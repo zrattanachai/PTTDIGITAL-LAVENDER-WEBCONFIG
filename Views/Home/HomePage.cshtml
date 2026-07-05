@@ -1,0 +1,769 @@
+﻿@* @model IEnumerable<LavenderConfig.Models.General> *@
+@using LavenderConfig.Models
+@model Tuple<List<General>, List<AddPumpModel>>
+
+@{
+    ViewData["Title"] = "General";
+}
+
+@section Styles{
+    <style>
+        .action-button:hover {
+            cursor: pointer;
+            opacity: 90%;
+        }
+    </style>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>General</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements disabled -->
+                    <div class="card card-primary">
+                        <form role="form">
+                        @*<div class="card-header" style="background-color: #0f2b57;">*@
+                        <!--<h3 class="card-title">Form</h3>-->
+                        @*</div>*@
+                        @* @if (ViewBag.userrole != "guest")
+                        {
+                            <div class="card-header">
+                                <div class="row clearfix">
+                                    <div class="col-md-2" id="dvview">
+                                        <button type="button" class="btn btn-block btn-primary btn-sm" onclick="editmode()">Edit</button>
+                                    </div>
+                                    <div class="col-md-2" id="dvview2">
+                                        <button type="button" class="btn btn-block btn-outline-primary btn-sm" onclick="toPDF()">Export PDF</button>
+                                    </div>
+                                    <div class="col-md-2" align="center" id="dvedit" style="display:none">
+                                        <button type="button" class="btn btn-block btn-success btn-sm" onclick="confirmUpdate()">Save</button>
+                                    </div>
+                                    <div class="col-md-8"></div>
+                                    <div class="col-md-2" align="center" id="dvedit2" style="display:none">
+                                        <button type="button" class="btn btn-block btn-outline-primary btn-sm" onclick="backmode()">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        } *@
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @* <form role="form"> *@
+                                @if (ViewBag.userrole != "guest")
+                                {
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h5>Site Profile</h5>
+                                    </div>
+                                    <div class="col-sm-6 text-right" id="dvview">
+                                        <h5><i class="fas fa-pen text-primary action-button" title="Edit" onclick="editmode()"></i></h5>
+                                    </div>
+                                    <div class="col-sm-6 text-right" id="dvedit" style="display:none">
+                                        <h5>
+                                            <span><i class="fas fa-save text-primary mr-3 action-button" title="Save" onclick="confirmUpdate()"></i></span>
+                                            <i class="fas fa-times text-danger action-button" title="Cancel" onclick="backmode()"></i>
+                                        </h5>
+                                    </div>
+                                </div>
+                                }
+                                @* <h5>Site Profile</h5>
+                                <br> *@
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5">
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Site_Name")) //3
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Site Name ", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtsitename", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Contact_Number")) //6
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Contact Number ", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtcontactnum", @class = "form-control", @disabled = "disabled", placeholder = "number only ex.0123456789" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "GPS_Address")) //7
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Latitude, Longitude Address ", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                    <div class="col-sm-1"></div>
+
+                                    <div class="col-sm-5">
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Site_Code")) //4
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Site Code ", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtsitecode", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Address")) //5
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Address ", new { @class = "normalweight" })
+                                                @Html.TextAreaFor(model => item.value, new { @id = "txtaddress", @class = "form-control", @rows = "4", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                                <br>
+                                <h5>Operation Mode</h5>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5">
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Operation_Mode")) //8
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Operation Mode ", new { @class = "normalweight" })
+                                                @Html.DropDownListFor(model => item.value, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="POS Link (Automatic)", Value="1" },
+                                                new SelectListItem { Text="POS Link without Self Authorize", Value="2" },
+                                                new SelectListItem { Text="Self Authorize", Value="3" }
+                                                }, new { @class = "form-control", @id = "txtoperation", @disabled = "disabled", @onchange = "showStackSelf()" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Delivery Timeout")) //38
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Delivery Timeout ", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtdelivery", @class = "form-control", @type = "number", placeholder = "15 -> 300", min = 15, max = 300, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Seconds</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Stack Self Authorize")) //40
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Self Authorize Stack Limit", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtstack", @class = "form-control", @type = "number", placeholder = "1 -> 1000", min = 1, max = 1000, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Transactions</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                    <div class="col-sm-1"></div>
+
+                                    <div class="col-sm-5">
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Authorize Timeout")) //2
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Authorize Timeout ", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtauthorize", @class = "form-control", @type = "number", placeholder = "15 -> 300", min = 15, max = 300, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Seconds</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "No Flow Timeout")) //39
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "No Flow Timeout ", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtnoflow", @class = "form-control", @type = "number", placeholder = "15 -> 300", min = 15, max = 300, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Seconds</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <h5>Logging</h5>
+                                        <br>
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5">
+                                        <h5 id="lblsoftver">Software Version</h5>
+                                        <br>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5">
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "ATG_Keep_Days")) //9
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "ATG Data Keep Day ", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtatgkeepday", @class = "form-control", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Dispenser_Keep_Days")) //10
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Dispenser Data Keep Day ", new { @class = "normalweight" })
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txtdispenkeepday", @class = "form-control", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Event_Keep_Days")) //11
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Event Data Keep Day ", new { @class = "normalweight" })
+                                                <div class="input-group mb-3">
+                                                    @Html.TextBoxFor(model => item.value, new { @id = "txteventkeepday", @class = "form-control", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5" id="softver">
+                                        @*<h5 id="lblsoftver">Software Version</h5>
+                                        <br>*@
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Dispenser_Version")) //12
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Dispenser Version ", new { @id = "lbldispenver", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtdispenver", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Tank_Gauge_Version")) //13
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Tank Gauge Version ", new { @id = "lbltankgaugever", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txttankgaugever", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "LavenderUpdate_Version")) //14
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Update Service Version ", new { @id = "lblupdatever", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtupdatever", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2" style="padding-top:2.5%">
+                                        <h5>Hardware Information</h5>
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                    <div class="col-sm-5" id="softver_2">
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "API_Version")) //15
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "API Version ", new { @id = "lblapiver", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtapiver", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5">
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Serial_Number")) //42
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Controller Serial Number", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtserialnumber", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Model")) //43
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Controller Model", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtmodel", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                        @{
+                                            var countpumpsgill = @Model.Item2.Count();
+                                            var toggleshow = countpumpsgill > 0 ? "" : "d-none";
+                                        }
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Interface_Serial_Number")) //47
+                                        {
+                                            <div class="form-group @toggleshow">
+                                                @Html.LabelFor(model => item.value, "Interface Serial Number", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtinfserialnumber", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Interface_Model")) //48
+                                        {
+                                            <div class="form-group @toggleshow">
+                                                @Html.LabelFor(model => item.value, "Interface Model", new { @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtinfmodel", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-5" id="softver_3">
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "Monitor_Version")) //25
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Monitor Version ", new { @id = "lblmonitorver", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtmonitorver", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "WebConfig_Version")) //26
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Web Config Version ", new { @id = "lblwebconver", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtwebconver", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+
+                                        @foreach (var item in Model.Item1.Where(i => i.key == "WebSupport_Version")) //27
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => item.value, "Web Support Version ", new { @id = "lblwebsupver", @class = "normalweight" })
+                                                @Html.TextBoxFor(model => item.value, new { @id = "txtwebsupver", @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <br>
+                                @* @if (ViewBag.userrole != "guest")
+                                {
+                                    <div class="row">
+                                        <div class="col-md-2" id="dvview">
+                                            <button type="button" class="btn btn-block btn-primary btn-sm" onclick="editmode()">Edit</button>
+                                        </div>
+                                        <div class="col-md-2" id="dvview2">
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2" align="center" id="dvedit" style="display:none">
+                                            <button type="button" class="btn btn-block btn-success btn-sm" onclick="confirmUpdate()">Save</button>
+                                        </div>
+                                        <div class="col-md-2" align="center" id="dvedit2" style="display:none">
+                                            <button type="button" class="btn btn-block btn-outline-primary btn-sm" onclick="backmode()">Cancel</button>
+                                        </div>
+                                    </div>
+                                } *@
+                            @* </form> *@
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<script type="text/javascript">
+
+    var sitename = document.getElementById("txtsitename").value;
+    var contact = document.getElementById("txtcontactnum").value;
+    var latlong = document.getElementById("txtlatlongaddress").value;
+    var sitecode = document.getElementById("txtsitecode").value;
+    var address = document.getElementById("txtaddress").value;
+    var operation = document.getElementById("txtoperation").value;
+    var autho = document.getElementById("txtauthorize").value;
+    var atg = document.getElementById("txtatgkeepday").value;
+    var dispen = document.getElementById("txtdispenkeepday").value;
+    var eventkeep = document.getElementById("txteventkeepday").value;
+    var delivery = document.getElementById("txtdelivery").value;
+    var noflow = document.getElementById("txtnoflow").value;
+    var stack = document.getElementById("txtstack").value;
+    var serialnumber = document.getElementById("txtserialnumber").value;
+    var model = document.getElementById("txtmodel").value;
+    var infserialnumber = document.getElementById("txtinfserialnumber").value;
+    var infmodel = document.getElementById("txtinfmodel").value;
+
+    function editmode()
+    {
+        // Edit
+        document.getElementById("txtsitename").disabled = false;
+        document.getElementById("txtcontactnum").disabled = false;
+        document.getElementById("txtlatlongaddress").disabled = false;
+
+        document.getElementById("txtsitecode").disabled = false;
+        document.getElementById("txtaddress").disabled = false;
+
+        document.getElementById("txtoperation").disabled = false;
+        document.getElementById("txtauthorize").disabled = false;
+        document.getElementById("txtdelivery").disabled = false;
+        document.getElementById("txtnoflow").disabled = false;
+
+        document.getElementById("txtserialnumber").disabled = false;
+        document.getElementById("txtmodel").disabled = false;
+        document.getElementById("txtinfserialnumber").disabled = false;
+        document.getElementById("txtinfmodel").disabled = false;
+        document.getElementById("txtstack").disabled = false;
+        /*if (operation == "2") {
+            document.getElementById("txtstack").disabled = false;
+        } else {
+            document.getElementById("txtstack").disabled = true;
+        }*/
+
+        document.getElementById("txtatgkeepday").disabled = false;
+        document.getElementById("txtdispenkeepday").disabled = false;
+        document.getElementById("txteventkeepday").disabled = false;
+
+        //Hide
+        document.getElementById("lblsoftver").style.display = "none";
+        document.getElementById("softver").style.display = "none";
+        document.getElementById("softver_2").style.display = "none";
+        document.getElementById("softver_3").style.display = "none";
+        document.getElementById("dvview").style.display = "none";
+        //document.getElementById("dvview2").style.display = "none";
+
+        //Open
+        document.getElementById("dvedit").style.display = "block";
+        //document.getElementById("dvedit2").style.display = "block";
+
+    }
+
+    function backmode()
+    {
+        // Edit
+        document.getElementById("txtsitename").disabled = true;
+        document.getElementById("txtcontactnum").disabled = true;
+        document.getElementById("txtlatlongaddress").disabled = true;
+
+        document.getElementById("txtsitecode").disabled = true;
+        document.getElementById("txtaddress").disabled = true;
+
+        document.getElementById("txtoperation").disabled = true;
+        document.getElementById("txtauthorize").disabled = true;
+        document.getElementById("txtdelivery").disabled = true;
+        document.getElementById("txtnoflow").disabled = true;
+        document.getElementById("txtstack").disabled = true;
+
+
+        document.getElementById("txtatgkeepday").disabled = true;
+        document.getElementById("txtdispenkeepday").disabled = true;
+        document.getElementById("txteventkeepday").disabled = true;
+
+        document.getElementById("txtserialnumber").disabled = true;
+        document.getElementById("txtmodel").disabled = true;
+        document.getElementById("txtinfserialnumber").disabled = true;
+        document.getElementById("txtinfmodel").disabled = true;
+
+        //Open
+        document.getElementById("lblsoftver").style.display = "block";
+        document.getElementById("softver").style.display = "block";
+        document.getElementById("softver_2").style.display = "block";
+        document.getElementById("softver_3").style.display = "block";
+
+        document.getElementById("dvview").style.display = "block";
+        //document.getElementById("dvview2").style.display = "block";
+
+        //Hide
+        document.getElementById("dvedit").style.display = "none";
+        //document.getElementById("dvedit2").style.display = "none";
+
+        document.getElementById("txtsitename").value = sitename;
+        document.getElementById("txtcontactnum").value = contact;
+        document.getElementById("txtlatlongaddress").value = latlong;
+        document.getElementById("txtsitecode").value = sitecode;
+        document.getElementById("txtaddress").value = address;
+        document.getElementById("txtoperation").value = operation;
+        document.getElementById("txtauthorize").value = autho;
+        document.getElementById("txtdelivery").value = delivery;
+        document.getElementById("txtnoflow").value = noflow;
+        document.getElementById("txtstack").value = stack;
+        document.getElementById("txtatgkeepday").value = atg;
+        document.getElementById("txtdispenkeepday").value = dispen;
+        document.getElementById("txteventkeepday").value = eventkeep;
+        document.getElementById("txtserialnumber").value = serialnumber;
+        document.getElementById("txtmodel").value = model;
+        document.getElementById("txtinfserialnumber").value = infserialnumber;
+        document.getElementById("txtinfmodel").value = infmodel;
+    }
+
+    function toPDF()
+    {
+        var doc = new jsPDF();
+
+        doc.autoTable({
+            html: '#export-table'/*, tableLineWidth: number = 0.5,
+            tableLineColor: Color = 'black'*/
+        })
+        doc.save('site_config.pdf')
+    }
+
+    function confirmUpdate() {
+        $.bsAlert.confirm("Do you want to update Site Config ?", function () {
+            sentupdate();
+        });
+    }
+
+    function showStackSelf() {
+        var tanktypevalue = document.getElementById("txtoperation").value;
+        document.getElementById("txtstack").disabled = false;
+        document.getElementById('txtstack').value = stack;
+    }
+
+    function sentupdate()
+    {
+        var stringArray = new Array();
+
+        stringArray = [];
+
+        stringArray[0] = document.getElementById("txtauthorize").value; //config_id = 2
+
+        if ((stringArray[0] != "" && stringArray[0] != null) && (stringArray[0] >= 15 && stringArray[0] <= 300))
+        {
+
+        }
+        else
+        {
+            $.bsAlert.alert("Please input Authorize Timeout with number and between 15 to 300 seconds.");
+            document.getElementById("txtauthorize").value = null;
+            document.getElementById("txtauthorize").focus();
+            return false;
+        }
+
+        stringArray[1] = document.getElementById("txtsitename").value; //config_id = 3
+
+        if (stringArray[1] == "") {
+            $.bsAlert.alert("Please input Site Name.");
+            document.getElementById("txtsitename").value = null;
+            document.getElementById("txtsitename").focus();
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[2] = document.getElementById("txtsitecode").value; //config_id = 4
+
+        if (stringArray[2] == "") {
+            $.bsAlert.alert("Please input Site Code.");
+            document.getElementById("txtsitecode").value = null;
+            document.getElementById("txtsitecode").focus();
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[3] = document.getElementById("txtaddress").value; //config_id = 5
+
+        if (stringArray[3] == "") {
+            $.bsAlert.alert("Please input Address.");
+            document.getElementById("txtaddress").value = null;
+            document.getElementById("txtaddress").focus();
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[4] = document.getElementById("txtcontactnum").value; //config_id = 6
+
+        if (isNaN(stringArray[4]))
+        {
+            $.bsAlert.alert("Please input Contact Number with number between 9 and 10 digits.");
+            document.getElementById("txtcontactnum").value = null;
+            document.getElementById("txtcontactnum").focus();
+            return false;
+        }
+        else
+        {
+            if (stringArray[4].length >= 9 && stringArray[4].length <= 10)
+            {
+                
+            }
+            else
+            {
+                $.bsAlert.alert("Please input Contact Number with number between 9 and 10 digits.");
+                document.getElementById("txtcontactnum").value = null;
+                document.getElementById("txtcontactnum").focus();
+                return false;
+            }
+        }
+
+        stringArray[5] = document.getElementById("txtlatlongaddress").value; //config_id = 7
+
+        if (stringArray[5] == "")
+        {
+            $.bsAlert.alert("Please input Latitude, Longitude Address.");
+            document.getElementById("txtlatlongaddress").value = null;
+            document.getElementById("txtlatlongaddress").focus();
+            return false;
+        }
+        else
+        {
+
+        }
+
+        stringArray[6] = document.getElementById("txtoperation").value; //config_id = 8
+
+        stringArray[7] = document.getElementById("txtatgkeepday").value; //config_id = 9
+
+        if ((stringArray[7] != "" || stringArray[7] != null) && (stringArray[7] >= 7 && stringArray[7] <= 120))
+        {
+
+        }
+        else
+        {
+            $.bsAlert.alert("Please input ATG Data Keep Day with number and between 7 to 120 days.");
+            document.getElementById("txtatgkeepday").value = null;
+            document.getElementById("txtatgkeepday").focus();
+            return false;
+        }
+
+        stringArray[8] = document.getElementById("txtdispenkeepday").value; //config_id = 10
+
+        if ((stringArray[8] != "" || stringArray[8] != null) && (stringArray[8] >= 7 && stringArray[8] <= 120)) {
+
+        }
+        else {
+            $.bsAlert.alert("Please input Dispenser Data Keep Day with number and between 7 to 120 days.");
+            document.getElementById("txtdispenkeepday").value = null;
+            document.getElementById("txtdispenkeepday").focus();
+            return false;
+        }
+
+        stringArray[9] = document.getElementById("txteventkeepday").value; //config_id = 11
+
+        if ((stringArray[9] != "" || stringArray[9] != null) && (stringArray[9] >= 7 && stringArray[9] <= 120)) {
+
+        }
+        else {
+            $.bsAlert.alert("Please input Event Data Keep Day with number and between 7 to 120 days.");
+            document.getElementById("txteventkeepday").value = null;
+            document.getElementById("txteventkeepday").focus();
+            return false;
+        }
+
+        stringArray[10] = document.getElementById("txtdelivery").value;
+
+        if ((stringArray[10] != "" && stringArray[10] != null) && (stringArray[10] >= 15 && stringArray[10] <= 300)) {
+
+        }
+        else {
+            $.bsAlert.alert("Please input Delivery Timeout with number and between 15 to 300 seconds.");
+            document.getElementById("txtauthorize").value = null;
+            document.getElementById("txtauthorize").focus();
+            return false;
+        }
+
+        stringArray[11] = document.getElementById("txtnoflow").value;
+
+        if ((stringArray[11] != "" && stringArray[11] != null) && (stringArray[11] >= 15 && stringArray[11] <= 300)) {
+
+        }
+        else {
+            $.bsAlert.alert("Please input No Flow Timeout with number and between 15 to 300 seconds.");
+            document.getElementById("txtauthorize").value = null;
+            document.getElementById("txtauthorize").focus();
+            return false;
+        }
+
+        stringArray[12] = document.getElementById("txtstack").value;
+
+        if ((stringArray[12] != "" && stringArray[12] != null) && (stringArray[12] >= 1 && stringArray[12] <= 1000)) {
+
+        }
+        else {
+            if (stringArray[6] == "2") { // Self Authorize
+                $.bsAlert.alert("Please input Stack Self Authorize with number and between 1 to 1000.");
+                document.getElementById("txtstack").value = null;
+                document.getElementById("txtstack").focus();
+                return false;
+            } else { // POS Link or Standalone don't do nothing.
+
+            }
+            
+        }
+
+        stringArray[13] = document.getElementById("txtserialnumber").value;
+        stringArray[14] = document.getElementById("txtmodel").value;
+        stringArray[15] = document.getElementById("txtinfserialnumber").value;
+        stringArray[16] = document.getElementById("txtinfmodel").value;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../Home/SaveGeneral",
+            data: postData,
+            success: function (data) {
+                if (data.status == true)
+                {
+                    @* window.location.href = '@Url.Action("HomePage", "Home")'; *@
+                    @* location.href = "/LavenderConfig/Home/HomePage"; *@
+                    window.location.reload(true);
+                }
+                else
+                {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+</script>
+
+@if (ViewBag.generalmessage == null || ViewBag.generalmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1") {
+        <script type="text/javascript">
+            window.onload = function ()
+            {
+                $.bsAlert.alert("@ViewBag.generalmessage");
+            };
+        </script>
+    }
+}

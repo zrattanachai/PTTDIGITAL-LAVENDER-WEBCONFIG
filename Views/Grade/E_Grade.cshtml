@@ -1,0 +1,279 @@
+﻿@model LavenderConfig.Models.AddGradeModel;
+
+@{
+    ViewData["Title"] = "Grade";
+    ViewData["SubTitle"] = "Edit Grade";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit Grade
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("Grade", "Grade")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        @using (Html.BeginForm("E_Grade", "Grade", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    @Html.HiddenFor(x => x.grade_id, new { id = "txtGradeID" })
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.grade_name, "Grade Name: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.grade_name, new { id = "txtGradeName", required = "required", autofocus = "", placeholder = "Grade Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.material_id, "Material Code: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.material_id, new { id = "txtMatCode", required = "required", placeholder = "Number Only", @type = "number", min = 0, max = 99999999, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.price_level_1, "Price Level 1: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.price_level_1, new { id = "txtPrice1", required = "required", placeholder = "Number Only", @type = "number", @step = "0.01", min = 0, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.price_level_2, "Price Level 2: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.price_level_2, new { id = "txtPrice2", placeholder = "Number Only", @type = "number", @step = "0.01", min = 0, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.enable, "Enable: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            <div class="custom-control custom-switch custom-switch-lg">
+                                                @if (Model.enable == true)
+                                                {
+                                                    @Html.CheckBoxFor(model => model.enable, new { @id = "chkEnable", @checked = "checked", @class = "custom-control-input" })
+                                                    <label class="custom-control-label" for="chkEnable"></label>
+                                                }
+                                                else
+                                                {
+                                                    @Html.CheckBoxFor(model => model.enable, new { @id = "chkEnable", @class = "custom-control-input" })
+                                                    <label class="custom-control-label" for="chkEnable"></label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <br>
+                                        <div class="row clearfix" align="center">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-block btn-outline-info btn-sm" id="btndel" name="btndel" value="btndel" onclick="requiredfunc(this.id)" @*onclick="sentdelete()"*@>Delete</button>
+                                            </div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="requiredfunc(this.id)">Save</button>
+                                            </div>
+                                            <div class="col-md-2" align="center">
+                                                @Html.ActionLink("Cancel", "Grade", "Grade", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        }
+</section>
+
+<script type="text/javascript">
+
+    function requiredfunc(getbtnid)
+    {
+        var gradename = document.getElementById("txtGradeName").value;
+        
+        if (getbtnid == "btndel")
+        {
+            $.bsAlert.confirm("Do you want to delete " + gradename + " ?", function () {
+                doRemove();
+            });
+        }
+        else if (getbtnid == "btnedi")
+        {   
+            $.bsAlert.confirm("Do you want to update " + gradename + " ?", function () {
+                sentupdate();
+            });
+        }
+        else
+        {
+
+        }
+    }
+
+    function doRemove() {
+        var input = document.getElementsByTagName("input").length;
+        var select = document.getElementsByTagName("select").length;
+        if (input > 0) {
+            if (select > 0) {
+                for (c = 0; c <= select - 1; c++) {
+                    var checkatt = document.getElementsByTagName("select")[c].hasAttribute("required");
+                    if (checkatt == true) {
+                        document.getElementsByTagName("select")[c].removeAttribute("required");
+                    }
+                    else {
+                    }
+                }
+            }
+            else {
+            }
+
+            for (i = 0; i <= input - 1; i++) {
+                var checkatt = document.getElementsByTagName("input")[i].hasAttribute("required");
+                if (checkatt == true) {
+                    document.getElementsByTagName("input")[i].removeAttribute("required");
+                }
+                else {
+
+                }
+            }
+        }
+        else {
+
+        }
+        sentdelete();
+    }
+
+    function sentdelete() {
+
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtGradeID").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Grade/DeleteList",
+            data: postData,
+            success: function (data) {
+                if (data.status == true)
+                {
+                    window.location.href = '@Url.Action("Grade", "Grade")';
+                }
+                else
+                {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function sentupdate()
+    {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtGradeID").value;
+        stringArray[1] = document.getElementById("txtGradeName").value;
+
+        if (stringArray[1] == null || stringArray[1] == "")
+        {
+            $.bsAlert.alert("Please fill Grade Name.");
+            return false;
+        }
+        else
+        {
+
+        }
+
+        stringArray[2] = document.getElementById("txtPrice1").value;
+
+        if (stringArray[2] == null || stringArray[2] == "")
+        {
+            $.bsAlert.alert("Please fill Price Level 1 with number.");
+            document.getElementById("txtPrice1").value = null;
+            return false;
+        }
+        else
+        {
+
+        }
+
+        stringArray[3] = document.getElementById("txtPrice2").value;
+
+        if (document.getElementById("chkEnable").checked)
+        {
+            stringArray[4] = true;
+        }
+        else
+        {
+            stringArray[4] = false;
+        }
+
+        stringArray[5] = document.getElementById("txtMatCode").value;
+
+        if (stringArray[5] == null || stringArray[5] == "") {
+            if (stringArray[5].length > 8) {
+                $.bsAlert.alert("Please fill Material Code with length between 1-8.");
+                document.getElementById("txtMatCode").value = null;
+                return false;
+            }
+            else {
+                $.bsAlert.alert("Please fill Material Code with number.");
+                document.getElementById("txtMatCode").value = null;
+                return false;
+            }
+        }
+        else {
+
+        }
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Grade/UpdateList",
+            data: postData,
+            success: function (data) {
+                if (data.status == true)
+                {
+                    window.location.href = '@Url.Action("Grade", "Grade")';
+                }
+                else
+                {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+</script>

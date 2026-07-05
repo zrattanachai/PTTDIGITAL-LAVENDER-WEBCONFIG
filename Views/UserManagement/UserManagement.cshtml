@@ -1,0 +1,161 @@
+﻿@model List<LavenderConfig.Models.Login>
+
+@{
+    ViewData["Title"] = "UserManagement";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    User Management
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">User Management</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        @*<div class="col-sm-2">
+            @Html.ActionLink("Create New", "A_UserManagement", "UserManagement", null, new { @class = "btn btn-block btn-outline-primary" })
+        </div>*@
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            @*<h3 class="card-title">User Management</h3>*@
+
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create User", "A_UserManagement", "UserManagement", null, new { @class = "btn btn-block btn-primary" })
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped dataTable text-nowrap" role="grid" style="width: 80%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    @*<th rowspan="1" colspan="1" class="text-center" style="width: 10%;">User ID</th>*@
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Username</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 9%;">Role</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 13%;">Department</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Enable</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 13%;">Activity Log</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 17%;">Last Login</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 11%;">Settings</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 17%;">Change Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loop for Display Data with Razor -->
+                                @{
+                                    var countmodel = @Model.Count();
+                                }
+                                @if (countmodel > 0)
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr role="row" class="odd" align="center">
+                                            @*<td class="item-id">@item.user_id</td>*@
+                                            <td>@item.user_name</td>
+                                            <td>@item.role</td>
+                                            <td>@item.department</td>
+                                            <td>
+                                                <div class="custom-control custom-switch" style="padding-left: 100%">
+                                                    @if (@item.enable == true)
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.enable, new { @id = "customSwitch1", @class = "custom-control-input", @checked = "checked", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch1"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.enable, new { @id = "customSwitch1", @class = "custom-control-input", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch1"></label>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-switch" style="padding-left: 75%">
+                                                    @if (@item.activity_log == true)
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.activity_log, new { @id = "customSwitch2", @class = "custom-control-input", @checked = "checked", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch2"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.activity_log, new { @id = "customSwitch2", @class = "custom-control-input", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch2"></label>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>@item.login_date.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                            @*<td>@Html.ActionLink("Edit", "E_UserSetting", "Edit", new { ID = @item.user_id }, new { ID = @item.user_id }) | @Html.ActionLink("Delete", "D_UserSetting", "Delete", new { ID = @item.user_id }, new { ID = @item.user_id })</td>*@
+                                            @*<td>@Html.ActionLink("Details", "E_UserSetting", "UserSetting", new { ID = @item.user_id }, new { ID = @item.user_id, @class = "btn btn-outline-primary btn-sm" }) @Html.ActionLink("Change Password", "ChangePassword", "UserSetting", new { ID = @item.user_id }, new { ID = @item.user_id, @class = "btn btn-outline-primary btn-sm" })</td>*@
+                                            <td>
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                @Html.ActionLink("", "E_UserManagement", "UserManagement", new { ID = @item.user_id }, new { ID = @item.user_id, @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                            }
+                                            else 
+                                            {
+                                                <span>-</span>
+                                            }
+                                            </td>
+                                            <td>
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                @Html.ActionLink("", "ChangePassword", "UserManagement", new { ID = @item.user_id }, new { ID = @item.user_id, @class = "fas fa-key changetextcolor", title = "Change Password" })
+                                            }
+                                            else 
+                                            {
+                                                <span>-</span>
+                                            }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+</section>
+
+
+@if (ViewBag.usersettingmessage == null || ViewBag.usersettingmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                //alert("@ViewBag.usersettingmessage");
+                $.bsAlert.alert("@ViewBag.usersettingmessage");
+            };
+        </script>
+    }
+}

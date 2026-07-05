@@ -1,0 +1,207 @@
+@model IEnumerable<LavenderConfig.Models.General>
+
+@{
+    ViewData["Title"] = "General";
+}
+
+<section class="content-header">
+    <h1>
+        General
+        <!--<small>Optional description</small>-->
+    </h1>
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+    <!--------------------------
+    | Your Page Content Here |
+    -------------------------->
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-1"></div>
+        <div class="col-md-4"><h4>Site Profile</h4></div>
+    </div>
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 3))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Site Name ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtsitename" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 4))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Site Code ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtsitecode" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 5))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Address ")</div>
+            <div class="col-md-2">
+                @Html.TextAreaFor(model => item.value, new { id = "txtaddress" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 6))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Contact Number ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtcontactnum" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 7))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Latitude, Longitude Address ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 8))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+                <h4>Operation Mode</h4>
+            </div>
+            <br>
+            <div class="col-md-2">
+                @if (@item.value == "1")
+                {
+                    @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress" }) <span>POS Link</span>
+                }
+                else if (@item.value == "2")
+                {
+                    @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress" }) <span>Self Authorize</span>
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress" }) <span style="color:red;">This Operation Mode Not Found.</span>
+                }
+            </div>
+        </div>
+    }
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-1"></div>
+        <div class="col-md-4"><h4>Logging</h4></div>
+    </div>
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 9))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "ATG Data Keep Day ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtatgkeepday" })
+            </div>
+            <div class="col-md-1">days</div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 10))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Dispenser Data Keep Day ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtdispenkeepday" })
+            </div>
+            <div class="col-md-1">days</div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 11))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Event Data Keep Day ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txteventkeepday" })
+            </div>
+            <div class="col-md-1">days</div>
+        </div>
+    }
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-1"></div>
+        <div class="col-md-4"><h4>Software Version: </h4></div>
+    </div>
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 12))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Dispenser Version: ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtdispenver" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 13))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "Tank Gauge Version: ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txttankgaugever" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 14))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "GAIA Agent Version: ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtgaiaver" })
+            </div>
+        </div>
+    }
+    <br>
+    @foreach (var item in Model.Where(i => i.config_id == 15))
+    {
+        <div class="row clearfix">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">@Html.LabelFor(model => item.value, "API Version: ")</div>
+            <div class="col-md-2">
+                @Html.TextBoxFor(model => item.value, new { id = "txtapiver" })
+            </div>
+        </div>
+    }
+    <br>
+    @Html.ActionLink("Edit Data", "E_General", "Edit", null)
+</section>

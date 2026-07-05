@@ -1,0 +1,662 @@
+﻿@model IEnumerable<LavenderConfig.Models.AddReportModel>
+
+@using LavenderConfig.Models
+@*  @model Tuple<List<Transactions>, List<Grades>, List<Hoses>>*@
+
+@{
+    ViewData["Title"] = "Report";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Report
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+    <!--------------------------
+    | Your Page Content Here |
+    -------------------------->
+        @using (Html.BeginForm("Report", "Report", FormMethod.Get, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row clearfix">
+                <div class="col-md-2">
+                    Delivery Type
+                </div>
+                <div class="col-md-2">
+                    Pump
+                </div>
+                <div class="col-md-2">
+                    Hose
+                </div>
+                <div class="col-md-2">
+                    Grade
+                </div>
+                <div class="col-md-4">
+                    Completed Date
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-2">
+                    @{
+                        List<SelectListItem> DeliveryListItems = new List<SelectListItem>();
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "- Delivery Type -",
+                            Value = ""
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "All",
+                            Value = "0"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "Current",
+                            Value = "1"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "Stacked",
+                            Value = "2"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "PostPay",
+                            Value = "5"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "Test",
+                            Value = "11"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "Offline",
+                            Value = "14"
+                        });
+                        DeliveryListItems.Add(new SelectListItem
+                        {
+                            Text = "Self Authorize",
+                            Value = "15"
+                        });
+
+                        var delivery = ViewBag.reportdelivery;
+                        var pump = ViewBag.reportpump == null ? "" : ViewBag.reportpump;
+                        var hose = ViewBag.reporthose == null ? "" : ViewBag.reporthose;
+                        var grade = ViewBag.reportgrade == null ? "" : ViewBag.reportgrade;
+                        @* var std = ViewBag.reportstdate == null ? "" : ViewBag.reportstdate;
+                        var edd = ViewBag.reporteddate == null ? "" : ViewBag.reporteddate; *@
+
+                        var pumplist = ViewBag.pumpinreport == null ? "" : ViewBag.pumpinreport;
+                        var hoselist = ViewBag.hoseinreport == null ? "" : ViewBag.hoseinreport;
+                        var gradelist = ViewBag.gradeinreport == null ? "" : ViewBag.gradeinreport;
+                    }
+                    @Html.DropDownList("ddlDeliveryType", new SelectList(DeliveryListItems, "Value", "Text", delivery)
+                    , new { @class = "form-control", @onchange = "Deliveryforsearch()", required = "required" })
+                    <input type="hidden" id="txtDeliType" />
+                </div>
+                <div class="col-md-2">
+                    @Html.DropDownList("ddlPump", new SelectList(pumplist, "pump_id", "pump_name", pump)
+                    , new { @class = "form-control", @onchange = "Pumpforsearch()" })
+                    <input type="hidden" id="txtPump" />
+                </div>
+                <div class="col-md-2">
+                    @Html.DropDownList("ddlHose", new SelectList(hoselist, "hose_id", "hose_text", hose)
+                    , new { @class = "form-control", @onchange = "Hoseforsearch()" })
+                    <input type="hidden" id="txtHose" />
+                </div>
+                <div class="col-md-2">
+                    @Html.DropDownList("ddlGrade", new SelectList(gradelist, "grade_id", "grade_name", grade)
+                    , new { @class = "form-control", @onchange = "Gradeforsearch()" })
+                    <input type="hidden" id="txtGrade" />
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBox("RDate", null, new { id = "RDate", type = "text", @class = "datepicker form-control", @placeholder = "- From -", @onchange = "Dateforsearch()", required = "required" })
+                    <input type="hidden" id="txtRDate" />
+                </div>
+                @* 
+                <div class="col-md-1">
+                    @Html.TextBox("STime", null, new { id = "STime", type = "text", @class = "time-start form-control", @placeholder = "- Start Time -", @onchange = "STimeforsearch()"})
+                    <input type="hidden" id="txtSTime" />
+                </div>
+                <div class="col-md-1">
+                    @Html.TextBox("ETime", null, new { id = "ETime", type = "text", @class = "time-end form-control", @placeholder = "- End Time -", @onchange = "ETimeforsearch()"})
+                    <input type="hidden" id="txtETime" />
+                </div> *@
+            </div>
+            <br>
+            <div class="row clearfix">
+                <div class="col-md-4"></div>
+                <div class="col-md-2" align="center">
+                    <button type="submit" class="btn btn-block btn-primary btn-sm" title="Search">Search</button>
+                </div>
+                <div class="col-md-2" align="center">
+                    <button type="button" class="btn btn-block btn-outline-info btn-sm" onclick="clearData()" title="Clear all search options">Clear search fields@*<i class="fas fa-broom"></i>*@</button>
+                </div>
+            </div>
+        }
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="tableReport" class="table table-bordered table-striped dataTable text-nowrap" role="grid" style="width: 100%">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th rowspan="1" colspan="1" class="text-center">Transaction ID</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Pump ID</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Hose ID</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Grade</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Completed Date</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Delivery Type</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Volume</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Value</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Price</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Cleared By</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Cleared Date</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Meter Volume</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Meter Value</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Rollback</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rowReport">
+                                @{
+                                    @* var countmodel = @Model.Count(); *@
+                                }
+                                @* @if (countmodel > 0) *@
+                                @if (ViewBag.reportdelivery != null && ViewBag.reportdelivery != "")
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.transaction_id</td>
+                                            <td class="text-center">@item.pump_id</td>
+                                            <td class="text-center">@item.hose_id</td>
+                                            <td class="text-center">@item.grade_name</td>
+                                            <td class="text-center">@Convert.ToDateTime(item.completed_ts).ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                            <td class="text-center">
+                                                @if (item.delivery_type == 1)
+                                                {
+                                                    <span>Current</span>
+                                                }
+                                                else if (item.delivery_type == 2)
+                                                {
+                                                    <span>Stacked</span>
+                                                }
+                                                else if (item.delivery_type == 5)
+                                                {
+                                                    <span>Postpay</span>
+                                                }
+                                                else if (item.delivery_type == 11)
+                                                {
+                                                    <span>Test</span>
+                                                }
+                                                else if (item.delivery_type == 14)
+                                                {
+                                                    <span>Offline</span>
+                                                }
+                                                else if (item.delivery_type == 15)
+                                                {
+                                                    <span>Self Authorize</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.delivery_volume</td>
+                                            <td class="text-center">@item.delivery_value</td>
+                                            <td class="text-center">@item.sell_price</td>
+                                            <td class="text-center">
+                                                @if(item.cleared_by == null)
+                                                {
+                                                    <span>-</span>
+                                                }
+                                                else
+                                                {
+                                                    @item.cleared_by
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if(item.cleared_ts == null)
+                                                {
+                                                    <span>-</span>
+                                                }
+                                                else
+                                                {
+                                                    @Convert.ToDateTime(item.cleared_ts).ToString("dd/MM/yyyy HH:mm:ss")
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.total_meter_volume</td>
+                                            <td class="text-center">@item.total_meter_value</td>
+                                            <td class="text-center">
+                                                @if(item.sync_gaia == true) //check if in transaction_bk
+                                                {  
+                                                    @if(ViewBag.userrole == "admin" || ViewBag.username == "support")
+                                                    {
+                                                        <button type="button" class="btn btn-block btn-primary btn-sm" title="Rollback" onclick='requiredfunc("@item.transaction_id")'>Rollback</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-block btn-primary btn-sm" title="Rollback" disabled>Rollback</button>
+                                                    }   
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+@* <script src="~/bower_components/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/bower_components/datatables-buttons/js/buttons.bootstrap4.min.js"></script> *@
+
+<script type="text/javascript">
+    $(function () {
+        var table = $("#tableReport").DataTable(
+            {
+                "scrollX": true,
+                "lengthChange": false,
+                "searching": true,
+                "info": true,
+                @* "ordering": true, *@
+                "paging": true,
+                "buttons": [
+                    { "extend": "excel", "text": "Export to Excel" ,"className": "btn-success" }
+                ],
+                "order": [[ 0, "desc" ]],
+                @* "serverSide": true,
+                "processing": true, *@
+                /*"columnDefs": [
+                    { "width": "9%", "targets": 0 }
+                ]*/
+            }
+        );
+        table.buttons().container().appendTo( '#tableReport_wrapper .col-md-6:eq(0)' );
+        $(".buttons-excel").removeClass("btn-secondary");
+    });
+
+    function Deliveryforsearch() {
+        var Delivery = document.getElementById("ddlDeliveryType").value;
+        document.getElementById('txtDeliType').value = Delivery;
+    }
+
+
+    function Pumpforsearch() {
+        var Pump = document.getElementById("ddlPump").value;
+        document.getElementById("txtPump").value = Pump;
+
+        GetHose(Pump);
+    }
+
+    var defaultPump = (function setdefaultPump() {
+        AddDropdownItem("ddlPump", "- Pump -", "");
+    }());
+
+
+    function GetHose(ddlPump) {
+        document.getElementById('ddlHose').options.length = 0;
+
+        if(ddlPump == null || ddlPump == ""){
+            AddDropdownItem("ddlHose", "- Hose -", "");
+        }else{
+            $.ajax({
+                type: "POST",
+                url: "../Report/GetHoseItem",
+                data: { ddlPump : ddlPump },
+                success: function (data) {
+                    if (data.status == true) {
+                        if(data.hoseitem.length > 0){
+                            for (i = 0; i < data.hoseitem.length; i++){
+                                var ddlHose = document.getElementById("ddlHose");
+                                var option = document.createElement('option');
+                                option.text = data.hoseitem[i].hose_text;
+                                option.value = data.hoseitem[i].hose_id;
+                                ddlHose.add(option);
+                            }
+                            document.getElementById("ddlHose").selectedIndex = "0";  
+                        }
+                    }
+                },
+                dataType: "json",
+                traditional: true
+            });
+        }
+    }
+
+    function Hoseforsearch() {
+        var Pump = document.getElementById("ddlHose").value;
+        document.getElementById("txtHose").value = Pump;
+    }
+
+    var defaultHose = (function setdefaultHose() {
+        document.getElementById("ddlHose").selectedIndex = "0";
+    }());
+
+    function Gradeforsearch() {
+        var Grade = document.getElementById("ddlGrade").value;
+        document.getElementById("txtGrade").value = Grade;
+    }
+
+    var defaultGrade = (function setdefaultGrade() {
+        var ddlgrade = document.getElementById("ddlGrade");
+        var option = document.createElement("option");
+        option.text = "- Grade -";
+        option.value = "";
+        ddlgrade.add(option, ddlgrade[0]);
+        document.getElementById("ddlGrade").selectedIndex = "0";
+    }());
+
+    function AddDropdownItem(id, text, value){
+        var ddlid = document.getElementById(id);
+        var option = document.createElement('option');
+        option.text = text;
+        option.value = value;
+        ddlid.add(option, ddlid[0]);
+        document.getElementById(id).selectedIndex = "0";
+    }
+
+    
+    function Dateforsearch() {
+        var RDate = document.getElementById("RDate").value;
+        @* var subdate = RDate.substr(0, 2);
+        var submonth = RDate.substr(3, 2);
+        var subyear = RDate.substr(6, 4);
+        var newDate = subyear + "-" + submonth + "-" + subdate;
+        document.getElementById("txtRDate").value = newDate;  *@
+
+        document.getElementById("txtRDate").value = RDate; //Ex. 26-01-2023 15:00 - 27-01-2023 23:00
+    }
+
+    var defaultDate = (function setdefaultDate() {
+        var RDate = document.getElementById("txtRDate").value;
+        document.getElementById("RDate").value = RDate;
+    }());
+
+    @* function STimeforsearch() {
+        var RDate = document.getElementById("RDate").value;
+        var STime = document.getElementById("STime").value;
+        document.getElementById("txtSTime").value = STime;
+        var ETime = document.getElementById("ETime").value;
+        document.getElementById("txtETime").value = ETime;
+
+        if(RDate == null || RDate == "")
+        {
+            $.bsAlert.alert("Please choose Report Date!");
+            document.getElementById("STime").value = "";
+            document.getElementById("txtSTime").value = "";
+        }
+        else
+        {
+            var subdate = RDate.substr(0, 2);
+            var submonth = RDate.substr(3, 2);
+            var subyear = RDate.substr(6, 4);
+            var newDate = subyear + "-" + submonth + "-" + subdate;
+
+            var st = new Date(newDate + " " + STime + ":00");
+            var sttime = st.getTime();
+            var ed = new Date(newDate + " " + ETime + ":00");
+            var edtime = ed.getTime();
+
+            if (ETime != null || ETime != "")
+            {
+                if(sttime > edtime)
+                {
+                    $.bsAlert.alert("Start Time More Than End Time!");
+                    document.getElementById("STime").value = "";
+                    document.getElementById("txtSTime").value = "";
+                }
+            }
+
+        }
+    }
+
+    var defaultSTime = (function setdefaultSTime() {
+        var STime = document.getElementById("txtSTime").value;
+        document.getElementById("STime").value = STime;
+    }());
+
+    function ETimeforsearch() {
+        var RDate = document.getElementById("RDate").value;
+        var STime = document.getElementById("STime").value;
+        document.getElementById("txtSTime").value = STime;
+        var ETime = document.getElementById("ETime").value;
+        document.getElementById("txtETime").value = ETime;
+
+        if(RDate == null || RDate == "")
+        {
+            $.bsAlert.alert("Please choose Report Date!");
+            document.getElementById("ETime").value = "";
+            document.getElementById("txtETime").value = "";
+        }
+        else
+        {
+            var subdate = RDate.substr(0, 2);
+            var submonth = RDate.substr(3, 2);
+            var subyear = RDate.substr(6, 4);
+            var newDate = subyear + "-" + submonth + "-" + subdate;
+
+            var st = new Date(newDate + " " + STime + ":00");
+            var sttime = st.getTime();
+            var ed = new Date(newDate + " " + ETime + ":00");
+            var edtime = ed.getTime();
+
+            if (STime != null || STime != "")
+            {
+                if(sttime > edtime)
+                {
+                    $.bsAlert.alert("Start Time More Than End Time!");
+                    document.getElementById("ETime").value = "";
+                    document.getElementById("txtETime").value = "";
+                }
+            }
+        }
+    }
+
+    var defaultETime = (function setdefaultETime() {
+        var ETime = document.getElementById("txtETime").value;
+        document.getElementById("ETime").value = ETime;
+    }()); *@
+
+    function clearData() {
+        document.getElementById('ddlDeliveryType').value = "";
+        document.getElementById('ddlPump').value = "";
+        document.getElementById('ddlHose').value = "";
+        document.getElementById('ddlGrade').value = "";
+        document.getElementById('RDate').value = "";
+        @* document.getElementById('STime').value = "";
+        document.getElementById('ETime').value = ""; *@
+    }
+
+    function rollbackfunc(transid){
+        var postData = { transid: parseInt(transid) };
+
+        $.ajax({
+            type: "POST",
+            url: "../Report/Rollback",
+            data: postData, 
+            success: function (data) {
+                var ddlDeliveryType = document.getElementById("ddlDeliveryType").value;
+                var ddlPump = document.getElementById("ddlPump").value;
+                var ddlHose = document.getElementById("ddlHose").value;
+                var ddlGrade = document.getElementById("ddlGrade").value;
+                var RDate = document.getElementById("RDate").value;
+                @* var STime = document.getElementById("STime").value;
+                var ETime = document.getElementById("ETime").value; *@
+
+                var url = '@Html.Raw(Url.Action("Report", "Report", new { ddlDeliveryType = "_ddlDeliveryType_" , ddlPump = "_ddlPump_", ddlHose = "_ddlHose_", ddlGrade = "_ddlGrade_", RDate = "_RDate_"}))';
+                var params = url.replace('_ddlDeliveryType_', ddlDeliveryType)
+                .replace('_ddlPump_', ddlPump)
+                .replace('_ddlHose_', ddlHose)
+                .replace('_ddlGrade_', ddlGrade)
+                .replace('_RDate_', RDate)
+                @* .replace('_STime_', STime)
+                .replace('_ETime_', ETime); *@
+
+                window.location.href = params;
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function requiredfunc(transid) {
+        $.bsAlert.confirm("Do you want to rollback transaction "+transid+"?", function () {
+            rollbackfunc(transid);
+        });
+    }
+
+</script>
+
+@{
+    if (@ViewBag.reportpump != null || @ViewBag.reportpump != "")
+    {
+        <script type="text/javascript">
+            var defaultPump = (function setdefaultPump() {
+                var Pump = @ViewBag.reportpump;
+                document.getElementById("ddlPump").value = Pump;
+            }());
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            var defaultPump = (function setdefaultPump() {
+                document.getElementById("ddlPump").selectedIndex = "0";
+            }());
+        </script>
+    }
+}
+
+@{
+    if (@ViewBag.reporthose != null || @ViewBag.reporthose != "")
+    {
+        <script type="text/javascript">
+            var defaultHose = (function setdefaultHose() {
+                var Hose = @ViewBag.reporthose;
+                document.getElementById("ddlHose").value = Hose;
+            }());
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            var defaultHose = (function setdefaultHose() {
+                document.getElementById("ddlHose").selectedIndex = "0";
+            }());
+        </script>
+    }
+}
+
+@{
+    if (ViewBag.reportgrade != null || ViewBag.reportgrade != "")
+    {
+        <script type="text/javascript">
+            var defaultGrade = (function setdefaultGrade() {
+                var Grade = @ViewBag.reportgrade;
+                document.getElementById("ddlGrade").value = Grade;
+            }());
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            var defaultGrade = (function setdefaultGrade() {
+                var ddlgrade = document.getElementById("ddlGrade");
+                document.getElementById("ddlGrade").value = ddlgrade[0];
+            }());
+        </script>
+    }
+}
+
+@{
+    if (ViewBag.reportrdate != null || ViewBag.reportrdate != "")
+    {
+        <script type="text/javascript">
+            var defaultDate = (function setdefaultDate() {
+                var RDate = document.getElementById("RDate").getAttribute("value");
+                document.getElementById("RDate").value = RDate;
+            }());
+        </script>
+    }
+    else
+    {
+    }
+}
+
+@* @{
+    if (ViewBag.reportstime != null || ViewBag.reportstime != "")
+    {
+        <script type="text/javascript">
+            var defaultSTime = (function setdefaultSTime() {
+                var STime = document.getElementById("STime").getAttribute("value");
+                document.getElementById("STime").value = STime;
+            }());
+        </script>
+    }
+    else
+    {
+    }
+}
+
+@{
+    if (ViewBag.reportetime != null || ViewBag.reportetime != "")
+    {
+        <script type="text/javascript">
+            var defaultETime = (function setdefaultETime() {
+                var ETime = document.getElementById("ETime").getAttribute("value");
+                document.getElementById("ETime").value = ETime;
+            }());
+        </script>
+    }
+    else
+    {
+    }
+} *@
+
+@if (ViewBag.reportmessage == null || ViewBag.reportmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("@ViewBag.reportmessage");
+            };
+        </script>
+    }
+}

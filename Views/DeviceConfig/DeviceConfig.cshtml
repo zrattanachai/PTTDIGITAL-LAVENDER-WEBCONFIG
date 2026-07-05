@@ -1,0 +1,440 @@
+﻿@using LavenderConfig.Models
+@model Tuple<List<Loops>, List<Protocols>, List<TankGaugeFeatures>>
+@{
+    ViewData["Title"] = "DeviceConfig";
+}
+
+@section Styles{
+    <style>
+        .selected {
+            background-color: #ddd;
+        }
+        .mousepointer {
+            cursor: pointer;
+        }
+
+        #get_file {
+            border-width: 3px;
+            border-style: dashed;
+            font-size: 1.2rem;
+        }
+
+        #get_file:hover {
+            border-color: white;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Devices Configuration
+                    <!--<small>Optional description</small>-->
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">Device Configuration</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content container-fluid">
+    
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            @*<h3 class="card-title">Dispenser</h3>*@
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create Dispenser", "A_DeviceCon", "DeviceConfig", new { type = "D" }, new { type = "D", @class = "btn btn-block btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped dataTable text-nowrap" role="grid" style="width: 65%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Port</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 35%;">Type</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 40%;">Protocol</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int countD = 1;
+                                    var countmodelD = @Model.Item1.Count();
+                                }
+                                @if (countmodelD > 0)
+                                {
+                                    @foreach (var item in Model.Item1.Where(i => i.loop_type != 2))
+                                    {
+                                        @foreach (var itemk in Model.Item2.Where(i => i.protocol_id == item.protocol_id))
+                                        {
+                                            <tr role="row" class="odd" align="center">
+                                                <td>@item.loop_name</td>
+                                                <td>
+                                                    @{
+                                                        var looptype = "";
+                                                    }
+                                                    @if (item.loop_type == 0)
+                                                    {
+                                                        looptype = "SW-Control";
+                                                    }
+                                                    else if (item.loop_type == 1)
+                                                    {
+                                                        looptype = "HW-Extended Control";
+                                                    }
+                                                    else
+                                                    {
+                                                        looptype = "Tank Gauge";
+                                                    }
+                                                    @looptype
+                                                </td>
+                                                <td>
+                                                    @foreach (var Protocol in ViewBag.protocolindevcon)
+                                                    {
+                                                        if (itemk.protocol_id == Protocol.protocol_id)
+                                                        {
+                                                            @itemk.protocol_name
+                                                        }
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (ViewBag.userrole != "guest")
+                                                    {
+                                                        @Html.ActionLink("", "E_DeviceCon", "DeviceConfig", new { ID = @item.loop_id, type = "D" }, new { ID = @item.loop_id, type = "D", @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                                    }
+                                                    else 
+                                                    {
+                                                        <span>-</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            countD++;
+                                        }
+                                    }
+                                    @*}*@
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            @*<h3 class="card-title">Tank Gauge</h3>*@
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create Tank Gauge", "A_DeviceCon", "DeviceConfig", new { type = "TG" }, new { type = "TG", @class = "btn btn-block btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-striped dataTable" role="grid" style="width: 60%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 14%;">Port</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 35%;">Protocol</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 40%;">Features</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int countTG = 1;
+                                    var countmodelTG = @Model.Item1.Count();
+                                }
+                                @if (countmodelTG > 0)
+                                {
+                                    @foreach (var item in Model.Item1.Where(i => i.loop_type == 2))
+                                    {
+                                        @foreach (var itemk in Model.Item2.Where(i => i.protocol_id == item.protocol_id))
+                                        {
+                                            <tr role="row" class="odd">
+                                                <td class="text-center">@item.loop_name</td>
+                                                <td class="text-center">
+                                                    @foreach (var Protocol in ViewBag.protocolindevcon)
+                                                    {
+                                                        if (itemk.protocol_id == Protocol.protocol_id)
+                                                        {
+                                                            @itemk.protocol_name
+                                                        }
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @foreach (var itemj in Model.Item3.Where(i => i.protocol_id == item.protocol_id))
+                                                    {
+                                                        <div style="padding-left: 35%" class="custom-control custom-switch">
+                                                            @if (itemj.enable == true)
+                                                            {
+                                                                @Html.CheckBoxFor(model => itemj.enable, new { @id = "customSwitch1", @class = "custom-control-input", @checked = "checked", @disabled = "disabled" })
+                                                                <label class="custom-control-label normalweight" for="customSwitch1">@itemj.group</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBoxFor(model => itemj.enable, new { @id = "customSwitch1", @class = "custom-control-input", @disabled = "disabled" })
+                                                                <label class="custom-control-label normalweight" for="customSwitch1">@itemj.group</label>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </td>
+                                                <td class="text-center">
+                                                @if (ViewBag.userrole != "guest")
+                                                {
+                                                    @Html.ActionLink("", "E_DeviceCon", "DeviceConfig", new { ID = @item.loop_id, type = "TG" }, new { ID = @item.loop_id, type = "TG", @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                                }
+                                                else 
+                                                {
+                                                    <span>-</span>
+                                                }
+                                                </td>
+                                            </tr>
+                                            countTG++;
+                                        }
+                                    }
+                                    @*}*@
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <!-- Import File Section -->
+        @if (ViewBag.userrole != "guest") {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @using (Html.BeginForm("UploadFile", "DeviceConfig", FormMethod.Post, new { enctype = "multipart/form-data", id="uploadFileForm" }))
+                    {
+                    <div class="card-body pb-0">
+                        <div class="row">
+                            <div class="col-7">
+                                <h4>Import Configuration File</h4>
+                            </div>
+                            <div class="col-5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="imp-section">
+                        <div class="row clearfix">
+                            <div class="col-md-4">
+                                
+                            </div>
+                            <div class="col-md-4 align-self-center">
+                                <div class="row clearfix">
+                                    <input type="file" id="my_file" name="myFile" accept="application/JSON" style="display: none;">
+
+                                    <button type="button" class="btn btn-block btn-outline-primary py-3 mb-2" onclick="getFile()" id="get_file">
+                                        <i class="fas fa-upload"></i>&nbsp;&nbsp; Select a file..
+                                    </button>
+                                </div>
+                                    
+                                <div class="row clearfix mt-2" >
+                                    <div class="col-md-8">
+                                        <div id="file_area"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button id="importFileBtn" type="button" class="btn btn-block btn-success btn-sm" onclick="requiredfunc()" value="UploadFile" style="display: none;">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="divImpSpin" style="display:none;">
+                        <div>
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                            </div>
+                            <br>
+                            <div class="d-flex justify-content-center">
+                                <h5>Importing...</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    }
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        }
+
+    <!-- Loading Modal -->
+    <div class='modal fade' id='bsAlertLoadingModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+        <div class='modal-dialog modal-dialog-centered' role='document'>
+            <div class='modal-content'>
+                <div class='modal-body'>
+                    <div>
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                        </div>
+                        <br>
+                        <div class="d-flex justify-content-center">
+                            <h5>Importing...</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var fileSelected = [];
+    var fileTable, selectfile;
+
+    $(function () {
+        $('input[type=file]').change(function (e) {
+            var inp = document.getElementById("my_file");
+            selectfile = inp.files.item(0).name;
+            $("#importFileBtn").show();
+            ShowSelectedFile(selectfile);
+        });
+    });
+
+    function protocolDtohidden(i) {
+        var protocolDvalue = document.getElementById("ddlProtocolD" + i).value;
+        document.getElementById('txtProtocolD' + i).value = protocolDvalue;
+    }
+
+    var defaultprotocolD = (function setdefaultprotocolD() {
+        var AllRow = @countD-1;
+        for (c=1;c<=AllRow;c++)
+        {
+            var protocolDvalue = document.getElementById("txtProtocolD" + c).value;
+            document.getElementById("ddlProtocolD" + c).value = protocolDvalue;
+        }
+    }());
+
+    function protocolTGtohidden(i) {
+        var protocolTGvalue = document.getElementById("ddlProtocolTG" + i).value;
+        document.getElementById('txtProtocolTG' + i).value = protocolTGvalue;
+    }
+
+    var defaultprotocolTG = (function setdefaultprotocolTG() {
+        var AllRow = @countTG-1;
+        for (c=1;c<=AllRow;c++)
+        {
+            var protocolTGvalue = document.getElementById("txtProtocolTG" + c).value;
+            document.getElementById("ddlProtocolTG" + c).value = protocolTGvalue;
+        }
+    }());
+
+    //$(function(){
+    //   $.switcher();
+    //});
+
+    function getFile() {
+        document.getElementById("my_file").click();
+    }
+
+    function deleteFile() {
+        document.getElementById("my_file").value = "";
+        $(".filelist").remove();
+        $("#importFileBtn").hide();
+    }
+
+    function requiredfunc() {
+        $.bsAlert.confirm("Do you want to upload and import file ?", function () {
+            setTimeout(function () {
+                $('#bsAlertLoadingModal').modal({backdrop: 'static', keyboard: false})  
+                @* $("#imp-section").hide();
+                $("#divImpSpin").show(); *@
+                uploadFile(selectfile);
+            }, 800);
+        });
+    }
+
+    
+
+    function uploadFile(myFile) {
+        var form = $("#uploadFileForm")[0];
+        var formData = new FormData(form);
+
+        $.ajax({
+            type: "POST",
+            url: "../DeviceConfig/UploadFile",
+            data: formData, 
+            contentType: false,
+            processData: false,
+            success: function (res) {  
+                location.reload();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                location.reload();
+            },
+        });
+
+    }
+
+    function ShowSelectedFile(filename) {
+        $(".filelist").remove();
+            
+        $("#file_area").append(`
+            <div id="${filename}" role="alert" style="background-color:#eaf0fb;" class="filelist alert alert-dismissible fade show py-1 text-primary">
+                <i class="fas fa-file-alt pr-2"></i>
+                ${filename}
+                <button type="button" class="delfilebtn close" data-dismiss="alert" aria-label="Close" onclick="deleteFile()" style="line-height: 0.3;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>  
+        `)
+    }
+
+</script>
+
+@if (ViewBag.devconmessage == null || ViewBag.devconmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                //alert("@ViewBag.devconmessage");
+                $.bsAlert.alert("@ViewBag.devconmessage");
+            };
+        </script>
+    }
+}

@@ -1,0 +1,252 @@
+﻿@{
+    ViewData["Title"] = "HardwareOperation";
+    ViewData["SubTitle"] = "Edit Ventilation";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit Ventilation
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HardwareOperation", "HardwareOperation")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        @using (Html.BeginForm("E_Ventilation", "HardwareOperation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            <div class="card-body">
+
+                                <form role="form">
+                                    <br>
+                                    <div class="row">
+                                        @* column 1 *@
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-2 pt-1">
+                                            <label class="normalweight">Temp &#64; low speed: </label>
+                                        </div>
+                                        <div class="col-md-1">                                            
+                                            <input autofocus="" class="form-control text-center" max="100" min="0" id="txtTempLow" name="temp_low" placeholder="0 - 100" 
+                                                required="required" type="number" value="@ViewBag.getFan.temp_1">
+                                        </div>
+                                        <div class="col-md-1 pt-1">&#8451;</div>
+
+                                        @* column 2 *@
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-2">
+                                            <label class="normalweight">PWM low speed: </label>
+                                        </div>
+                                        <div class="col-md-1">                                            
+                                            <input autofocus="" class="form-control text-center" max="100" min="0" id="txtPWMlow" name="pwm_low" placeholder="0 - 100" 
+                                                required="required" type="number" value="@ViewBag.getFan.pwm_low">
+                                        </div>
+                                        <div class="col-md-1 pt-1">%</div>
+                                    </div>
+                                    <br>
+
+                                    <div class="row">
+                                        @* column 1 *@
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-2 pt-1">
+                                            <label class="normalweight">Temp &#64; high speed: </label>
+                                        </div>
+                                        <div class="col-md-1">                                            
+                                            <input autofocus="" class="form-control text-center" max="100" min="0" id="txtTempHigh" name="temp_high" placeholder="0 - 100" 
+                                                required="required" type="number" value="@ViewBag.getFan.temp_2">
+                                        </div>
+                                        <div class="col-md-1 pt-1">&#8451;</div>
+
+                                        @* column 2 *@
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-2">
+                                            <label class="normalweight">PWM high speed: </label>
+                                        </div>
+                                        <div class="col-md-1">                                            
+                                            <input autofocus="" class="form-control text-center" max="100" min="0" id="txtPWMHigh" name="pwm_high" placeholder="0 - 100" 
+                                                required="required" type="number" value="@ViewBag.getFan.pwm_high">
+                                        </div>
+                                        <div class="col-md-1 pt-1">%</div>
+                                    </div>
+                                    <br>
+
+                                    <div class="row">
+                                        @* column 1 *@
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-2 pt-1">
+                                            <label class="normalweight">Report interval: </label>
+                                        </div>
+                                        <div class="col-md-1">                                            
+                                            <input autofocus="" class="form-control text-center" min="1" id="txtInterval" name="interval" placeholder="> 0" 
+                                                required="required" type="number" value="@ViewBag.getFan.interval">
+                                        </div>
+                                        <div class="col-md-1 pt-1">Second</div>
+                                    </div>
+                                    <br>
+                                    
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <br>
+                                        <div class="row clearfix" align="center">
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="requiredfunc(this.id)">Save</button>
+                                            </div>
+                                            <div class="col-md-2" align="center">
+                                                @Html.ActionLink("Cancel", "HardwareOperation", "HardwareOperation", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        }
+</section>
+
+<script type="text/javascript">
+
+    function requiredfunc(getbtnid)
+    {
+        if (getbtnid == "btnedi")
+        {   
+            $.bsAlert.confirm("Do you want to update ventilation ?", function () {
+                sentupdate();
+            });
+        }
+    }
+
+    function sentupdate()
+    {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtTempLow").value;
+        stringArray[1] = document.getElementById("txtTempHigh").value;
+        stringArray[2] = document.getElementById("txtInterval").value;
+        stringArray[3] = document.getElementById("txtPWMlow").value;
+        stringArray[4] = document.getElementById("txtPWMHigh").value;
+        
+        if (stringArray[0] == null || stringArray[0] == "")
+        {
+            $.bsAlert.alert("Please fill temp at low speed.");
+            return false;
+        }
+
+        if (stringArray[0] < 0 || stringArray[0] > 100)
+        {
+            $.bsAlert.alert("Temp at low speed must be 0 to 100.");
+            return false;
+        }
+
+        if (stringArray[1] == null || stringArray[1] == "")
+        {
+            $.bsAlert.alert("Please fill temp at high speed.");
+            return false;
+        }
+
+        if (stringArray[1] < 0 || stringArray[1] > 100)
+        {
+            $.bsAlert.alert("Temp at high speed must be 0 to 100.");
+            return false;
+        }
+
+        if (stringArray[2] == null || stringArray[2] == "")
+        {
+            $.bsAlert.alert("Please fill report interval.");
+            return false;
+        }
+
+        if (stringArray[2] < 1 )
+        {
+            $.bsAlert.alert("Report interval must not less than 1.");
+            return false;
+        }
+
+        if (stringArray[3] == null || stringArray[3] == "")
+        {
+            $.bsAlert.alert("Please fill pwm low speed.");
+            return false;
+        }
+
+        if (stringArray[3] < 0 || stringArray[3] > 100)
+        {
+            $.bsAlert.alert("PWM low speed must be 0 to 100.");
+            return false;
+        }
+
+        if (stringArray[4] == null || stringArray[4] == "")
+        {
+            $.bsAlert.alert("Please fill pwm high speed.");
+            return false;
+        }
+
+        if (stringArray[4] < 0 || stringArray[4] > 100)
+        {
+            $.bsAlert.alert("PWM high speed must be 0 to 100.");
+            return false;
+        }
+
+        loadingModal("Updating ventilation...");
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../HardwareOperation/SetConfigFan",
+            data: postData,
+            success: function (data) {
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            },
+            error: function (err) {
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function loadingModal(message) {
+        const modalHtml = `
+            <div class='modal fade' id='bsLoadingModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true' data-backdrop='static' data-keyboard='false'>
+                <div class='modal-dialog modal-dialog-centered' role='document'>
+                    <div class='modal-content'>
+                        <div class='modal-body'>
+                            <div>
+                                <div class="d-flex justify-content-center">
+                                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                                </div>
+                                <br>
+                                <div class="d-flex justify-content-center">
+                                    <h5>${message}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend' , modalHtml);
+        $('#bsLoadingModal').modal('show');
+    }
+</script>

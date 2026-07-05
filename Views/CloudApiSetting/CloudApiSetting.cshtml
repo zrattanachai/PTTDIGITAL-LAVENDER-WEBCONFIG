@@ -1,0 +1,430 @@
+﻿@using LavenderConfig.Models
+@model Tuple<List<General>,List<LavenderUrlApi>>
+@* @model LavenderConfig.Models.AddGradeModel; *@
+@* @model IEnumerable<LavenderConfig.Models.General> *@
+@{
+    ViewData["Title"] = "CloudApiSetting";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Cloud API Setting
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">Cloud API Settiing</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content container-fluid">
+        @using (Html.BeginForm("E_CloudApiSetting", "CloudApiSetting", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {       
+        <div class="row">
+            <div class="col-12">
+                <div class="card overflow-auto">
+                    <form role="form">   
+                        @if (ViewBag.userrole != "guest")
+                        {
+                            <div class="card-header">
+                                <div class="row clearfix">
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-block btn-primary" id="btncre" name="btncre" value="btncre" onclick="actionCreate()">Create URL API</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2">Container</div>
+                                <div class="col-md-6">
+                                    @foreach (var item in Model.Item1.Where(i => i.config_id == 45))
+                                    {
+                                        @Html.HiddenFor(model => item.config_id, new { id = "txtContainerID" })
+                                        @Html.TextBoxFor(model => item.value, new { id = "txtContainer", required = "required", autofocus = "", placeholder = "Container", @class = "form-control" })
+                                    }
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2">Owner</div>
+                                <div class="col-md-6">
+                                    @foreach (var item in Model.Item1.Where(i => i.config_id == 44))
+                                    {
+                                        @Html.HiddenFor(model => item.config_id, new { id = "txtOwnerID" })
+                                        @Html.TextAreaFor(model => item.value, new { id = "txtOwner", required = "required", autofocus = "", placeholder = "Owner", @class = "form-control" })
+                                    }
+                                </div>
+                            </div>
+                            <br>
+
+                            <table id="example3" class="table table-bordered table-striped table-hover dataTable text-nowrap" role="grid" style="width: 90%; margin:0 auto;">
+                                <thead>
+                                    <tr role="row" class="header bg-light-blue">
+                                        <th rowspan="1" colspan="1" class="text-center" style="width: 7%;">ID</th>
+                                        <th rowspan="1" colspan="1" class="text-center" style="width: 28%;">API Name</th>
+                                        <th rowspan="1" colspan="1" class="text-center" style="width: 55%;">Address</th>
+                                        <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Settings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        @* int countD = 1; *@
+                                        var countmodelUrl = @Model.Item2.Count();
+                                    }
+                                    @if (countmodelUrl > 0)
+                                    {
+                                        @foreach (var item in Model.Item2)
+                                            {
+                                                <tr role="row" class="odd" align="center">
+                                                    <td class="text-center urlid">@item.url_id</td>
+                                                    <td class="text-center apiname">@item.api_name</td>
+                                                    <td class="text-left urlname">@item.url_name</td>
+
+                                                    <td class="text-center settings">
+                                                    @if (ViewBag.userrole != "guest")
+                                                    {
+                                                        @* <button type="button" class="btn btn-block btn-primary btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="actionEdit(this)"><i class="fas fa-cog"></i></button> *@
+                                                        @* <button type="button" class="btn btn-block btn-outline-primary btn-sm" id="btndel" name="btndel" value="btndel"><i class="fas fa-trash"></i></button> *@
+
+                                                        <span class="fas fa-cog changetextcolor" id="btnset" name="btnset" value="btnset" title = "Settings" onclick="actionSettings(this)" style="cursor: pointer;"></span>
+                                                    }
+                                                    else 
+                                                    {
+                                                        <span>-</span>
+                                                    }
+                                                    </td>
+                                                </tr>
+                                            }
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                </tbody>
+                            </table>
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-block btn-success btn-sm" id="btnsav" name="btnsav" value="btnsav" data-toggle="modal" data-target="#bsAlertModal">Save</button>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Cancel", "CloudApiSetting", "CloudApiSetting", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </form> 
+                    <!-- /.form -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+
+        @* confirm alert*@
+        <div class="modal fade" id="bsAlertModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+            <div class="modal-dialog" role="document">        
+                <div class="modal-content">            
+                    <div class="modal-header">                
+                        <h5 class="modal-title" id="myModalLabel">Lavender Config</h5>                
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                            <span aria-hidden="true">×</span>                
+                            <span class="sr-only">Close</span>                
+                        </button>            
+                    </div>            
+                    <div class="modal-body">                
+                        <h5>Do you want to save all changed ?</h5>            
+                    </div>            
+                    <div class="modal-footer">                
+                        <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                        <button type="button" id="bsSaveBtn" class="btn btn-outline-success" onclick="requiredfunc()">OK</button>            
+                    </div>        
+                </div>    
+            </div>
+        </div>
+        
+        }
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#example3").DataTable(
+            {
+                "lengthChange": true,
+                "searching": false,
+                "info": true,
+                "ordering": true,
+                "paging": false,
+                "columnDefs": [
+                    { orderable: false, targets: 3 }
+                ]
+            }
+        );
+    });
+
+    const actionSettings = (btnSet) => {
+        $(btnSet).each(function(){
+            @* $(this).parent().parent().children(".urlid").css( "background", "yellow" ); *@
+            var urlid = $(this).parent().parent().children(".urlid").text();
+            var urlname = $(this).parent().parent().children(".urlname").text();
+            
+            @* Add an address textfield *@
+            $(this).parent().parent().children(".urlname").each(function(){ 
+                if($(this).children().length==0)
+                    $(this).html(
+                        "<input type='text' id='"+urlid+"' value='"+$(this).html()+"' required='required' autofocus='' placeholder='Address' class='form-control urlchange' name='edit'>"
+                    );  
+            });
+
+            var addressval = $(this).parent().parent().children(".urlname").children().val();
+            $(this).parent().parent().children(".urlname").children().focus().val('').val(addressval);
+            $(this).parent().parent().css( "background", "#ddd" );
+            
+            @* Change to edit button and add delete button *@
+            $(this).parent().parent().children(".settings").each(function(){
+                $(this).children().remove();
+                $(this).append([
+                    $( "<span/>", {
+                        class: "fas fa-undo changetextcolor",
+                        id: "btnedi",
+                        name: "btnedi",
+                        title: "Undo",
+                        text: "",
+                        style: "cursor: pointer; padding-right:10px;",
+                        click: function() {
+                            actionReturn(this, addressval)
+                        },
+                    }),
+                    $( "<span/>", {
+                        class: "fas fa-trash changetextcolor",
+                        id: "btndel",
+                        name: "btndel",
+                        title: "Delete",
+                        text: "",
+                        style: "cursor: pointer;",
+                        click: function() {
+                            actionDelete(this, addressval);
+                        },
+                    })
+                ]);
+            });
+        });
+    }
+
+    const actionReturn = (btnRet, addressval) => {
+        $(btnRet).each(function(){
+            $(this).parent().parent().children(".urlname").text(addressval);
+            
+            if ($(this).parent().parent().hasClass("odd")) {
+                $(this).parent().parent().css( "background", "#f2f2f2" );
+            }else{
+                $(this).parent().parent().css( "background", "none" );
+            }
+
+            @* Change to settings button *@
+            $(this).parent().parent().children(".settings").each(function(){
+                $(this).html(
+                    "<span class='fas fa-cog changetextcolor' id='btnset' name='btnset' value='btnset' title='Settings' onclick='actionSettings(this)' style='cursor: pointer;'></span>"
+                );
+            });
+        });
+    }
+
+    const actionDelete = (btnDel, addressval) => {
+        $(btnDel).each(function(){
+            var urlid = $(this).parent().parent().children(".urlid").text();
+
+            $(this).parent().parent().parent().append(
+                $( "<input/>", {
+                    type:'hidden',
+                    class: "form-control urlchange",
+                    id: urlid,
+                    value: addressval,
+                    name: "delete",
+                    text: "",
+                }),
+            )
+            $(this).parent().parent().remove();
+        });
+    }
+
+    const actionCreate = () => {
+        var randchar = randomchar(6);
+    
+        $("#example3").find('tbody').append(
+            $('<tr>',{ class: "text-center urlnew",role: "row",align: "center"}).append([
+                $('<td>',{ class: "text-center",text: "",style: "background-color:#214990;"}),
+                $('<td>',{ class: "text-center",text: "",html: "<input type='text' id='newapiname_"+randchar+"' value='' class='form-control urlnewapi'>"}),
+                $('<td>',{ class: "text-center",text: "",html: "<input type='text' id='newaddress_"+randchar+"' value='' class='form-control urlnewaddress'>"}),
+                $('<td>',{ class: "text-center" }).append(
+                    $( "<span/>", {
+                        class: "fas fa-trash changetextcolor",
+                        text: "",
+                        style: "cursor: pointer;",
+                        click: function() {
+                            $(this).parent().parent().remove();
+                        },
+                    }))
+            ])
+        );
+        var newapinameid = "#newapiname_"+randchar;
+        $(newapinameid).focus();
+    }
+
+    function randomchar(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+
+    function requiredfunc()
+    {
+        $("#bsAlertModal").modal('hide')
+
+        var urlArray = new Array();
+        var urlChange = document.getElementsByClassName("urlchange");
+
+        @* $.bsAlert.confirm("Do you want to save all changed ?", function () { *@
+        
+            //save edited data
+            for (let i = 0; i < urlChange.length; i++) {
+                var urlId = urlChange[i].id;
+                var apiName = "null";
+                var urlName = urlChange[i].value;
+                var action = urlChange[i].name;
+                
+                if(urlName == null || urlName == ""){
+                    urlArray = new Array();
+                    $.bsAlert.alert("Please fill all Address.");
+                    return false;
+
+                }
+                
+                urlArray.push([urlId,apiName,urlName,action]);
+            }
+
+            var urlNewApiName = document.getElementsByClassName("urlnewapi");
+            var urlNewAddress = document.getElementsByClassName("urlnewaddress");
+                
+            //save created data
+            for (let i = 0; i < urlNewApiName.length; i++) {
+                var urlId = "0";
+                var apiName = urlNewApiName[i].value;
+                var action = "create";
+                    
+                for (let j = 0; j < urlNewAddress.length; j++) {
+                    var urlName = urlNewAddress[j].value;
+                    if(urlNewApiName[i].id.split("_")[1] == urlNewAddress[j].id.split("_")[1]){
+                        if(apiName == null || apiName == ""){
+                            urlArray = new Array();
+                            $.bsAlert.alert("Please fill all API Name.");
+                            return false;
+                        }
+                        if(urlName == null || urlName == ""){
+                            urlArray = new Array();
+                            $.bsAlert.alert("Please fill all Address.");
+                            return false;
+                        }
+                        
+                        urlArray.push([urlId,apiName,urlName,action]);
+                        break;
+                        
+                    }
+                }
+            }
+   
+            sentupdate(urlArray);
+        @* }); *@
+        
+    }
+
+    function sentupdate(urlArray)
+    {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtContainer").value;
+
+        if (stringArray[0] == null || stringArray[0] == "")
+        {
+            $.bsAlert.alert("Please fill Container.");
+            return false;
+        }
+        else
+        {
+
+        }
+        
+        stringArray[1] = document.getElementById("txtOwner").value;
+
+        if (stringArray[1] == null || stringArray[1] == "")
+        {
+            $.bsAlert.alert("Please fill Owner.");
+            return false;
+        }
+        else
+        {
+
+        }
+
+        var postData = { sitecon: stringArray, urlapi: urlArray };
+
+        @* console.log(postData); *@
+
+
+        $.ajax({
+            type: "POST",
+            url: "../CloudApiSetting/UpdateList",
+            data: postData, 
+            success: function (data) {
+                if (data.status == true)
+                {
+                    window.location.href = '@Url.Action("CloudApiSetting", "CloudApiSetting")';
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    @* function restartLogService() {
+        $.ajax({
+            type: "POST",
+            url: "../CloudApiSetting/RestartLogService"
+        }).done(function (val) {
+            
+        });
+    } *@
+</script>
+
+@if (ViewBag.cloudsettingmessage == null || ViewBag.cloudsettingmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("@ViewBag.cloudsettingmessage");
+            };
+        </script>
+    }
+}

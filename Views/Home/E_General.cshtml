@@ -1,0 +1,303 @@
+﻿@model IEnumerable<LavenderConfig.Models.General>
+
+@{
+    ViewData["Title"] = "General";
+    ViewData["SubTitle"] = "Edit General";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit General
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content container-fluid">
+    @using (Html.BeginForm("E_General", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-body">
+                            <form role="form">
+                                <div class="row clearfix">
+                                    <div class="col-md-4"><h5>Site Profile</h5></div>
+                                </div>
+                                <br>
+                                @foreach (var item in Model)
+                                {
+                                    @if (@item.key == "Site_Name") //3
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Site Name ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtsitename", autofocus = "", placeholder = "Site Name", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Site_Code") //4
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Site Code ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtsitecode", placeholder = "Site Code", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Address") //5
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Address ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextAreaFor(model => item.value, new { id = "txtaddress", placeholder = "Site Address", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Contact_Number") //6
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Contact Number ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtcontactnum", placeholder = "Site Phone Number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "GPS_Address") //7
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Latitude, Longitude Address ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtlatlongaddress", placeholder = "Site Latitude, Longitude", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Operation_Mode") //8
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-4">
+                                                <h5>Operation Mode</h5>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Operation Mode ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.RadioButtonFor(model => item.value, "1", new { id = "rdbom1" })
+                                                @Html.Label("1", "POS Link", new { @class = "normalweight" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-3">
+                                                @Html.RadioButtonFor(model => item.value, "2", new { id = "rdbom2" })
+                                                @Html.Label("2", "Self Authorize", new { @class = "normalweight" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-3">
+                                                @Html.RadioButtonFor(model => item.value, "3", new { id = "rdbom3" })
+                                                @Html.Label("3", "Standalone", new { @class = "normalweight" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                    }
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    if (item.key == "Authorize Timeout") //2
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Authorize Timeout ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtauthorize", placeholder = "15 -> 300", @type = "number", min = 15, max = 300, @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-1">seconds</div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "ATG_Keep_Days") //9
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-4"><h5>Logging</h5></div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "ATG Data Keep Day ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtatgkeepday", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-1">days</div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Dispenser_Keep_Days") //10
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Dispenser Data Keep Day ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txtdispenkeepday", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-1">days</div>
+                                        </div>
+                                        <br>
+                                    }
+
+                                    if (item.key == "Event_Keep_Days") //11
+                                    {
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value, "Event Data Keep Day ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => item.value, new { id = "txteventkeepday", placeholder = "7 -> 120", @type = "number", min = 7, max = 120, @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-1">days</div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-5"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-outline-success btn-sm" onclick="sentupdate()">Save</button>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-sm-2">
+        @Html.ActionLink("Cancel", "HomePage", "Home", null, new { @class = "btn btn-block btn-outline-primary" })
+    </div>
+    <br>
+</section>
+<script>
+    function sentupdate() {
+        var stringArray = new Array();
+
+        if (document.getElementById("txtauthorize").value >= 15 && document.getElementById("txtauthorize").value <= 300) {
+            stringArray[0] = document.getElementById("txtauthorize").value; //config_id = 2
+        }
+        else {
+            alert("Authorize Timeout between 15 to 300 seconds.");
+            document.getElementById("txtauthorize").value = null;
+            return false;
+        }
+
+        stringArray[1] = document.getElementById("txtsitename").value; //config_id = 3
+        stringArray[2] = document.getElementById("txtsitecode").value; //config_id = 4
+        stringArray[3] = document.getElementById("txtaddress").value; //config_id = 5
+        stringArray[4] = document.getElementById("txtcontactnum").value; //config_id = 6
+        stringArray[5] = document.getElementById("txtlatlongaddress").value; //config_id = 7
+
+        if (document.getElementById('rdbom1').checked)
+        {
+            stringArray[6] = document.getElementById("rdbom1").value; //config_id = 8
+        }
+        else if (document.getElementById('rdbom2').checked)
+        {
+            stringArray[6] = document.getElementById("rdbom2").value; //config_id = 8
+        }
+        else if (document.getElementById('rdbom3').checked)
+        {
+            stringArray[6] = document.getElementById("rdbom3").value; //config_id = 8
+        }
+        else
+        {
+            alert("Please Choose Operation Mode.");
+            return false;
+        }
+
+        if (document.getElementById("txtatgkeepday").value >= 7 && document.getElementById("txtatgkeepday").value <= 120)
+        {
+            stringArray[7] = document.getElementById("txtatgkeepday").value; //config_id = 9
+        }
+        else
+        {
+            alert("ATG Keep Day between 7 to 120 days.");
+            document.getElementById("txtatgkeepday").value = null;
+            return false;
+        }
+
+        if (document.getElementById("txtdispenkeepday").value >= 7 && document.getElementById("txtdispenkeepday").value <= 120)
+        {
+            stringArray[8] = document.getElementById("txtdispenkeepday").value; //config_id = 10
+        }
+        else
+        {
+            alert("Dispenser Keep Day between 7 to 120 days.");
+            document.getElementById("txtdispenkeepday").value = null;
+            return false;
+        }
+
+        if (document.getElementById("txteventkeepday").value >= 7 && document.getElementById("txteventkeepday").value <= 120)
+        {
+            stringArray[9] = document.getElementById("txteventkeepday").value; //config_id = 11
+        }
+        else
+        {
+            alert("Event Keep Day between 7 to 120 days.");
+            document.getElementById("txteventkeepday").value = null;
+            return false;
+        }
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../Home/SaveGeneral",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = '@Url.Action("HomePage", "Home")';
+                }
+                else
+                {
+                    //alert(data.message);
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+</script>

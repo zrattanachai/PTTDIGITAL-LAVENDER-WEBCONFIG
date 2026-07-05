@@ -1,0 +1,593 @@
+﻿@*@model Tuple<List<PumpsRealtime>, List<Tanks>>*@
+
+@model IEnumerable<LavenderConfig.Models.AddTankModel>;
+@using LavenderConfig.Models
+@{
+    ViewData["Title"] = "SystemStatus";
+}
+
+@section Styles{
+    <style>
+        .green-animate {
+            border-color: green;
+            border-style: solid;
+            border-width: 2px;
+            animation-name: greenAnimate;
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+        }
+
+        @@keyframes greenAnimate {
+            0%   {border-color: #00cc1b;}
+            50%  {border-color: #00ff21;}
+            100% {border-color: #00cc1b;}
+        }
+
+        span.btn-refresh:hover {
+            color: #0056b3;
+        }
+
+        span.btn-refresh:active {
+            color: #3396ff;
+        }
+        
+    </style>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>System Status</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">System Status</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    @if (ViewBag.Cpumprealtime == "N/A" && ViewBag.Ctank == "N/A" && ViewBag.cpu == "N/A" && ViewBag.memory == "N/A" && ViewBag.disk == "N/A" && ViewBag.temp == "N/A" && ViewBag.OpeMode == "N/A")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("No data in this section.");
+                var myVarRedirect = setInterval(myFuncRedirect, 5000);
+            };
+
+            function myFuncRedirect() {
+                window.location.replace("../Home/HomePage");
+            }
+        </script>
+    }
+    else
+    {
+        <div id="divSpin" style="display:block;">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+                <h5>Loading...</h5>
+            </div>
+        </div>
+    }
+    
+    <div id="divData" style="display:none;">
+        @if (ViewBag.OpeMode == "N/A")
+        {
+        }
+        else 
+        {
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row d-flex align-items-stretch" id="area_opemode_head" style="flex-wrap: nowrap; overflow: auto">
+                        
+                    </div>
+                    <div class="row d-flex align-items-stretch" id="area_opemode" style="flex-wrap: nowrap; overflow: auto">
+
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ViewBag.Cpumprealtime == "N/A")
+        {
+        }
+        else
+        {
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row">
+                        <div class="col-7">
+                            <h4>Pump Status &nbsp;<span class="fas fa-redo changetextcolor btn-refresh" id="btnRefreshPump" name="btnRefreshPump" value="btnRefreshPump" title = "Refresh Pump" onclick="refreshSection(this.id)" style="cursor: pointer;"></span>@*<span class="spinner-border text-primary" style="width: 1.3rem; height: 1.3rem;" role="status"></span>*@</h4>
+                        </div>
+                        <div class="col-5">
+                            <span id="check_show_hose" class="showhose"></span>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex align-items-stretch" id="area_pump" style="flex-wrap: nowrap; overflow: auto">
+                        <div id="divPumpSpin" style="display:none;">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                            </div>
+                            <br>
+                            <div class="d-flex justify-content-center">
+                                <h5>Loading Pump...</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ViewBag.Ctank == "N/A")
+        {
+        }
+        else
+        {
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <h4>Tank Status &nbsp;<span class="fas fa-redo changetextcolor btn-refresh" id="btnRefreshTank" name="btnRefreshTank" value="btnRefreshTank" title = "Refresh Tank" onclick="refreshSection(this.id)" style="cursor: pointer;"></span></h4>
+                    <div class="row d-flex align-items-stretch" id="area_tank" style="flex-wrap: nowrap; overflow: auto">
+
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ViewBag.cpu == "N/A" && ViewBag.memory == "N/A" && ViewBag.disk == "N/A" && ViewBag.temp == "N/A")
+        {
+        }
+        else
+        {
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <h4>Performance Status</h4>
+                    <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                        @if (ViewBag.cpu != "N/A")
+                        {
+                            <div class="col-md-3 col-sm-6 col-12" id="area_cpu">
+
+                            </div>
+                        }
+                        @if (ViewBag.memory != "N/A")
+                        {
+                            <div class="col-md-3 col-sm-6 col-12" id="area_memory">
+
+                            </div>
+                        }
+                        @if (ViewBag.disk != "N/A")
+                        {
+                            <div class="col-md-3 col-sm-6 col-12" id="area_disk">
+
+                            </div>
+                        }
+                        @if (ViewBag.temp != "N/A")
+                        {
+                            <div class="col-md-3 col-sm-6 col-12" id="area_temp">
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var pumpReady = 0;
+    var tankReady = 0;
+    var cpuReady = 0;
+    var memReady = 0;
+    var diskReady = 0;
+    var tempReady = 0;
+    var opeReady = 0;
+
+    const pumpDetail = (pumpres, hoseres) => {
+        $(".pumplist").remove();
+
+        pumpres.map((pumpval) => {
+            var areaid = "area_hose" + String(pumpval.pump_id);
+            var collapseid = "hose_collapse" + String(pumpval.pump_id);
+            var hoseiconid = "icon_show_hose" + String(pumpval.pump_id);
+            var hoseitems = ``;
+
+            //append active hose for first
+            hoseres.map((hoseval) => {
+                if(pumpval.pump_id == hoseval.pump_id){
+                    if(hoseval.active_hose_number == hoseval.hose_number){
+                        hoseitems+=`
+                            <div class="row hoselist">
+                                <div class="col-sm">
+                                    <div class="bg-light pl-1 mb-3 green-animate shadow-sm" style="border-radius: 25px;">
+                                        <div class="row">
+                                            <div class="col-2 text-left pl-0" style="margin-left:10px;margin-top:auto;margin-bottom:auto;background: url('../../dist/img/hose.png') right no-repeat; background-size: cover;">
+                                                <sub class="text-right badge badge-pill badge-${(pumpval.status !== 'Unknown') ? 'primary' : 'secondary'}" style="font-size:13px;">${hoseval.hose_number}</sub>
+                                            </div>
+                                            <div class="col-4 border-right align-self-center">    
+                                                <div class="description-block">
+                                                    <h5 class="description-header text-light" style="font-size:18px;letter-spacing: 1px;"><span class="badge badge-pill" style="background-color:${(pumpval.status !== 'Unknown') ? hoseval.product_color : '#aeaeae'};">${hoseval.grade_name}</span></h5>
+                                                    <h5 class="description-header">${(hoseval.active_price_level == 1) ? dec2point(hoseval.price_level_1) : (hoseval.active_price_level == 2) ? dec2point(hoseval.price_level_2) : ''}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-1 align-self-center ml-1">  
+                                                <div class="description-block">
+                                                    <h5 class="description-header"><i class="fas fa-tint text-${(pumpval.status !== 'Unknown') ? 'info' : 'secondary'}"></i></h5>
+                                                    <h5 class="description-header"><i class="fas fa-dollar-sign text-${(pumpval.status !== 'Unknown') ? 'success' : 'secondary'}"></i></h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 align-self-center pl-1">
+                                                <div class="description-block text-left">
+                                                    <h5 class="description-header">${hoseval.total_meter_volume}</h5>
+                                                    <h5 class="description-header">${hoseval.total_meter_value}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+                }    
+            })
+
+            //append hose
+            hoseres.map((hoseval) => {
+                if(pumpval.pump_id == hoseval.pump_id){
+                    if(hoseval.active_hose_number != hoseval.hose_number){
+                        hoseitems+=`
+                                <div class="row hoselist">
+                                    <div class="col-sm">
+                                        <div class="card bg-light pl-1" style="border-radius: 25px;">
+                                            <div class="row">
+                                                <div class="col-2 text-left pl-0" style="margin-left:10px;margin-top:auto;margin-bottom:auto;background: url('../../dist/img/hose.png') right no-repeat; background-size: cover;">
+                                                    <sub class="text-right badge badge-pill badge-${(pumpval.status !== 'Unknown') ? 'primary' : 'secondary'}" style="font-size:13px;">${hoseval.hose_number}</sub>
+                                                </div>
+                                                <div class="col-4 border-right align-self-center">    
+                                                    <div class="description-block">
+                                                        <h5 class="description-header text-light" style="font-size:18px;letter-spacing: 1px;"><span class="badge badge-pill" style="background-color:${(pumpval.status !== 'Unknown') ? hoseval.product_color : '#aeaeae'};">${hoseval.grade_name}</span></h5>
+                                                        <h5 class="description-header">${(hoseval.active_price_level == 1) ? dec2point(hoseval.price_level_1) : (hoseval.active_price_level == 2) ? dec2point(hoseval.price_level_2) : ''}</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-1 align-self-center ml-1">  
+                                                    <div class="description-block">
+                                                        <h5 class="description-header"><i class="fas fa-tint text-${(pumpval.status !== 'Unknown') ? 'info' : 'secondary'}"></i></h5>
+                                                        <h5 class="description-header"><i class="fas fa-dollar-sign text-${(pumpval.status !== 'Unknown') ? 'success' : 'secondary'}"></i></h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 align-self-center pl-1">
+                                                    <div class="description-block text-left">
+                                                        <h5 class="description-header">${hoseval.total_meter_volume}</h5>
+                                                        <h5 class="description-header">${hoseval.total_meter_value}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    }
+                }    
+            })
+            
+            $("#area_pump").append(`
+                <div class="col-12 col-sm-3 col-md-3 pumplist d-flex align-items-stretch">
+                    <div class="card card-widget widget-user" style="width:100%;background-color:#f7f7f7;">
+                        <div class="widget-user-header text-white"
+                                style="background: url('../../dist/img/ptt-background${(pumpval.status !== 'Unknown') ? '' : '-offline'}.png') right no-repeat; background-size: cover;">
+                            <h3 class="widget-user-username text-right">Pump ${pumpval.pump_id}</h3>
+                            <h5 class="widget-user-desc text-right">${(pumpval.status !== 'Unknown' && pumpval.auto_authorize == false) ? 'Online' : (pumpval.status !== 'Unknown' && pumpval.auto_authorize == true) ? 'Self Authorize' : 'Offline'}</h5>
+                        </div>
+                        <div class="widget-user-image">
+                            <img class="img-circle" src="../../dist/img/pump-${(pumpval.status !== 'Unknown') ? 'online' : 'offline'}.png" alt="User Avatar"
+                            ${(pumpval.status !== 'Unknown' && pumpval.notification == true) ? "style='border-color: #ffc107'" : (pumpval.status !== 'Unknown' && pumpval.notification == false && pumpval.auto_authorize == false) ? "style='border-color: #00ff21'" : (pumpval.status !== 'Unknown' && pumpval.notification == false && pumpval.auto_authorize == true) ? "style='border-color: #00ff21;border-style: dashed;'" : ""}>
+                        </div>
+                        <div class="mt-5 mb-3">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="description-block">
+                                        <h5 class="description-header">${pumpval.pending_gauge}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-3 pt-0 collapse ${$("#check_show_hose").hasClass("showhose") == true ? 'show' : ''} hose_collapse" id="${areaid}">`
+                            +hoseitems+
+                        `</div>
+                        <div class="d-flex justify-content-center py-2 text-center mt-auto" id="${collapseid}" onclick="showHoseAll()" style="cursor: pointer;background-color:white;">
+                            <a href="#"><i class="${hoseiconid} icon_show_hose fas ${$("#check_show_hose").hasClass("showhose") == true ? 'fa-angle-up' : 'fa-angle-down'}"></i></a>
+                        </div>
+                    </div>
+                </div>
+            `)
+        })
+        pumpReady = 1;
+        changeRefreshIcon("btnRefreshPump");
+    }
+
+    const tankDetail = (tankres) => {
+        $(".tanklist").remove();
+        tankres.map((tankval) => {
+            $("#area_tank").append(`
+                <div class="col-12 col-sm-5 col-md-4 tanklist">
+                    <div class="card bg-light">
+                        <div class="card-header text-muted border-bottom-0"></div>
+                        <div class="card-body pt-0">
+                            <div class="row">
+                                <div class="col-10">
+                                    <h2 class="lead">
+                                        <b>Tank ${tankval.tank_number}</b>
+                                    </h2>
+                                </div>
+                                <div class="col-2">
+                                    <i class="btn btn-sm btn-${(tankval.tank_type_id <= 5 && tankval.tank_type_id >= 0 && tankval.tank_probe_status_id == 1) ? 'success' : 'default'}">
+                                        ${(tankval.tank_type_id <= 5 && tankval.tank_type_id >= 0 && tankval.tank_probe_status_id == 1) ? 'Online' : 'Offline'}
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-4 text-left">
+                                    <img src="../../dist/img/tank-${(tankval.tank_type_id <= 5 && tankval.tank_type_id >= 0 && tankval.tank_probe_status_id == 1) ? 'online' : 'offline'}.png" alt="" class=" img-fluid">
+                                </div>
+                                <div class="col-7 text-left">
+                                    <ul class="ml-4 mb-0 fa-ul text-muted">
+                                        <li><span class="fa-li"></span> Grade: ${tankval.grade_name}</li>
+                                        <li><span class="fa-li"></span> Volume: ${tankval.tank_alarm_description}</li>
+                                        <li><span class="fa-li"></span> Water Volume: ${tankval.tank_alarm_type}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-left">
+                                <ul class="ml-4 mb-0 fa-ul text-muted">
+                                    <li><span class="fa-li"></span> Last Update: ${tankval.tank_description}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             `)
+        })
+        tankReady = 1;
+        changeRefreshIcon("btnRefreshTank");
+    }
+
+    const cpuDetail = (cpures) => {
+        $(".cpulist").remove();
+        $("#area_cpu").append(`
+            <div class="info-box text-white cpulist" style="background: #242f40 linear-gradient(180deg,#2e3c52,#242f40) repeat-x">
+                <span class="info-box-icon"><i class="fas fa-microchip"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">CPU Load Average</span>
+                    <span class="info-box-number">${cpures == null ? "" : cpures.message}</span>
+                </div>
+            </div>
+        `)
+        cpuReady = 1;
+    }
+
+    const memoryDetail = (memoryres) => {
+        $(".memorylist").remove();
+        $("#area_memory").append(`
+            <div class="info-box text-white memorylist" style="background: #242f40 linear-gradient(180deg,#2e3c52,#242f40) repeat-x">
+                <span class="info-box-icon"><i class="fas fa-memory"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Memory Available</span>
+                    <span class="info-box-number">${memoryres == null ? "" : memoryres.message}</span>
+                </div>
+            </div>
+        `)
+        memReady = 1;
+    }
+
+    const diskDetail = (diskres) => {
+        $(".disklist").remove();
+        $("#area_disk").append(`
+            <div class="info-box text-white disklist" style="background: #242f40 linear-gradient(180deg,#2e3c52,#242f40) repeat-x">
+                <span class="info-box-icon"><i class="fas fa-hdd"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Disk Available</span>
+                    <span class="info-box-number">${diskres == null ? "" : diskres.message}</span>
+                </div>
+            </div>
+        `)
+        diskReady = 1;
+    }
+
+    const tempDetail = (tempres) => {
+        $(".templist").remove();
+        $("#area_temp").append(`
+            <div class="info-box text-white templist" style="background: #242f40 linear-gradient(180deg,#2e3c52,#242f40) repeat-x">
+                <span class="info-box-icon"><i class="fas fa-temperature-low"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Temperature</span>
+                    <span class="info-box-number">${tempres == null ? "" : tempres.message} &#x2103;</span>
+                </div>
+            </div>
+        `)
+        tempReady = 1;
+    }
+
+    const OpeModeDetail = (OpeModeres) => {
+        $(".opemodehead").remove();
+        $("#area_opemode_head").append(`
+            <div class="col-12 col-sm-5 col-md-12 opemodehead">
+                <div class="row clearfix">
+                    <div class="col-md-3"><h4>System Operation Mode</h4></div>
+                    <div class="col-md-3">
+                        ${ (OpeModeres[0].pump_description == "3") ? '<input type="text" class="form-control" value="Self Authorize Mode" disabled/>' : (OpeModeres[0].pump_description == "2") ? '<input type="text" class="form-control" value="POS Link without Self Authorize Mode" disabled/>' : '<input type="text" class="form-control" value="POS Link (Automatic) Mode" disabled/>' }
+                    </div>
+                </div>
+                <br>
+            </div>
+        `)
+        $(".opemodelistspace").remove();
+        $(".opemodelist").remove();
+        $("#area_opemode").append(`
+                <div class="col-md-3 opemodelistspace"></div>
+            `)
+        opeReady = 1;
+    }
+
+    const toggleHoseAll = () => {
+        $("#check_show_hose").toggleClass("showhose");
+        $(".icon_show_hose").toggleClass("fa-angle-up fa-angle-down"); 
+        $(".hose_collapse").collapse('toggle');
+    }
+
+    var showPage = setInterval(function() {
+        clearInterval(showPage);
+        myFuncPump();
+        myFuncTank();
+        myFuncCPU();
+        myFuncMemory();
+        myFuncDisk();
+        myFuncTemp();
+        myFuncOpeMode();
+
+        var readyCheck = setInterval(function() {
+            if(pumpReady === 1 && tankReady === 1 && cpuReady === 1 && memReady === 1 && diskReady === 1 && tempReady === 1 && opeReady === 1) {
+                clearInterval(readyCheck);
+                document.getElementById("divSpin").style.display = "none";
+                document.getElementById("divData").style.display = "block";
+            }        
+        }, 100);
+    }, 100);
+
+    var myVarPump = setInterval(myFuncPump, 5000);
+
+    var myVarTank = setInterval(myFuncTank, 5000);
+
+    var myVarCPU = setInterval(myFuncCPU, 5000);
+
+    var myVarMemory = setInterval(myFuncMemory, 5000);
+
+    var myVarDisk = setInterval(myFuncDisk, 5000);
+
+    var myVarTemp = setInterval(myFuncTemp, 5000);
+
+    var myVarOpeMode = setInterval(myFuncOpeMode, 5000);
+
+    function myFuncPump() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdatePumpsStatus"
+        }).done(function (pumpres) {
+            $.ajax({
+                type: "POST",
+                url: "../SystemStatus/UpdateHosesStatus"
+            }).done(function (hoseres) {
+                pumpDetail(pumpres, hoseres);
+            });
+        });
+    }
+
+    function myFuncTank() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateTanksStatus"
+        }).done(function (tankres) {
+            tankDetail(tankres);
+        });
+    }
+
+    function myFuncCPU() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateCPUStatus"
+        }).done(function (cpures) {
+            cpuDetail(cpures);
+        });
+    }
+
+    function myFuncMemory() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateMemoryStatus"
+        }).done(function (memoryres) {
+            memoryDetail(memoryres);
+        });
+    }
+
+    function myFuncDisk() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateDiskStatus"
+        }).done(function (diskres) {
+            diskDetail(diskres);
+        });
+    }
+
+    function myFuncTemp() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateTempStatus"
+        }).done(function (tempres) {
+            tempDetail(tempres);
+        });
+    }
+
+    function myFuncOpeMode() {
+        $.ajax({
+            type: "POST",
+            url: "../SystemStatus/UpdateOpeModeStatus"
+        }).done(function (OpeModeres) {
+            OpeModeDetail(OpeModeres);
+        });
+    }
+
+    function refreshSection(buttonid) {
+        document.getElementById(buttonid).classList.remove("fas");
+        document.getElementById(buttonid).classList.remove("fa-redo");
+        document.getElementById(buttonid).classList.add("spinner-grow");
+        document.getElementById(buttonid).onclick = "";
+        document.getElementById(buttonid).style.cursor = "default"; 
+
+        if(buttonid == "btnRefreshPump") {
+            myFuncPump();
+        }else{ //btnRefreshTank
+            myFuncTank();
+        }
+    }
+
+    function changeRefreshIcon(buttonid) {
+        if(document.getElementById(buttonid).classList.contains("spinner-grow")){
+            document.getElementById(buttonid).classList.remove("spinner-grow");
+            document.getElementById(buttonid).classList.add("fas");
+            document.getElementById(buttonid).classList.add("fa-redo");
+            document.getElementById(buttonid).onclick = function() { refreshSection(buttonid); }
+            document.getElementById(buttonid).style.cursor = "pointer"; 
+        }
+    }
+
+    function showHoseAll () {
+        toggleHoseAll();
+    }
+
+    function dec2point(num) {
+        var split = String(num).split(".");
+
+        if(num == null || num == undefined){
+            return "";
+        }
+        if(split.length == 1){
+            return num.toString() + ".00"; 
+        }
+        if(split[1].length == 1){
+            return split[0] + "." + split[1].padEnd(2, "0");
+        }else{
+            return num.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+        }
+    }
+
+
+</script>

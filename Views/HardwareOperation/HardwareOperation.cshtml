@@ -1,0 +1,934 @@
+﻿@model List<LavenderConfig.Models.PumpCommands>
+
+@{
+    ViewData["Title"] = "HardwareOperation";
+}
+
+@section Styles{
+    <style>
+        .red-background {
+            background: linear-gradient(105deg ,#f8f9fa -15%,#f95353 6%,#f95353 40%,#dc3545 66.7%, #f8f9fa 67%, #214990 67.3%, #2a5fbb 90%, #2a5fbb 130%);
+        }
+
+        .green-background {
+            background: linear-gradient(105deg ,#f8f9fa -15%,#58b368 6%,#58b368 40%,#28a745 66.7%, #f8f9fa 67%, #214990 67.3%, #2a5fbb 90%, #2a5fbb 130%);
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Hardware Operation
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">Hardware Operation</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-body">
+                        @if (ViewBag.userrole == "admin")
+                        {
+                            @using (Html.BeginForm("S_StationOperation", "StationOperation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <br>
+                                <form role="form">
+                                    <div class="row clearfix" id="area_time">
+                                        <div class="col-md-3 timelist"><h6>Last Update: @Convert.ToDateTime(DateTime.Now).ToString("dd/MM/yyyy HH:mm:ss")</h6></div>
+                                    </div>
+                                    <hr>
+
+                                    @if (ViewBag.model == "CONTROLLER-RM")
+                                    {
+
+                                    @* Ventilation *@
+                                    <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                        <div class="col-md-12 col-sm-12 col-4">
+                                            <div class="info-box" id="area_fan"
+                                                style="background: #f8f9fa linear-gradient(180deg,#f8f9fa,#f8f9fa) repeat-x">
+
+                                                @if(ViewBag.getFanError == null || ViewBag.getFanError == "")
+                                                {
+                                                    <span class="info-box-icon fanlist">
+                                                        <i class="bi bi-fan" style="font-size:3rem; color:#233966;"></i>
+                                                    </span>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col">
+                                                            <b style="color:#233966;">Ventilation</b>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 text-center">
+                                                            <span class="fas fa-pen changetextcolor" id="btnediven" name="btnediven" value="btnediven" title="Edit Ventilation" onclick="editVentilation()" style="font-size:1.4rem; cursor: pointer;"></span>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-high" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; high speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>@ViewBag.getFan.temp_2 &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-low" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; low speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>@ViewBag.getFan.temp_1 &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    @if(ViewBag.getFan.temp_now < 45)
+                                                                    {
+                                                                        <i class="bi bi-thermometer-snow" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                    }
+                                                                    else if(ViewBag.getFan.temp_now >= 45 && ViewBag.getFan.temp_now <= 59)
+                                                                    {
+                                                                        <i class="bi bi-thermometer-sun" style="font-size:2.1rem; color:#ffd966;"></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="bi bi-thermometer-sun" style="font-size:2.1rem; color:#ff9999;"></i>
+                                                                    }
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temperature
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>@ViewBag.getFan.temp_now &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+
+                                                                    @if(ViewBag.getFan.fan == "OFF" || ViewBag.getFan.fan == "NULL"){
+                                                                        <i class="fas fa-fan" style="font-size:2.1rem; color:#bfbfbf;"></i>
+                                                                    }
+                                                                    else if (ViewBag.getFan.fan == "LOW")
+                                                                    {
+                                                                        <i class="fas fa-fan" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="fas fa-fan" style="font-size:2.1rem; color:#ff9999;"></i>
+                                                                    }
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Fan speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>@ViewBag.getFan.fan</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="info-box-icon fanlist">
+                                                        <i class="bi bi-fan" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col">
+                                                            <b style="color:gray;">Ventilation</b>
+
+                                                            <h5>
+                                                                <span class="badge badge-warning badge-pill text-light" title="@ViewBag.getFanError" style="cursor: pointer;">Get data error</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 text-center">
+                                                            <span class="fas fa-pen changetextcolor" id="btnediven" name="btnediven" value="btnediven" title="Edit Ventilation" style="font-size:1.4rem; cursor: pointer; color:#aeaeae;"></span>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-high" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; high speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-low" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; low speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-snow" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temperature
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="fas fa-fan" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Fan speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @* Modem *@
+                                    <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                        <div class="col-md-12 col-sm-12 col-4">
+                                            <div class="info-box" id="area_modem"
+                                                style="background: #f8f9fa linear-gradient(180deg,#f8f9fa,#f8f9fa) repeat-x">
+
+                                                @if(ViewBag.modemStatus == 0) //on
+                                                {
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#233966;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;" id="area_modem_status">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:#233966;">Modem</b>
+
+                                                            <h5>
+                                                                <span class="badge badge-success badge-pill">Running</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" onclick='handleConfirmation("Modem", "reset")'>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-danger" 
+                                                                name="modemStop" value="1" title="Power off Modem" onclick='handleConfirmation("Modem", "power off")'>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power off
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if(ViewBag.modemStatus == 1) //off
+                                                {
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:gray;">Modem</b>
+                                                                    
+                                                            <h5>
+                                                                <span class="badge badge-danger badge-pill">Power Off</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" onclick='handleConfirmation("Modem", "reset")'>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-primary" 
+                                                                name="modemStart" value="1" title="Power on Modem" onclick='handleConfirmation("Modem", "power on")'>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power on
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;" id="area_modem_status">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:gray;">Modem</b>
+                                                                    
+                                                            <h5>
+                                                                <span class="badge badge-warning badge-pill text-light" title="@ViewBag.modemStatusError" style="cursor: pointer;">Get data error</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" disabled>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-primary" 
+                                                                name="modemStart" value="1" title="Power on Modem" disabled>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power on
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    }
+
+                                    @if (ViewBag.model == "CONTROLLER-RM" || ViewBag.model == "CONTROLLER-OR") {
+
+                                    @* Lavender Controller *@
+                                    <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                        <div class="col-md-12 col-sm-12 col-4">
+                                            <div class="info-box"
+                                                style="background: #233966 linear-gradient(180deg,#233966,#233966) repeat-x">
+                                                <span class="info-box-icon">
+                                                    <i class="bi bi-pc-horizontal text-white" style="font-size:3rem;"></i>
+                                                </span>
+
+                                                <div style="display: flex;align-items: center; width:20%;">
+                                                    <div class="col">
+                                                        <b class="text-white">Lavender Controller</b>
+                                                        <h5><span class="badge badge-success badge-pill">Running</span></h5>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                    <div class="col-1"></div>
+                                                    <div class="col-3">
+                                                        <button id="lavRestart" type="button" class="btn btn-block btn-light" 
+                                                            name="lavRestart" value="Lav_Restart" title="Reboot Lavender" onclick='handleConfirmation("Lavender", "reboot")'>
+                                                            <i class="fas fa-spinner"></i><br>
+                                                            <span>Reboot</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <button id="lavStop" type="button" class="btn btn-block btn-danger" 
+                                                            name="lavStop" value="Lav_Stop" title="Power off Lavender" onclick='handleConfirmation("Lavender", "power off")'>
+                                                            <i class="fas fa-power-off"></i><br>
+                                                            <span>Power off</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    }
+                                </form>
+                            }
+                        }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</section>
+
+@if (ViewBag.SOmessage == null || ViewBag.SOmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("@ViewBag.SOmessage");
+            };
+        </script>
+    }
+}
+
+<script type="text/javascript">
+
+    const modemDetail = (res) => {
+        $(".modem-list").remove();
+
+        if(res.config_modem.status == 0){ //on
+            $("#area_modem").append(`
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#233966;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;" id="area_modem_status">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:#233966;">Modem</b>
+
+                                                            <h5>
+                                                                <span class="badge badge-success badge-pill">Running</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" onclick='handleConfirmation("Modem", "reset")'>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-danger" 
+                                                                name="modemStop" value="1" title="Power off Modem" onclick='handleConfirmation("Modem", "power off")'>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power off
+                                                            </button>
+                                                        </div>
+                                                    </div>                                                   
+            `)
+        }
+        else if(res.config_modem.status == 1){ //off
+            $("#area_modem").append(`
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:gray;">Modem</b>
+                                                                    
+                                                            <h5>
+                                                                <span class="badge badge-danger badge-pill">Power Off</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" onclick='handleConfirmation("Modem", "reset")'>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-primary" 
+                                                                name="modemStart" value="1" title="Power on Modem" onclick='handleConfirmation("Modem", "power on")'>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power on
+                                                            </button>
+                                                        </div>
+                                                    </div>                  
+            `)
+        }
+        else{ //error
+            $("#area_modem").append(`
+                                                    <span class="info-box-icon modem-list">
+                                                        <i class="bi bi-router-fill modem-icon-list" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="modem-list" style="display: flex;align-items: center; width:20%;" id="area_modem_status">
+                                                        <div class="col modem-status-list">
+                                                            <b style="color:gray;">Modem</b>
+                                                                    
+                                                            <h5>
+                                                                <span class="badge badge-warning badge-pill text-light" title="${res.config_modem.error}" style="cursor: pointer;">Get data error</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="modem-list" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 modem-button-list"></div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-outline-primary"
+                                                                name="modemReset" value="1" title="Reset Modem" disabled>
+                                                                <i class="fas fa-spinner"></i> &nbsp; Reset
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-3 modem-button-list">
+                                                            <button type="button" class="btn btn-block btn-primary" 
+                                                                name="modemStart" value="1" title="Power on Modem" disabled>
+                                                                <i class="fas fa-power-off"></i> &nbsp; Power on
+                                                            </button>
+                                                        </div>
+                                                    </div>
+            `)                                     
+        }
+    }
+
+    const fanDetail = (res) => {
+        $(".fanlist").remove();
+
+        if(res.config_fan.error == null || res.config_fan.error == "")
+        {
+            var tempnow_icon = res.config_fan.temp_now < 45 ? 'snow' : 'sun';
+
+            var tempnow_icon_color = res.config_fan.temp_now < 45 ? '96afed' : 
+                                    res.config_fan.temp_now >= 45 && res.config_fan.temp_now <= 59 ? 'ffd966':
+                                    'ff9999';
+            
+            var fanspeed_icon_color = res.config_fan.fan == 'OFF' || res.config_fan.fan == 'NULL' ? 'bfbfbf' : 
+                                        res.config_fan.fan == 'LOW' ? '96afed' : 
+                                        'ff9999';
+
+            $("#area_fan").append(`
+                                                    <span class="info-box-icon fanlist">
+                                                        <i class="bi bi-fan" style="font-size:3rem; color:#233966;"></i>
+                                                    </span>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col">
+                                                            <b style="color:#233966;">Ventilation</b>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 text-center">
+                                                            <span class="fas fa-pen changetextcolor" id="btnediven" name="btnediven" value="btnediven" title="Edit Ventilation" onclick="editVentilation()" style="font-size:1.4rem; cursor: pointer;"></span>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-high" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; high speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>${res.config_fan.temp_2} &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-low" style="font-size:2.1rem; color:#96afed;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; low speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>${res.config_fan.temp_1} &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-${tempnow_icon}" style="font-size:2.1rem; color:#${tempnow_icon_color};"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temperature
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>${res.config_fan.temp_now} &#8451;</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="fas fa-fan" style="font-size:2.1rem; color:#${fanspeed_icon_color};"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Fan speed
+                                                                        <br>
+                                                                        <span class="text-primary" style="font-size:1.4rem;"><b>${res.config_fan.fan}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+            `)
+        }
+        else
+        {
+            $("#area_fan").append(`
+                                                    <span class="info-box-icon fanlist">
+                                                        <i class="bi bi-fan" style="font-size:3rem; color:#aeaeae;"></i>
+                                                    </span>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:20%;">
+                                                        <div class="col">
+                                                            <b style="color:gray;">Ventilation</b>
+
+                                                            <h5>
+                                                                <span class="badge badge-warning badge-pill text-light" title="${res.config_fan.error}" style="cursor: pointer;">Get data error</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="fanlist" style="display: flex;align-items: center; width:75%; flex-direction:row-reverse;">
+                                                        <div class="col-1 text-center">
+                                                            <span class="fas fa-pen changetextcolor" id="btnediven" name="btnediven" value="btnediven" title="Edit Ventilation" style="font-size:1.4rem; cursor: pointer; color:#aeaeae;"></span>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-high" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; high speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-2" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-low" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temp &#64; low speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="bi bi-thermometer-snow" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Temperature
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 text-center">
+                                                            <div class="py-1 px-3" style="display: flex; align-items: center; background-color:white; border:1px solid #e6e6e6; border-radius:12px;">
+                                                                <div class="col-2">
+                                                                    <i class="fas fa-fan" style="font-size:2.1rem; color:#aeaeae;"></i>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div>
+                                                                        Fan speed
+                                                                        <br>
+                                                                        <span class="text-secondary" style="font-size:1.4rem;"><b>-</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+            `)
+        }
+    }
+
+    const timeDetail = (res) => {
+        $(".timelist").remove();
+        $("#area_time").append(`
+            <div class="col-md-3 timelist"><h6>Last Update: ${res}</h6></div>
+        `)
+    }
+
+    var myVarTime = setInterval(myFuncTime, 300000);
+
+    var myVarConfig = setInterval(myFuncConfig, 300000);
+
+    function myFuncTime() {
+        $.ajax({
+            type: "POST",
+            url: "../HardwareOperation/UpdateTime"
+        }).done(function (res) {
+            timeDetail(res);
+        });
+    }
+
+    function myFuncConfig() {
+        if("@ViewBag.model" == "CONTROLLER-RM"){        
+            $.ajax({
+                type: "POST",
+                url: "../HardwareOperation/GetAllConfig"
+            }).done(function (res) {
+                console.log("***GetAllConfig***");
+                console.log(res);
+                fanDetail(res);
+                modemDetail(res);
+            });
+        }
+    }
+
+    function confirmLavModal(message, callback) {
+        const modalHtml = `
+            <div class="modal fade" id="bsAlertModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true" data-backdrop='static' data-keyboard='false'>    
+                <div class="modal-dialog" role="document">        
+                    <div class="modal-content">            
+                        <div class="modal-header">                
+                            <h5 class="modal-title" id="myModalLabel">Lavender Config</h5>                
+                            <button type="button" class="close deleteModal" data-dismiss="modal" aria-label="Close">                
+                                <span aria-hidden="true">×</span>                
+                                <span class="sr-only">Close</span>                
+                            </button>            
+                        </div>            
+                        <div class="modal-body">                
+                            <h5 id="bsAlertText">${message}</h5>          
+                        </div>            
+                        <div class="modal-footer">                
+                            <button type="button" class="btn btn-outline-info deleteModal" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                            <button type="button" id="bsLavConfirmBtn" class="btn btn-outline-success">OK</button>            
+                        </div>        
+                    </div>    
+                </div>
+            </div> 
+        `;
+
+        document.body.insertAdjacentHTML('beforeend' , modalHtml);
+        $('#bsAlertModal').modal('show');
+
+        $('#bsLavConfirmBtn').click(function() {
+            if(typeof callback === "function"){
+                callback();
+            }
+
+            $('#bsAlertModal').modal('hide');
+        });
+
+        $(".deleteModal").click(function () {
+            $(".modal-backdrop").remove();
+            $('#bsAlertModal').remove();
+        });
+    }
+
+    function confirmPassModal(message, callback) {
+        const modalHtml = `
+            <div class="modal fade" id="bsPasswordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true" data-backdrop='static' data-keyboard='false'>    
+                <div class="modal-dialog" role="document">        
+                    <div class="modal-content">            
+                        <div class="modal-header">                
+                            <h5 class="modal-title" id="myModalLabel">Lavender Config</h5>                
+                            <button type="button" class="close deleteModal" data-dismiss="modal" aria-label="Close">                
+                                <span aria-hidden="true">×</span>                
+                                <span class="sr-only">Close</span>                
+                            </button>            
+                        </div>            
+                        <div class="modal-body text-center">                
+                            <h5>${message}</h5>
+                            <input type="password" name="text" class="input-text" placeholder="Password" id="password" style="width:50%;" autofocus> 
+                        </div>            
+                        <div class="modal-footer">                
+                            <button type="button" class="btn btn-outline-info deleteModal" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                            <button type="button" id="bsPassConfirmBtn" class="btn btn-outline-success">OK</button>            
+                        </div>        
+                    </div>    
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend' , modalHtml);
+        $('#bsPasswordModal').modal('show');
+
+        $('#bsPassConfirmBtn').click(function() {
+            if(typeof callback === "function"){
+                callback();
+            }
+            
+            $('#bsPasswordModal').modal('hide');
+        });
+
+        $(".deleteModal").click(function () {
+            $("#password").val('');
+            $(".modal-backdrop").remove();
+            $('#bsPasswordModal').remove();
+        });
+    }
+
+    function loadingModal(message) {
+        const modalHtml = `
+            <div class='modal fade' id='bsLoadingModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true' data-backdrop='static' data-keyboard='false'>
+                <div class='modal-dialog modal-dialog-centered' role='document'>
+                    <div class='modal-content'>
+                        <div class='modal-body'>
+                            <div>
+                                <div class="d-flex justify-content-center">
+                                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                                </div>
+                                <br>
+                                <div class="d-flex justify-content-center">
+                                    <h5>${message}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend' , modalHtml);
+        $('#bsLoadingModal').modal('show');
+    }
+
+    function handleConfirmation(hardware, command) {
+        confirmLavModal("Do you want to " +command+ " " +hardware+ " ?" , function(){
+            confirmPassModal("Please enter your password." , function(){
+
+                var pass = $("#password").val();
+
+                if(pass == ""){
+                    $.bsAlert.alert("Password incorrect.");
+                    $("#password").val('');
+                    return false;
+                }
+                else{
+                    $.ajax({
+                        type: "POST",
+                        url: "../HardwareOperation/CheckPass",
+                        data: { pass: pass }
+                    }).done(function (res) {
+                        if(res == 0){
+                            var loadingMsg = "";
+                    
+                            if(hardware == "Lavender" && command == "power off"){
+                                loadingMsg = "Powering off Lavender...";
+                            }
+                            else if(hardware == "Lavender" && command == "reboot"){
+                                loadingMsg = "Rebooting Lavender...";
+                            }
+                            else if(hardware == "Modem" && command == "power off"){
+                                loadingMsg = "Powering off Modem...";
+                            }
+                            else if(hardware == "Modem" && command == "power on"){
+                                loadingMsg = "Powering on Modem...";
+                            }
+                            else if(hardware == "Modem" && command == "reset"){
+                                loadingMsg = "Resetting Modem...";
+                            }
+                            else{
+                                $.bsAlert.alert("Not found command.");
+                                return false;
+                            }
+
+                            loadingModal(loadingMsg);
+                            actionSubmit(hardware, command);
+                            
+                            return false;
+                        }
+                        else if(res == 1) {
+                            $.bsAlert.alert("Password incorrect.");
+                            $("#password").val('');
+                            return false;
+                        }
+                        else{
+                            $.bsAlert.alert("Can not check data.");
+                            $("#password").val('');
+                            return false;
+                        }
+                    })
+                }
+            });
+        });
+    }
+
+    function actionSubmit(hardware, command) {       
+
+        if(hardware == "Lavender"){
+            $.ajax({
+                type: "POST",
+                url: "../HardwareOperation/LavenderOperation",
+                data: { command: command }
+            }).done(function (res) {
+                $("#password").val('');
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            }).fail(function (xhr, txtstatus, err) {
+                $("#password").val('');
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            })
+        }else{ //Modem
+            $.ajax({
+                type: "POST",
+                url: "../HardwareOperation/ModemOperation",
+                data: { command: command }
+            }).done(function (res) {
+                $("#password").val('');
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            }).fail(function (xhr, txtstatus, err) {
+                $("#password").val('');
+                window.location.href = '@Url.Action("HardwareOperation", "HardwareOperation")';
+            })
+        }
+    }
+
+    function editVentilation() {
+        var action = '@Url.Action("E_Ventilation", "HardwareOperation")';
+        window.location.href = action;
+    }
+
+</script>

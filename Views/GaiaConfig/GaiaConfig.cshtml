@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "GaiaConfig";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    GAIA Configuration
+                    <!--<small>Optional description</small>-->
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">GAIA Configuration</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">GAIA Configuration</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example1" class="table table-bordered table-striped dataTable" role="grid">
+                        <thead>
+                            <tr>
+                                <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">ID</th>
+                                <th rowspan="1" colspan="1" class="text-center" style="width: 20%;">Port</th>
+                                <th rowspan="1" colspan="1" class="text-center" style="width: 22%;">Protocol</th>
+                                <th rowspan="1" colspan="1" class="text-center" style="width: 23%;">Features</th>
+                                <th rowspan="1" colspan="1" class="text-center">Settings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*@{
+                                var countmodel = @Model.Item1.Count();
+                            }
+                            @if (countmodel > 0)
+                            {
+                                @foreach (var item in Model.Item1)
+                                {
+                                    @foreach (var itemj in Model.Item2.Where(i => i.profile_id == item.price_profile_id))
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.grade_id</td>
+                                            <td class="text-center">@item.grade_name</td>
+                                            <td bgcolor="@item.product_color"></td>
+                                            <td class="text-center">@itemj.price_level_1.ToString("0.00")</td>
+                                            <td class="text-center">@itemj.price_level_2.Value.ToString("0.00")</td>
+                                            <td class="text-center">
+                                                <div class="custom-control custom-switch">
+                                                    @if (@itemj.enable == true)
+                                                    {
+                                                        @Html.CheckBoxFor(model => itemj.enable, new { @id = "customSwitch1", @class = "custom-control-input", @checked = "checked", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch1"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.CheckBoxFor(model => itemj.enable, new { @id = "customSwitch1", @class = "custom-control-input", @disabled = "disabled" })
+                                                        <label class="custom-control-label" for="customSwitch1"></label>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>@Html.ActionLink("Details", "E_Grade", "Grade", new { ID = @item.grade_id, price = @item.price_profile_id }, new { ID = @item.grade_id, price = @item.price_profile_id, @class = "btn btn-block btn-outline-primary btn-sm" })</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+
+                            }*@
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+@if (ViewBag.gaiamessage == null || ViewBag.gaiamessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+               @*alert("@ViewBag.gaiamessage");*@
+                $.bsAlert.alert("@ViewBag.gaiamessage");
+            };
+        </script>
+    }
+}

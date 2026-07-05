@@ -1,0 +1,1095 @@
+﻿@model IEnumerable<LavenderConfig.Models.AddPumpModel>
+@using LavenderConfig.Models;
+
+@{
+    ViewData["Title"] = "Pump";
+    ViewData["SubTitle"] = "Edit Pump";
+    int pid = 0;
+    //int lid = 0;
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit Pump
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("Pump", "Pump")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content container-fluid">
+        @using (Html.BeginForm("E_Pump", "Pump", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row clearfix">
+                <div class="col-md-4"><h5>&nbsp;&nbsp;Pump</h5></div>
+            </div>
+            <br>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    @foreach (var item in Model)
+                                    {
+                                        pid = item.pump_id;
+                                        @Html.HiddenFor(x => item.pump_id, new { id = "txtPumpID" })
+                                        @Html.HiddenFor(x => item.pump_display_id, new { id = "txtDisID" })
+                                        @Html.HiddenFor(x => item.advance_id, new { id = "txtAdvID" })
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.pump_name, "Pump Name: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBox("pump_name", item.pump_name, new { id = "txtPumpName", required = "required", autofocus = "", placeholder = "Pump Name", @class = "form-control", disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.loop_id, "Port: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.HiddenFor(x => item.loop_id, new { id = "txtLoop" })
+                                                @Html.DropDownList("loop_id", new SelectList(ViewBag.loopinpump, "loop_id", "loop_name", item.loop_id)
+                                                , new { @class = "form-control", @onchange = "looptohidden()", required = "required" })
+                                            </div>
+                                        </div>
+                                        @*}*@
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.protocol_name, "Protocol: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBox("protocol_name", item.protocol_name, new { id = "txtProtocol", required = "required", autofocus = "", placeholder = "Protocol", @class = "form-control", disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.physical_address, "Physical Address: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBox("physical_address", item.physical_address, new { id = "txtPhyAdd", @type = "number", min = 1, required = "required", placeholder = "Address of Pump", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div id="area_pumptype">
+                                            <div class="row clearfix inarea_pumptype">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">@Html.LabelFor(model => item.pump_type, "Pump Type: ", new { @class = "normalweight" })</div>
+                                                <div class="custom-control custom-radio custom-control-inline" style="margin-left:0.5%">
+                                                    @Html.RadioButtonFor(model => item.pump_type, "5", new { id = "rdbom1", name = "txtPumpType", @class = "custom-control-input" })
+                                                    @Html.Label("rdbom1", "5 Digits", new { @class = "custom-control-label normalweight" })
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(model => item.pump_type, "6", new { id = "rdbom2", name = "txtPumpType", @class = "custom-control-input" })
+                                                    @Html.Label("rdbom2", "6 Digits", new { @class = "custom-control-label normalweight" })
+                                                </div>
+                                            </div>
+                                            <br class="inarea_pumptype">
+                                        </div>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value_decimal_digit, "Pump Value Format: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @{
+                                                    List<SelectListItem> PumpDisNonTotListItems = new List<SelectListItem>();
+                                                    PumpDisNonTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0",
+                                                        Value = "0"
+                                                    });
+                                                    PumpDisNonTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.0",
+                                                        Value = "1"
+                                                    });
+                                                    PumpDisNonTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.00",
+                                                        Value = "2"
+                                                    });
+                                                    PumpDisNonTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.000",
+                                                        Value = "3"
+                                                    });
+                                                }
+                                                @Html.DropDownList("value_decimal_digit", new SelectList(PumpDisNonTotListItems, "Value", "Text", item.value_decimal_digit)
+                                                , new { @class = "form-control", /*id = "value_decimal_digit",*/ @onchange = "defaultValTotal(this.value)" })
+                                                @Html.HiddenFor(x => item.value_decimal_digit, new { id = "txtPumpDisVal" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.volume_decimal_digit, "Pump Volume Format: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("volume_decimal_digit", new SelectList(PumpDisNonTotListItems, "Value", "Text", item.volume_decimal_digit)
+                                                , new { @class = "form-control", /*id = "volume_decimal_digit",*/ @onchange = "defaultVolTotal(this.value)" })
+                                                @Html.HiddenFor(x => item.volume_decimal_digit, new { id = "txtPumpDisVol" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.price_decimal_digit, "Price Format: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("price_decimal_digit", new SelectList(PumpDisNonTotListItems, "Value", "Text", item.price_decimal_digit)
+                                                , new { @class = "form-control", /*id = "price_decimal_digit",*/ @onchange = "dispritohidden()" })
+                                                @Html.HiddenFor(x => item.price_decimal_digit, new { id = "txtPumpDisPri" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.value_total_decimal_digit, "Total Value Format: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @{
+                                                    List<SelectListItem> PumpDisTotListItems = new List<SelectListItem>();
+                                                    PumpDisTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0",
+                                                        Value = "0"
+                                                    });
+                                                    PumpDisTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.0",
+                                                        Value = "1"
+                                                    });
+                                                    PumpDisTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.00",
+                                                        Value = "2"
+                                                    });
+                                                    PumpDisTotListItems.Add(new SelectListItem
+                                                    {
+                                                        Text = "0.000",
+                                                        Value = "3"
+                                                    });
+                                                }
+                                                @Html.DropDownList("value_total_decimal_digit", new SelectList(PumpDisTotListItems, "Value", "Text", item.value_total_decimal_digit)
+                                                , new { @class = "form-control", /*id = "value_total_decimal_digit",*/ @onchange = "disvaltottohidden()" })
+                                                @Html.HiddenFor(x => item.value_total_decimal_digit, new { id = "txtPumpDisValTot" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.volume_total_decimal_digit, "Total Volume Format: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("volume_total_decimal_digit", new SelectList(PumpDisTotListItems, "Value", "Text", item.volume_total_decimal_digit)
+                                                , new { @class = "form-control", /*id = "volume_total_decimal_digit",*/ @onchange = "disvoltottohidden()" })
+                                                @Html.HiddenFor(x => item.volume_total_decimal_digit, new { id = "txtPumpDisVolTot" })
+                                            </div>
+                                        </div>
+                                        
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.stack_limit, "Stack Size: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBox("stack_limit", item.stack_limit, new { id = "txtStackSize", required = "required", type = "number", min = 1, max = 200, placeholder = "1 -> 200", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => item.self_mode, "Enable Self Authorize Feature: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                <div class="custom-control custom-switch custom-switch-lg">
+                                                    @if (item.self_mode == true)
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.self_mode, new { @id = "chkSelfAutho", @checked = "checked", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="chkSelfAutho"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.CheckBoxFor(model => item.self_mode, new { @id = "chkSelfAutho", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="chkSelfAutho"></label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-sm-2" id="openadset">
+                                                <button type="button" class="btn btn-block btn-outline-primary" onclick="hideAdSetting()"><i class="fas fa-angle-right"></i>&nbsp; Advance Setting</button>
+                                            </div>
+                                            <div class="col-sm-2" id="closeadset" style="display:none">
+                                                <button type="button" class="btn btn-block btn-outline-primary" onclick="hideAdSetting()"><i class="fas fa-angle-down"></i>&nbsp; Advance Setting</button>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix" id="divadset">
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_preset_volume, "Multiplier preset volume: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @{
+                                                        List<SelectListItem> AdvSetListItems = new List<SelectListItem>();
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "1000",
+                                                            Value = "1000"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "100",
+                                                            Value = "100"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "10",
+                                                            Value = "10"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "1",
+                                                            Value = "1"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "0.1",
+                                                            Value = "0.1"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "0.01",
+                                                            Value = "0.01"
+                                                        });
+                                                        AdvSetListItems.Add(new SelectListItem
+                                                        {
+                                                            Text = "0.001",
+                                                            Value = "0.001"
+                                                        });
+                                                    }
+                                                    @Html.DropDownList("multipier_preset_volume", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_preset_volume)
+                                                    , new { @class = "form-control", /*id = "multipier_preset_volume",*/ })
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_preset_value, "Multiplier preset value: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownList("multipier_preset_value", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_preset_value)
+                                                    , new { @class = "form-control", /*id = "volume_total_decimal_digit",*/ })
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_transaction_volume, "Multiplier transaction volume: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownList("multipier_transaction_volume", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_transaction_volume)
+                                                    , new { @class = "form-control", /*id = "multipier_transaction_volume",*/ })
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_transaction_value, "Multiplier transaction value: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownList("multipier_transaction_value", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_transaction_value)
+                                                    , new { @class = "form-control", /*id = "multipier_transaction_value",*/ })
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_total_volume, "Multiplier total volume: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownList("multipier_total_volume", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_total_volume)
+                                                    , new { @class = "form-control", /*id = "multipier_total_volume",*/ })
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => item.multipier_total_value, "Multiplier total value: ", new { @class = "normalweight" })</div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownList("multipier_total_value", new SelectList(AdvSetListItems, "Value", "Text", item.multipier_total_value)
+                                                    , new { @class = "form-control", /*id = "multipier_total_value",*/ })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*}*@
+                                        @Html.Hidden("pump_id", item.pump_id)
+                                        @Html.Hidden("pump_display_id", item.pump_display_id)
+                                        @Html.Hidden("advance_id", item.advance_id)
+                                    }
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <br>
+                                        <div class="row clearfix" align="center">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-block btn-outline-info btn-sm" id="btndel" name="btndel" value="btndel" onclick="requiredfunc(this.id)" @*onclick="sentdelete()"*@>Delete</button>
+                                            </div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="requiredfunc(this.id)">Save</button>
+                                            </div>
+                                            <div class="col-md-2" align="center">
+                                                @Html.ActionLink("Cancel", "Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        }
+        <br>
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h5>
+                        Hose Number
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create Hose", "A_Hose", "Pump", new { ID = pid@*, LoopID = lid*@ }, new { ID = pid, @class = "btn btn-block btn-primary"@*, LoopID = lid*@ })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped dataTable" role="grid" style="width: 35%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 25%;">Number</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 25%;">Grade</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 25%;">Tank</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 25%;">Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                    @foreach (HoseinAddPump hosein in ViewBag.hose)
+                                    {
+                                        <tr role="row" class="odd" align="center">
+                                            <td class="item-id">@hosein.hose_number</td>
+                                            <td>
+                                                @foreach (var grade in ViewBag.hosegradeinpump)
+                                                {
+                                                    if (hosein.grade_id == grade.grade_id)
+                                                    {
+                                                        @grade.grade_name
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @*@hosein.tank_id*@
+                                                @foreach (var tank in ViewBag.hosetankinpump)
+                                                {
+                                                    if (hosein.tank_id == tank.tank_id)
+                                                    {
+                                                        @tank.tank_name
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                @Html.ActionLink("", "E_Hose", "Pump", new { ID = hosein.hose_id, pump = pid }, new { ID = hosein.hose_id, pump = pid, @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                            }
+                                            else 
+                                            {
+                                                <span>-</span>
+                                            }
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    var click = 1;
+    function hideAdSetting() {
+        if (click == "1") {
+            document.getElementById('divadset').style.display = 'block';
+            document.getElementById('closeadset').style.display = 'block';
+            document.getElementById('openadset').style.display = 'none';
+            click = click + 1;
+        }
+        else {
+            document.getElementById('divadset').style.display = 'none';
+            document.getElementById('closeadset').style.display = 'none';
+            document.getElementById('openadset').style.display = 'block';
+            click = click - 1;
+        }
+    }
+
+    var checkadset = (function clickadset() {
+        if (click == "1") {
+            document.getElementById('divadset').style.display = 'none';
+        }
+        else {
+            document.getElementById('divadset').style.display = 'block';
+        }
+    }());
+
+    /* -- START LOOP -- */
+    function looptohidden() {
+        var loopvalue = document.getElementById("loop_id").value;
+        document.getElementById('txtLoop').value = loopvalue;
+
+        var stringArray = new Array();
+        stringArray[0] = loopvalue;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                
+                if (data.protocol_id == 1) //Gilbarco
+                {
+                    $(".inarea_pumptype").remove();
+                    $("#area_pumptype").append(`
+                        <div class="row clearfix inarea_pumptype">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-4"><label class="normalweight" for="item_pump_type">Pump Type: </label></div>
+                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:0.5%">
+                                <input class="custom-control-input" data-val="true" data-val-required="The pump_type field is required." id="rdbom1" name="item.pump_type" type="radio" value="5">
+                                <label class="custom-control-label normalweight" for="rdbom1">5 Digits</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="custom-control-input" id="rdbom2" name="item.pump_type" type="radio" value="6">
+                                <label class="custom-control-label normalweight" for="rdbom2">6 Digits</label>
+                            </div>
+                        </div>
+                        <br class="inarea_pumptype">
+                    `)
+                }
+                else
+                {
+                    $(".inarea_pumptype").remove();
+                }
+                document.getElementById("txtProtocol").value = data.protocol_name;
+                defaultFormat(data.protocol_id);
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    /* -- END LOOP -- */
+
+    /* -- START PUMP DISPLAY -- */
+    function disvaltohidden() {
+        var disvalvalue = document.getElementById("ddlPumpDisVal").value;
+        document.getElementById('txtPumpDisVal').value = disvalvalue;
+    }
+
+    function disvoltohidden() {
+        var disvolvalue = document.getElementById("ddlPumpDisVol").value;
+        document.getElementById('txtPumpDisVol').value = disvolvalue;
+    }
+
+    function dispritohidden() {
+        var disprivalue = document.getElementById("ddlPumpDisPri").value;
+        document.getElementById('txtPumpDisPri').value = disprivalue;
+    }
+
+    function disvaltottohidden() {
+        var disvaltotvalue = document.getElementById("ddlPumpDisValTot").value;
+        document.getElementById('txtPumpDisValTot').value = disvaltotvalue;
+    }
+
+    function disvoltottohidden() {
+        var disvoltotvalue = document.getElementById("ddlPumpDisVolTot").value;
+        document.getElementById('txtPumpDisVolTot').value = disvoltotvalue;
+    }
+
+    /* -- END PUMP DISPLAY -- */
+
+    /* -- START HOSE -- */
+    function hosegradetohidden(i) {
+        var hosegradevalue = document.getElementById("ddlHoseGrade" + i).value;
+        document.getElementById('txtHoseGrade' + i).value = hosegradevalue;
+    }
+
+
+    function hosetanktohidden(i) {
+        var hosetankvalue = document.getElementById("ddlHoseTank" + i).value;
+        document.getElementById('txtHoseTank' + i).value = hosetankvalue;
+    }
+
+    /* -- END HOSE -- */
+
+    function requiredfunc(getbtnid) {
+        var username = document.getElementById("txtPumpName").value;
+
+        if (getbtnid == "btndel") {
+            $.bsAlert.confirm("Do you want to delete " + username + " ?", function () {
+                doRemove();
+            });
+        }
+        else if (getbtnid == "btnedi") {
+            $.bsAlert.confirm("Do you want to update " + username + " ?", function () {
+                sentupdate();
+            });
+        }
+        else {
+
+        }
+    }
+
+    function doRemove() {
+        var input = document.getElementsByTagName("input").length;
+        var select = document.getElementsByTagName("select").length;
+        if (input > 0) {
+            if (select > 0) {
+                for (c = 0; c <= select - 1; c++) {
+                    var checkatt = document.getElementsByTagName("select")[c].hasAttribute("required");
+                    if (checkatt == true) {
+                        document.getElementsByTagName("select")[c].removeAttribute("required");
+                    }
+                    else {
+                    }
+                }
+            }
+            else {
+            }
+
+            for (i = 0; i <= input - 1; i++) {
+                var checkatt = document.getElementsByTagName("input")[i].hasAttribute("required");
+                if (checkatt == true) {
+                    document.getElementsByTagName("input")[i].removeAttribute("required");
+                }
+                else {
+                }
+            }
+        }
+        else {
+        }
+        sentdelete();
+    }
+
+    function sentdelete() {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtPumpID").value; // pump id
+        stringArray[1] = document.getElementById("txtDisID").value; // pump display id
+        stringArray[2] = document.getElementById("txtAdvID").value; // advancesetting id
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/DeleteListP",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = '@Url.Action("Pump", "Pump")';
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function sentupdate() {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtPumpID").value; // pump id
+        stringArray[1] = document.getElementById("txtDisID").value; // pump display id
+        stringArray[2] = document.getElementById("txtAdvID").value; // advancesetting id
+
+        stringArray[3] = document.getElementById("txtPumpName").value;
+        stringArray[4] = document.getElementById("loop_id").value;
+        stringArray[5] = document.getElementById("txtPhyAdd").value;
+
+        if (stringArray[5] == null || stringArray[5] == "") {
+            $.bsAlert.alert("Please fill Physical Address with number.");
+            return false;
+        }
+        else {
+
+        }
+
+        if(document.getElementById('rdbom1') == null){
+            stringArray[6] = "0";
+        }else{
+            if (document.getElementById('rdbom1').checked) {
+                stringArray[6] = document.getElementById('rdbom1').value;
+            }
+            else if (document.getElementById('rdbom2').checked) {
+                stringArray[6] = document.getElementById('rdbom2').value;
+            }
+            else {
+                stringArray[6] = "0";
+            }
+
+        }
+
+        stringArray[7] = document.getElementById("txtStackSize").value;
+
+        if ((stringArray[7] == null || stringArray[7] == "") || (stringArray[7] < 1 || stringArray[7] > 200)) {
+            $.bsAlert.alert("Please fill Stack Size with number and between 1 to 200 seconds.");
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[8] = document.getElementById("multipier_preset_volume").value; // advance setting
+        stringArray[9] = document.getElementById("multipier_preset_value").value;
+        stringArray[10] = document.getElementById("multipier_transaction_volume").value;
+        stringArray[11] = document.getElementById("multipier_transaction_value").value;
+        stringArray[12] = document.getElementById("multipier_total_volume").value;
+        stringArray[13] = document.getElementById("multipier_total_value").value;
+
+        stringArray[14] = document.getElementById("value_decimal_digit").value; // pump display
+        stringArray[15] = document.getElementById("volume_decimal_digit").value;
+        stringArray[16] = document.getElementById("price_decimal_digit").value;
+        stringArray[17] = document.getElementById("value_total_decimal_digit").value;
+        stringArray[18] = document.getElementById("volume_total_decimal_digit").value;
+
+        if (document.getElementById("chkSelfAutho").checked)
+        {
+            stringArray[19] = true;
+        }
+        else
+        {
+            stringArray[19] = false;
+        }
+
+        if (document.getElementById("loop_id").value == 1) { //Gilbarco
+            if(document.getElementById("volume_total_decimal_digit").value > 2){
+                $.bsAlert.alert("Total Volume Format must below 3 decimals.");
+                return false;
+            }
+            if(document.getElementById("price_decimal_digit").value != 2){
+                $.bsAlert.alert("Price Format must be 2 decimals.");
+                return false;
+            }
+        }
+
+        if (document.getElementById("loop_id").value == 3) { //Tatsuno
+            if(document.getElementById("price_decimal_digit").value != 2){
+                $.bsAlert.alert("Price Format must be 2 decimals.");
+                return false;
+            }
+        }
+
+        if (document.getElementById("loop_id").value == 6) { //Wayne
+            if(document.getElementById("value_total_decimal_digit").value != 2){
+                $.bsAlert.alert("Total Value Format must be 2 decimals.");
+                return false;
+            }
+
+            if(document.getElementById("volume_total_decimal_digit").value != 3){
+                $.bsAlert.alert("Total Volume Format must be 3 decimals.");
+                return false;
+            }
+
+            if(document.getElementById("price_decimal_digit").value != 2){
+                $.bsAlert.alert("Price Format must be 2 decimals.");
+                return false;
+            }
+        }
+
+        if (document.getElementById("loop_id").value == 7) { //Mepsan
+            if(document.getElementById("value_total_decimal_digit").value != 2){
+                $.bsAlert.alert("Total Value Format must be 2 decimals.");
+                return false;
+            }
+        }
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/UpdateListP",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = '@Url.Action("Pump", "Pump")';
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    var defaultindb = (function setdefaultindb() {
+        var protocol_id = parseInt("@Html.Raw(ViewBag.protocol_id)");
+        
+        if (protocol_id == 1) //Gilbarco
+        {
+            document.getElementById("rdbom1").disabled = false;
+            document.getElementById("rdbom2").disabled = false;
+        }
+        else
+        {
+            $(".inarea_pumptype").remove();
+        }
+        defaultFormat(protocol_id);
+    }());
+
+    function addDropDown(id,value)
+    {
+        var opt = document.createElement("option");
+        document.getElementById(id).options.add(opt);
+        let i = 0;
+        var text = value == 0 ? "0.0" : "0." ;
+
+        while (i < value) {
+            text += "0";
+            i++;
+        }
+        opt.text = text;
+        opt.value = value;
+    }
+
+    function defaultFormat(protocal){
+        //set dropdown
+        if(protocal == 1){ //Gilbarco
+            //set pump price
+            var price_decimal_digit = document.getElementById("price_decimal_digit").value;
+            document.getElementById("price_decimal_digit").options.length = 0;
+            addDropDown("price_decimal_digit",price_decimal_digit);
+            document.getElementById('price_decimal_digit').value = price_decimal_digit;
+
+            //set pump value
+            var value_decimal_digit = document.getElementById('value_decimal_digit').value;
+            document.getElementById("value_decimal_digit").options.length = 0;
+            addDropDown("value_decimal_digit",1);
+            addDropDown("value_decimal_digit",2);
+            document.getElementById('value_decimal_digit').value = value_decimal_digit;
+
+            //set pump volume
+            var volume_decimal_digit = document.getElementById("volume_decimal_digit").value;
+            document.getElementById("volume_decimal_digit").options.length = 0;
+            addDropDown("volume_decimal_digit",1);
+            addDropDown("volume_decimal_digit",2);
+            addDropDown("volume_decimal_digit",3);
+            document.getElementById("volume_decimal_digit").value = volume_decimal_digit;
+
+            //set pump total value
+            var value_total_decimal_digit = document.getElementById('value_total_decimal_digit').value;
+            document.getElementById("value_total_decimal_digit").options.length = 0;
+            addDropDown("value_total_decimal_digit",1);
+            addDropDown("value_total_decimal_digit",2);
+            @* addDropDown("value_total_decimal_digit",value_total_decimal_digit); *@
+            document.getElementById('value_total_decimal_digit').value = value_total_decimal_digit;
+
+            //set pump total volume
+            var volume_total_decimal_digit = document.getElementById('volume_total_decimal_digit').value;
+            document.getElementById("volume_total_decimal_digit").options.length = 0;
+            addDropDown("volume_total_decimal_digit",1);
+            addDropDown("volume_total_decimal_digit",2);
+            addDropDown("volume_total_decimal_digit",3);
+            @* addDropDown("volume_total_decimal_digit",volume_total_decimal_digit); *@
+            document.getElementById('volume_total_decimal_digit').value = volume_total_decimal_digit;
+        }
+        else if(protocal == 3){    //Tatsuno 
+            //set pump price
+            var price_decimal_digit = document.getElementById("price_decimal_digit").value;
+            document.getElementById("price_decimal_digit").options.length = 0;
+            addDropDown("price_decimal_digit",price_decimal_digit);
+            document.getElementById('price_decimal_digit').value = price_decimal_digit;
+            
+            //set pump value
+            var value_decimal_digit = document.getElementById('value_decimal_digit').value; 
+            document.getElementById("value_decimal_digit").options.length = 0;
+            addDropDown("value_decimal_digit",1);
+            addDropDown("value_decimal_digit",2);
+            document.getElementById('value_decimal_digit').value = value_decimal_digit;
+
+            //set pump volume
+            var volume_decimal_digit = document.getElementById("volume_decimal_digit").value;
+            document.getElementById("volume_decimal_digit").options.length = 0;
+            addDropDown("volume_decimal_digit",1);
+            addDropDown("volume_decimal_digit",2);
+            addDropDown("volume_decimal_digit",3);
+            document.getElementById("volume_decimal_digit").value = volume_decimal_digit;
+
+            //set pump total value
+            var value_total_decimal_digit = document.getElementById('value_total_decimal_digit').value;
+            document.getElementById("value_total_decimal_digit").options.length = 0;
+            addDropDown("value_total_decimal_digit",1);
+            addDropDown("value_total_decimal_digit",2);
+            @* addDropDown("value_total_decimal_digit",value_total_decimal_digit); *@
+            document.getElementById('value_total_decimal_digit').value = value_total_decimal_digit;
+
+            //set pump total volume
+            var volume_total_decimal_digit = document.getElementById('volume_total_decimal_digit').value;
+            document.getElementById("volume_total_decimal_digit").options.length = 0;
+            addDropDown("volume_total_decimal_digit",1);
+            addDropDown("volume_total_decimal_digit",2);
+            addDropDown("volume_total_decimal_digit",3);
+            @* addDropDown("volume_total_decimal_digit",volume_total_decimal_digit); *@
+            document.getElementById('volume_total_decimal_digit').value = volume_total_decimal_digit;
+        }
+        else if(protocal == 6){   //Wayne
+            //set pump price
+            var price_decimal_digit = document.getElementById("price_decimal_digit").value;
+            document.getElementById("price_decimal_digit").options.length = 0;
+            addDropDown("price_decimal_digit",price_decimal_digit);
+            document.getElementById('price_decimal_digit').value = price_decimal_digit;
+            
+            //set pump value
+            var value_decimal_digit = document.getElementById('value_decimal_digit').value; 
+            document.getElementById("value_decimal_digit").options.length = 0;
+            addDropDown("value_decimal_digit",1);
+            addDropDown("value_decimal_digit",2);
+            document.getElementById('value_decimal_digit').value = value_decimal_digit;
+
+            //set pump volume
+            var volume_decimal_digit = document.getElementById("volume_decimal_digit").value;
+            document.getElementById("volume_decimal_digit").options.length = 0;
+            addDropDown("volume_decimal_digit",1);
+            addDropDown("volume_decimal_digit",2);
+            addDropDown("volume_decimal_digit",3);
+            document.getElementById("volume_decimal_digit").value = volume_decimal_digit;
+
+            //set pump total value
+            var value_total_decimal_digit = document.getElementById('value_total_decimal_digit').value;
+            document.getElementById("value_total_decimal_digit").options.length = 0;
+            addDropDown("value_total_decimal_digit",1);
+            addDropDown("value_total_decimal_digit",2);
+            @* addDropDown("value_total_decimal_digit",value_total_decimal_digit); *@
+            document.getElementById('value_total_decimal_digit').value = 2;
+
+            //set pump total volume
+            var volume_total_decimal_digit = document.getElementById('volume_total_decimal_digit').value;
+            document.getElementById("volume_total_decimal_digit").options.length = 0;
+            addDropDown("volume_total_decimal_digit",1);
+            addDropDown("volume_total_decimal_digit",2);
+            addDropDown("volume_total_decimal_digit",3);
+            @* addDropDown("volume_total_decimal_digit",volume_total_decimal_digit); *@
+            document.getElementById('volume_total_decimal_digit').value = 3;
+        }
+        else if(protocal == 7){  //Mepsan
+            var price_decimal_digit = document.getElementById("price_decimal_digit").value;
+            document.getElementById("price_decimal_digit").options.length = 0;
+            addDropDown("price_decimal_digit",0);
+            addDropDown("price_decimal_digit",1);
+            addDropDown("price_decimal_digit",2);
+            addDropDown("price_decimal_digit",3);
+
+            var value_decimal_digit = document.getElementById('value_decimal_digit').value;
+            document.getElementById("value_decimal_digit").options.length = 0;
+            addDropDown("value_decimal_digit",0);
+            addDropDown("value_decimal_digit",1);
+            addDropDown("value_decimal_digit",2);
+            addDropDown("value_decimal_digit",3);
+
+            var volume_decimal_digit = document.getElementById("volume_decimal_digit").value;
+            document.getElementById("volume_decimal_digit").options.length = 0;
+            addDropDown("volume_decimal_digit",0);
+            addDropDown("volume_decimal_digit",1);
+            addDropDown("volume_decimal_digit",2);
+            addDropDown("volume_decimal_digit",3);
+
+            var value_total_decimal_digit = document.getElementById("value_total_decimal_digit").value;
+            document.getElementById("value_total_decimal_digit").options.length = 0;
+            addDropDown("value_total_decimal_digit",0);
+            addDropDown("value_total_decimal_digit",1);
+            addDropDown("value_total_decimal_digit",2);
+            addDropDown("value_total_decimal_digit",3);
+
+            var volume_total_decimal_digit = document.getElementById("volume_total_decimal_digit").value;
+            document.getElementById("volume_total_decimal_digit").options.length = 0;
+            addDropDown("volume_total_decimal_digit",1);
+            addDropDown("volume_total_decimal_digit",2);
+            addDropDown("volume_total_decimal_digit",3);
+
+            document.getElementById('value_decimal_digit').value = value_decimal_digit;
+            document.getElementById('volume_decimal_digit').value = volume_decimal_digit;
+            document.getElementById('price_decimal_digit').value = price_decimal_digit;
+            document.getElementById('value_total_decimal_digit').value = 2;
+            document.getElementById('volume_total_decimal_digit').value = volume_total_decimal_digit;
+        }
+        else{
+            setOriginFormat(protocal);
+        }
+        
+    }
+
+    function defaultValTotal(val) {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("loop_id").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                if (data.protocol_id == 1 || data.protocol_id == 3) { //Gilbarco or Tatsuno 
+                    document.getElementById("value_total_decimal_digit").options.length = 0;
+                    addDropDown("value_total_decimal_digit",1);
+                    addDropDown("value_total_decimal_digit",2);
+                    @* addDropDown("value_total_decimal_digit",val); *@
+                    document.getElementById("value_total_decimal_digit").value = val;
+                }
+                else if (data.protocol_id == 6) { //Wayne
+                    document.getElementById("value_total_decimal_digit").options.length = 0;
+                    addDropDown("value_total_decimal_digit",1);
+                    addDropDown("value_total_decimal_digit",2);
+                    document.getElementById("value_total_decimal_digit").value = 2;
+                }
+                else if (data.protocol_id == 7) { //Mepsan
+                    document.getElementById("value_total_decimal_digit").value = 2;
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function defaultVolTotal(val) {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("loop_id").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                if (data.protocol_id == 1) { //Gilbarco
+                    document.getElementById("volume_total_decimal_digit").options.length = 0;
+                    addDropDown("volume_total_decimal_digit",1);
+                    addDropDown("volume_total_decimal_digit",2);
+                    addDropDown("volume_total_decimal_digit",3);
+                    if(val > 2){
+                        document.getElementById("volume_total_decimal_digit").value = 2;
+                    }
+                    else{
+                        document.getElementById("volume_total_decimal_digit").value = val;
+                    }
+                }
+                else if(data.protocol_id == 3){ //Tatsuno
+                    document.getElementById("volume_total_decimal_digit").options.length = 0;
+                    addDropDown("volume_total_decimal_digit",1);
+                    addDropDown("volume_total_decimal_digit",2);
+                    addDropDown("volume_total_decimal_digit",3);
+                    document.getElementById("volume_total_decimal_digit").value = val;
+                }
+                else if(data.protocol_id == 6){ //Wayne
+                    document.getElementById("volume_total_decimal_digit").options.length = 0;
+                    addDropDown("volume_total_decimal_digit",1);
+                    addDropDown("volume_total_decimal_digit",2);
+                    addDropDown("volume_total_decimal_digit",3);
+                    document.getElementById("volume_total_decimal_digit").value = 3;
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function setOriginFormat(protocal)
+    {
+        var price_decimal_digit = document.getElementById("price_decimal_digit").value;
+        document.getElementById("price_decimal_digit").options.length = 0;
+        addDropDown("price_decimal_digit",0);
+        addDropDown("price_decimal_digit",1);
+        addDropDown("price_decimal_digit",2);
+        addDropDown("price_decimal_digit",3);
+
+        var value_decimal_digit = document.getElementById('value_decimal_digit').value;
+        document.getElementById("value_decimal_digit").options.length = 0;
+        addDropDown("value_decimal_digit",0);
+        addDropDown("value_decimal_digit",1);
+        addDropDown("value_decimal_digit",2);
+        addDropDown("value_decimal_digit",3);
+
+        var volume_decimal_digit = document.getElementById("volume_decimal_digit").value;
+        document.getElementById("volume_decimal_digit").options.length = 0;
+        addDropDown("volume_decimal_digit",0);
+        addDropDown("volume_decimal_digit",1);
+        addDropDown("volume_decimal_digit",2);
+        addDropDown("volume_decimal_digit",3);
+
+        var value_total_decimal_digit = document.getElementById("value_total_decimal_digit").value;
+        document.getElementById("value_total_decimal_digit").options.length = 0;
+        addDropDown("value_total_decimal_digit",0);
+        addDropDown("value_total_decimal_digit",1);
+        addDropDown("value_total_decimal_digit",2);
+        addDropDown("value_total_decimal_digit",3);
+
+        var volume_total_decimal_digit = document.getElementById("volume_total_decimal_digit").value;
+        document.getElementById("volume_total_decimal_digit").options.length = 0;
+        addDropDown("volume_total_decimal_digit",0);
+        addDropDown("volume_total_decimal_digit",1);
+        addDropDown("volume_total_decimal_digit",2);
+        addDropDown("volume_total_decimal_digit",3);
+
+        document.getElementById('value_decimal_digit').value = value_decimal_digit;
+        document.getElementById('volume_decimal_digit').value = volume_decimal_digit;
+        document.getElementById('price_decimal_digit').value = price_decimal_digit;
+        document.getElementById('value_total_decimal_digit').value = value_total_decimal_digit;
+        document.getElementById('volume_total_decimal_digit').value = volume_total_decimal_digit;
+    }
+
+</script>
+
+@if (ViewBag.hosemessage == null || ViewBag.hosemessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                //alert("@ViewBag.hosemessage");
+                $.bsAlert.alert("@ViewBag.hosemessage");
+            };
+        </script>
+    }
+}

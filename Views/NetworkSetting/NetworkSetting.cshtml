@@ -1,0 +1,411 @@
+﻿@{
+    ViewData["Title"] = "NetworkSetting";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Network Setting</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-body">
+                            @using (Html.BeginForm("ToLinux", "NetworkSetting", FormMethod.Get, new { enctype = "multipart/form-data" }))
+                            {
+                                <div id="divSpin" style="display:block;">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                                    </div>
+                                    <br>
+                                    <div class="d-flex justify-content-center">
+                                        <h5>Loading...</h5>
+                                    </div>
+                                </div>
+
+                                <div id="divData" style="display:none;">
+                                    @if (ViewBag.model == "CONTROLLER-OR") {
+                                        <form role="form">
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">IP Address</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtIPAddress" class="form-control" required autofocus />
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">Subnet</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtSubnet" class="form-control" required />
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">DNS</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtDNS" class="form-control" required />
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">Gateway</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtGateway" class="form-control" required />
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">IP Sim</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtIPSim" class="form-control" required />
+                                                </div>
+                                            </div>
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                <br>
+                                                <div class="row clearfix">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="col-md-2" align="center">
+                                                        <button type="button" class="btn btn-block btn-success btn-sm" onclick='requiredfunc()'>Save</button>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-block btn-outline-primary btn-sm" title="Clear" onclick="clearData()">Clear</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </form>
+                                    }
+                                    else if (ViewBag.model == "CONTROLLER-RM" ){
+                                        <form role="form">
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">IP Address</div>
+                                                <div class="col-md-3">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <input type="text" id="txtIPAddressRM" class="form-control" required autofocus />
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            /
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="number" id="txtIPAddressBitRM" min="0" max="32" class="form-control" placeholder="0 - 32" required />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row clearfix">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">Gateway</div>
+                                                <div class="col-md-3">
+                                                    <input type="text" id="txtGatewayRM" class="form-control" required />
+                                                </div>
+                                            </div>
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                <br>
+                                                <div class="row clearfix">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="col-md-2" align="center">
+                                                        <button type="button" class="btn btn-block btn-success btn-sm" onclick='requiredfuncRM()'>Save</button>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-block btn-outline-primary btn-sm" title="Clear" onclick="clearDataRM()">Clear</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-12 text-danger text-center">
+                                            <h5>Wrong format for "Controller Model" name.</h5>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    function defaultData(model) {
+        if(model == "CONTROLLER-OR"){
+            var defaultipaddress = (function setdefaultipaddress() {
+                document.getElementById("txtIPAddress").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var defaultsubnet = (function setdefaultsubnet() {
+                document.getElementById("txtSubnet").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var defaultdns = (function setdefaultdns() {
+                document.getElementById("txtDNS").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var defaultgateway = (function setdefaultgateway() {
+                document.getElementById("txtGateway").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var defaultipsim = (function setdefaultipsim() {
+                document.getElementById("txtIPSim").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());    
+
+            var getmyipaddress = (function getipaddress() {
+                if (document.getElementById('txtIPAddress').value == ""){
+                    $.ajax({
+                        type: "POST",
+                        url: "../NetworkSetting/getMySetting",
+                        data: { model : model }
+                    }).done(function (res) {
+                        document.getElementById("divSpin").style.display = "none";
+                        document.getElementById("divData").style.display = "block";
+
+                        document.getElementById('txtIPAddress').value = res.ipaddress;
+                        document.getElementById('txtSubnet').value = res.subnet;
+                        document.getElementById('txtDNS').value = res.dns;
+                        document.getElementById('txtGateway').value = res.gateway;
+                        document.getElementById('txtIPSim').value = res.ipsim;
+                    }).fail(function (xhr, txtstatus, err) {
+                        document.getElementById("divSpin").style.display = "none";
+                        document.getElementById("divData").style.display = "block";
+                    });
+                }
+            }());
+        }
+        else if(model == "CONTROLLER-RM"){
+            var defaultipaddress = (function setdefaultipaddress() {
+                document.getElementById("txtIPAddressRM").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var defaultgateway = (function setdefaultgateway() {
+                document.getElementById("txtGatewayRM").pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            }());
+
+            var getmyipaddress = (function getipaddress() {
+                if (document.getElementById('txtIPAddressRM').value == ""){
+
+                    $.ajax({
+                        type: "POST",
+                        url: "../NetworkSetting/getMySetting",
+                        data: { model : model }
+                    }).done(function (res) {
+                        document.getElementById("divSpin").style.display = "none";
+                        document.getElementById("divData").style.display = "block";
+
+                        document.getElementById('txtIPAddressRM').value = res.ipaddress;
+                        document.getElementById('txtIPAddressBitRM').value = res.bit;
+                        document.getElementById('txtGatewayRM').value = res.gateway;
+                    }).fail(function (xhr, txtstatus, err) {
+                        document.getElementById("divSpin").style.display = "none";
+                        document.getElementById("divData").style.display = "block";
+                    });
+                }
+            }());
+        }
+    }
+
+    defaultData("@ViewBag.model");
+
+    function clearData() {
+        document.getElementById('txtIPAddress').value = "";
+        document.getElementById('txtSubnet').value = "";
+        document.getElementById('txtDNS').value = "";
+        document.getElementById('txtGateway').value = "";
+        document.getElementById('txtIPSim').value = "";
+    }
+
+    function clearDataRM() {
+        document.getElementById('txtIPAddressRM').value = "";
+        document.getElementById('txtIPAddressBitRM').value = "";
+        document.getElementById('txtGatewayRM').value = "";
+    }
+
+    function requiredfunc() {
+        $.bsAlert.confirm("Do you want to config network setting ?", function () {
+            sentupdate();
+        });
+    }
+
+    function requiredfuncRM() {
+        $.bsAlert.confirm("Do you want to config network setting ?", function () {
+            sentupdateRM();
+        });
+    }
+
+    function sentupdate()
+    {
+        var ipaddress = document.getElementById("txtIPAddress").value;
+        var subnet = document.getElementById("txtSubnet").value;
+        var dns = document.getElementById("txtDNS").value;
+        var gateway = document.getElementById("txtGateway").value;
+        var ipsim = document.getElementById("txtIPSim").value;
+
+        var countip = ipaddress.split(".").length;
+        var countsubnet = subnet.split(".").length;
+        var countdns = dns.split(".").length;
+        var countgateway = gateway.split(".").length;
+        var countipsim = ipsim.split(".").length;
+        
+        var stringArray = new Array();
+
+        if (countip == 4)
+        {
+            stringArray[0] = ipaddress;
+        }
+        else
+        {
+            $.bsAlert.alert("IP Address had wrong format.");
+            return false;
+        }
+
+        if (countsubnet == 4)
+        {
+            stringArray[1] = subnet;
+        }
+        else
+        {
+            $.bsAlert.alert("Subnet had wrong format.");
+            return false;
+        }
+
+        if (countdns == 4) {
+            stringArray[2] = dns;
+        }
+        else {
+            $.bsAlert.alert("DNS had wrong format.");
+            return false;
+        }
+
+        if (countgateway == 4)
+        {
+            stringArray[3] = gateway;
+        }
+        else
+        {
+            $.bsAlert.alert("Gateway had wrong format.");
+            return false;
+        }
+
+        if (countipsim == 4)
+        {
+            stringArray[4] = ipsim;
+        }
+        else
+        {
+            $.bsAlert.alert("IP Sim had wrong format.");
+            return false;
+        }
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../NetworkSetting/ToLinux",
+            data: postData,
+            success: function (data) {
+                if (data.status == true)
+                {
+                    $.bsAlert.alert(data.message);
+                    window.location.href = "http://" + ipaddress + "/lavenderconfig";
+                }
+                else
+                {
+                    $.bsAlert.alert(data.message);
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function sentupdateRM()
+    {
+        var ipaddress = document.getElementById("txtIPAddressRM").value;
+        var bit = document.getElementById("txtIPAddressBitRM").value;
+        var gateway = document.getElementById("txtGatewayRM").value;
+
+        var countip = ipaddress.split(".").length;
+        var countgateway = gateway.split(".").length;
+        
+        var stringArray = new Array();
+
+        if (countip == 4)
+        {
+            stringArray[0] = ipaddress;
+        }
+        else
+        {
+            $.bsAlert.alert("IP Address had wrong format.");
+            return false;
+        }
+
+        if (bit >= 0 && bit <= 32)
+        {
+            stringArray[1] = bit;
+        }
+        else
+        {
+            $.bsAlert.alert("Bit must equal 0 to 32.");
+            return false;
+        }
+
+        if (countgateway == 4)
+        {
+            stringArray[2] = gateway;
+        }
+        else
+        {
+            $.bsAlert.alert("Gateway had wrong format.");
+            return false;
+        }
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../NetworkSetting/ToLinuxForRM",
+            data: postData,
+            success: function (data) {
+                if (data.status == true)
+                {
+                    $.bsAlert.alert(data.message);
+                    window.location.href = "http://" + ipaddress + "/lavenderconfig";
+                }
+                else
+                {
+                    $.bsAlert.alert(data.message);
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+</script>

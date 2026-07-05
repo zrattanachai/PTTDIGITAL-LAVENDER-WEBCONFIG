@@ -1,0 +1,184 @@
+﻿@model LavenderConfig.Models.Login;
+
+@{
+    ViewData["Title"] = "UserManagement";
+    ViewData["SubTitle"] = "Create User";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Create User
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("UserManagement", "UserManagement")">User Management</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        @using (Html.BeginForm("A_UserManagement", "UserManagement", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            @*<div class="card-header" style="background-color: #0f2b57;">*@
+                                <!--<h3 class="card-title">Form</h3>-->
+                            @*</div>*@
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.user_name, "Username: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.user_name, new { id = "txtUsername", required = "required", autofocus = "", placeholder = "User Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.password, "Password: ", new { @class = "normalweight" })</div>
+                                        @*<div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.password, new { id = "txtPassword", required = "required", placeholder = "User Password", @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-block btn-outline-primary btn-sm" onclick="showPassW()">Show</button>
+                                        </div>*@
+                                        <div class="col-md-3">
+                                            <div class="login-21">
+                                                <div class="login-inner-form">
+                                                    <div class="form-group form-box">
+                                                        @Html.TextBoxFor(model => model.password, new { id = "txtPassword", required = "required", placeholder = "Password", @class = "form-control", type = "password" })
+                                                        @*@Html.TextBox("txtPassword", "", new { id = "txtPassword", required = "required", placeholder = "Password", @class = "form-control", type = "password" })*@
+                                                        <a onclick="showPassW();"><i id="inew" class="fas fa-eye"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.role, "Role: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @*@Html.TextBoxFor(model => model.role, new { id = "txtRole", required = "required", placeholder = "User Role", @class = "form-control" })*@
+                                            @Html.DropDownListFor(model => model.role, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="admin", Value="admin" },
+                                                new SelectListItem { Text="user", Value="user" },
+                                                new SelectListItem { Text="guest", Value="guest" }
+                                                }, new { @class = "form-control", id = "ddlrole", @onchange = "roletohidden()", required = "required" })
+                                            @Html.HiddenFor(model => model.role, new { id = "txtRole" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.department, "Department: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.department, new { id = "txtDepartment", placeholder = "User Department", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.enable, "Enable: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            <div class="custom-control custom-switch custom-switch-lg">
+                                                @Html.CheckBoxFor(model => model.enable, new { @id = "chkEnable", @checked = "checked", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="chkEnable"></label>
+                                            </div>
+                                            @*@Html.CheckBoxFor(model => model.enable, new { id = "chkEnable" })*@
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.activity_log, "Activity Log: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            <div class="custom-control custom-switch custom-switch-lg">
+                                                @Html.CheckBoxFor(model => model.activity_log, new { @id = "chkActivityLog", @checked = "checked", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="chkActivityLog"></label>
+                                            </div>
+                                            @*@Html.CheckBoxFor(model => model.activity_log, new { id = "chkActivityLog" })*@
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2" align="center">
+                                            <button type="submit" class="btn btn-block btn-success btn-sm" value="A_UserManagement">Create</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.ActionLink("Cancel", "UserManagement", "UserManagement", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        }
+        @*<div class="col-sm-2">
+            @Html.ActionLink("Cancel", "UserManagement", "UserManagement", null, new { @class = "btn btn-block btn-outline-primary" })
+        </div>
+        <br>*@
+</section>
+
+<script type="text/javascript">
+    var defaultchk = (function defaultchk() {
+        document.getElementById("chkEnable").checked = true;
+        document.getElementById("chkActivityLog").checked = true;
+    }());
+
+    document.getElementById('txtPassword').type = 'password';
+
+    var click = 1;
+
+    function showPassW() {
+        if (click == "1") {
+            document.getElementById('txtPassword').type = 'text';
+            document.getElementById("inew").className = "fas fa-eye-slash";
+            click = click + 1;
+        }
+        else {
+            document.getElementById('txtPassword').type = 'password';
+            document.getElementById("inew").className = "fas fa-eye";
+            click = click - 1;
+        }
+    }
+
+    //var defaultrole = (function setdefaultrole() {
+    //    document.getElementById('ddlrole').value = "guest";
+    //}());
+
+    function roletohidden() {
+        var rolevalue = document.getElementById("ddlrole").value;
+        document.getElementById('txtRole').value = rolevalue;
+    }
+
+    var defaultrole = (function setdefaultrole() {
+        //var rolevalue = document.getElementById("txtRole").value;
+        //document.getElementById("ddlrole").value = rolevalue;
+        var c = document.getElementById("ddlrole").childNodes;
+        document.getElementById("ddlrole").value = c[0].value;
+        document.getElementById("txtRole").value = c[0].value;
+    }());
+
+</script>

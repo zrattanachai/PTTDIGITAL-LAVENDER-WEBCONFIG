@@ -1,0 +1,254 @@
+﻿@model LavenderConfig.Models.Loops;
+
+@{
+    ViewData["Title"] = "DeviceConfig";
+    ViewData["SubTitle"] = "Create Device Configuration";
+}
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>
+                        Create Device Configuration
+                    </h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                        <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("DeviceConfig", "DeviceConfig")">Device Configuration</a></li>
+                        <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <section class="content container-fluid">
+
+            @using (Html.BeginForm("A_DeviceCon", "DeviceConfig", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- general form elements disabled -->
+                            <div class="card card-primary">
+                                <div class="card-body">
+                                    <form role="form">
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => model.loop_name, "Loop Name: ", new { @class = "normalweight", id = "lblloopname" })</div>
+                                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:0.5%">
+                                                @Html.RadioButtonFor(model => model.loop_id, "0", new { id = "rdbom1", name = "devicetype", @class = "custom-control-input", @onclick = "clickcom()" })
+                                                @Html.Label("rdbom1", "COM", new { @class = "custom-control-label normalweight" })
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                @Html.RadioButtonFor(model => model.loop_id, "1", new { id = "rdbom2", name = "devicetype", @class = "custom-control-input", @onclick = "clickusb()" })
+                                                @Html.Label("rdbom2", "LAV-LOOP", new { @class = "custom-control-label normalweight" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => model.loop_name, new { id = "txtloopname", required = "required", autofocus = "", placeholder = "Loop Name", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => model.loop_type, "Loop Type: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("ddllooptype", new SelectList(ViewBag.looptypeindevcon, "looptype_id", "name")
+                                                , new { @class = "form-control", @onchange = "looptypetohidden()", required = "required" })
+                                                @Html.HiddenFor(model => model.loop_type, new { id = "txtlooptype" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => model.protocol_id, "Protocol: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("ddlprotocol", new SelectList(ViewBag.protocolindevcon, "protocol_id", "protocol_name")
+                                                , new { @class = "form-control", @onchange = "protocoltohidden()", required = "required" })
+                                                @Html.HiddenFor(model => model.protocol_id, new { id = "txtprotocol" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => model.baudrate, "Baudrate(kbps): ", new { @class = "normalweight", id = "lblbauport" })</div>
+                                            <div class="col-md-3">
+                                                @Html.TextBoxFor(model => model.baudrate, new { id = "txtbaudrate", required = "required", placeholder = "Number Only", @type = "number", min = 0, @class = "form-control" })
+                                                @Html.HiddenFor(model => model.read_timeout, new { id = "txtread" })
+                                                @Html.HiddenFor(model => model.readdata_timeout, new { id = "txtreaddata" })
+                                                @Html.HiddenFor(model => model.time_delay, new { id = "txttimedelay" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="submit" class="btn btn-block btn-success btn-sm" value="A_DeviceCon">Create</button>
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.ActionLink("Cancel", "DeviceConfig", "DeviceConfig", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!--/.col (right) -->
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            }
+    </section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    function looptypetohidden()
+    {
+        var looptypevalue = document.getElementById("ddllooptype").value;
+        document.getElementById('txtlooptype').value = looptypevalue;
+
+        document.getElementById('ddlprotocol').options.length = 0;
+
+        var ddl = document.getElementById("ddlprotocol");
+
+        var jsonObj = @Html.Raw(Json.Serialize(ViewBag.protocolindevcon));
+
+        if (looptypevalue == 2)
+        {
+            for (i = 0; i < jsonObj.length; i++)
+            {
+                if (jsonObj[i].protocol_type == 1)
+                {
+                    var option = document.createElement('option');
+                    option.text = jsonObj[i].protocol_name;
+                    option.value = jsonObj[i].protocol_id;
+                    ddl.add(option);
+                }
+                else
+                {
+
+                }
+            }
+            var protocolvalue = document.getElementById("ddlprotocol").value;
+            document.getElementById('txtprotocol').value = protocolvalue;
+        }
+        else
+        {
+            for (i = 0; i < jsonObj.length; i++)
+            { 
+                if (jsonObj[i].protocol_type == 1) 
+                {
+
+                }
+                else
+                {
+                    var option = document.createElement('option');
+                    option.text = jsonObj[i].protocol_name;
+                    option.value = jsonObj[i].protocol_id;
+                    ddl.add(option);
+                }
+            }
+            var protocolvalue = document.getElementById("ddlprotocol").value;
+            document.getElementById('txtprotocol').value = protocolvalue;
+        }
+    }
+
+    var defaultlooptype = (function setdefaultlooptype() {
+        var c = document.getElementById("ddllooptype").childNodes;
+        document.getElementById("ddllooptype").value = c[0].value;
+        document.getElementById("txtlooptype").value = c[0].value;
+    }());
+
+    function protocoltohidden() {
+        var protocolvalue = document.getElementById("ddlprotocol").value;
+        document.getElementById('txtprotocol').value = protocolvalue;
+        getBaudrateAndTimeout();
+    }
+
+    var defaultprotocol = (function setdefaultprotocol() {
+        var c = document.getElementById("ddlprotocol").childNodes;
+        document.getElementById("ddlprotocol").value = c[0].value;
+        document.getElementById("txtprotocol").value = c[0].value;
+    }());
+
+    var defaultbaudrate = (function setdefaultbaudrate() {
+        getBaudrateAndTimeout();
+    }());
+
+    function clickcom() {
+        document.getElementById("txtloopname").placeholder = "Loop Name";
+        document.getElementById('txtloopname').type = "number";
+        document.getElementById("txtloopname").value = null;
+        document.getElementById("txtloopname").pattern = "";
+        document.getElementById('lblloopname').innerHTML = "Loop Name:";
+        document.getElementById("txtbaudrate").value = null;
+        document.getElementById('lblbauport').innerHTML = "Baudrate(kbps):";
+        getBaudrateAndTimeout();
+    }
+
+    function clickusb() {
+        document.getElementById("txtloopname").placeholder = "Loop Name";
+        document.getElementById('txtloopname').type = "number";
+        document.getElementById("txtloopname").value = null;
+        document.getElementById("txtloopname").pattern = "";
+        document.getElementById('lblloopname').innerHTML = "Loop Name:";
+        document.getElementById("txtbaudrate").value = null;
+        document.getElementById('lblbauport').innerHTML = "Baudrate(kbps):";
+        getBaudrateAndTimeout();
+    }
+
+    function getBaudrateAndTimeout() {
+        var ddlprotocol = document.getElementById("ddlprotocol");
+        var ddlprotocol_id = ddlprotocol.options[ddlprotocol.selectedIndex].value;
+
+        if (ddlprotocol_id == "1") { //Gilbarco
+            document.getElementById("txtread").value = 300;
+            document.getElementById("txtreaddata").value = 800;
+            document.getElementById("txtbaudrate").value = 5787;
+            document.getElementById("txttimedelay").value = 80;
+        }
+        else if (ddlprotocol_id == "2") { //Veeder Root
+            document.getElementById("txtread").value = 700;
+            document.getElementById("txtreaddata").value = 1500;
+            document.getElementById("txtbaudrate").value = 9600;
+            document.getElementById("txttimedelay").value = 1000;
+        }
+        else if (ddlprotocol_id == "3") { //Tatsuno
+            document.getElementById("txtread").value = 300;
+            document.getElementById("txtreaddata").value = 800;
+            document.getElementById("txtbaudrate").value = 19200;
+            document.getElementById("txttimedelay").value = 20;
+        }
+        else if (ddlprotocol_id == "6" || ddlprotocol_id == "7") { //Wayne or Mepsan
+            document.getElementById("txtread").value = 300;
+            document.getElementById("txtreaddata").value = 800;
+            document.getElementById("txtbaudrate").value = 9600;
+            document.getElementById("txttimedelay").value = 40;
+        }
+        else if (ddlprotocol_id == "8") { //Tokheim
+            document.getElementById("txtread").value = 300;
+            document.getElementById("txtreaddata").value = 800;
+            document.getElementById("txtbaudrate").value = 9600;
+            document.getElementById("txttimedelay").value = 40;
+        }        
+        else {
+            document.getElementById("txtread").value = 0;
+            document.getElementById("txtreaddata").value = 0;
+            document.getElementById("txtbaudrate").value = 0;
+            document.getElementById("txttimedelay").value = 0;
+        }
+
+    }
+
+</script>

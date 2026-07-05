@@ -1,0 +1,585 @@
+﻿@using LavenderConfig.Models
+@model Tuple<List<Pumps>, List<Hoses>, List<Loops>, List<Protocols>>
+
+@{
+    ViewData["Title"] = "Pump";
+}
+
+@section Styles {
+    <style>
+        .selected {
+            background-color: #214990;
+            color: white;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Pump
+                    <!--<small>Optional description</small>-->
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        @*@if (ViewBag.userrole != "guest")
+        {
+            <div class="col-sm-2">
+                @Html.ActionLink("Create New", "A_Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary" })
+            </div>
+            <br>
+        }*@
+        @* @using (Html.BeginForm("Pump", "Pump", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmEditPort" }))
+        { *@
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            @*<h3 class="card-title">Pump</h3>*@
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create Pump", "A_Pump", "Pump", null, new { @class = "btn btn-block btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="tablePump" class="table table-bordered table-striped dataTable text-nowrap" role="grid" style="width: 65%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th id="checkpumpHeader" rowspan="1" colspan="1" class="text-center d-none" style="width: 5%;" onclick="selectPumpAll()"><i class="far fa-circle text-primary"></i></th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Pump Name</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 9%;">Hose(s)</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 16%;">Physical Address</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Port &nbsp;
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <span class="fas fa-pen changetextcolor" id="btnediport" name="btnediport" value="btnediport" title = "Edit port" onclick="editPort()" style="cursor: pointer;"></span>
+                                    }
+                                    </th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Protocol</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Stack &nbsp;
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <span class="fas fa-pen changetextcolor" id="btnedistack" name="btnedistack" value="btnedistack" title = "Edit stack" onclick="editStack()" style="cursor: pointer;"></span>
+                                    }
+                                    </th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablePumpBody">
+                                @{
+                                    var countmodel = @Model.Item1.Count();
+                                }
+                                @if (countmodel > 0)
+                                {
+                                    @foreach (var item in Model.Item1)
+                                    {
+                                        @foreach (var itemk in Model.Item3.Where(i => i.loop_id == item.loop_id))
+                                        {
+                                            <tr role="row" id="row_@item.pump_id" class="odd row-pump" align="center" onclick="selectPump(this)">
+                                                <td class="d-none checkpump"><i class="far fa-circle text-primary"></i></td>
+                                                <td>@item.pump_name</td>
+                                                @{int count = 0;}
+                                                @foreach (var myItem in Model.Item2.Where(i => i.pump_id == item.pump_id))
+                                                {
+                                                    count++;
+                                                }
+                                                <td>@count</td>
+                                                <td>@item.physical_address</td>
+                                                <td>@itemk.loop_name</td>
+                                                @if(@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().Count() > 0){
+                                                    <td>@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().FirstOrDefault().protocol_name</td>
+                                                }else
+                                                {
+                                                    <td></td>
+                                                }
+                                                <td>@item.stack_limit</td>
+                                                @*<td>@Html.ActionLink("Edit", "E_Pump", "Edit", new { ID = @item.pump_id, loopID = @itemk.loop_id }, new { ID = @item.pump_id, loopID = @itemk.loop_id }) | @Html.ActionLink("Delete", "D_Pump", "Delete", new { ID = @item.pump_id, loopID = @itemk.loop_id }, new { ID = @item.pump_id, loopID = @itemk.loop_id })</td>*@
+                                                @*<td>@Html.ActionLink("Details", "E_Pump", "Pump", new { ID = @item.pump_id, disID = item.pump_display_id, loopID = @itemk.loop_id }, new { ID = @item.pump_id, disID = item.pump_display_id, loopID = @itemk.loop_id, @class = "btn btn-block btn-outline-primary btn-sm" })</td>*@
+                                                <td class="settings">
+                                                @if (ViewBag.userrole != "guest")
+                                                {
+                                                    @Html.ActionLink("", "E_Pump", "Pump", new { ID = @item.pump_id, disID = item.pump_display_id, loopID = @itemk.loop_id }, new { ID = @item.pump_id, disID = item.pump_display_id, loopID = @itemk.loop_id, @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                                }
+                                                else 
+                                                {
+                                                    <span>-</span>
+                                                }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                        <br>
+                        <div id="saveEditPort" class="row clearfix d-none">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnselport" name="btnselport" value="btnselport" onclick="selectPortModal()">Edit port</button>
+                            </div>
+                            <div class="col-md-2">
+                                @Html.ActionLink("Cancel", "Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                            </div>
+                        </div>
+                        <div id="saveEditStack" class="row clearfix d-none">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnselstack" name="btnselstack" value="btnselstack" onclick="selectStackModal()">Edit stack</button>
+                            </div>
+                            <div class="col-md-2">
+                                @Html.ActionLink("Cancel", "Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        @* } *@
+
+    @* choose port modal*@
+    <div class="modal fade" id="bsPortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+        <div class="modal-dialog modal-dialog-centered" role="document">        
+            <div class="modal-content">            
+                <div class="modal-header">                
+                    <h5 class="modal-title" id="myModalLabel">Please choose port</h5>                
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                        <span aria-hidden="true">×</span>                
+                        <span class="sr-only">Close</span>                
+                    </button>            
+                </div>            
+                <div class="modal-body">     
+                    <table id="tablePort" class="table table-bordered table-hover table-sm dataTable text-nowrap" role="grid" style="width: 100%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th rowspan="1" colspan="1" class="text-center">ID</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Port</th>
+                                    <th rowspan="1" colspan="1" class="text-center">Protocol</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablePortBody" style="cursor: pointer;">
+                                @{
+                                    var countloop = @Model.Item3.Count();
+                                }
+                                @if (countloop > 0)
+                                {
+                                        @foreach (var itemk in Model.Item3)
+                                        {
+                                            <tr role="row" class="odd" align="center" onclick="selectPort(this)">
+                                                <td>@itemk.loop_id</td>
+                                                <td>@itemk.loop_name</td>
+                                                @if(@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().Count() > 0){
+                                                    <td>@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().FirstOrDefault().protocol_name</td>
+                                                }else
+                                                {
+                                                    <td></td>
+                                                }
+                                            </tr>
+                                        }
+                                }
+                            </tbody>
+                    </table>
+                </div>                  
+            </div>    
+        </div>
+    </div>
+
+    @* confirm choose port modal*@
+    <div class="modal fade" id="bsConfirmEditPortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+        <div class="modal-dialog modal-dialog-centered" role="document">        
+            <div class="modal-content">            
+                <div class="modal-header">                
+                    <h5 class="modal-title" id="confirmEditPortText"></h5>                
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                        <span aria-hidden="true">×</span>                
+                        <span class="sr-only">Close</span>                
+                    </button>            
+                </div>            
+                <div class="modal-body">                
+                    <table id="tableSelectedPump" class="table table-bordered table-sm text-nowrap" role="grid" style="width: 100%; margin:0 auto"></table>        
+                </div>            
+                <div class="modal-footer">                
+                    <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                    <button type="button" id="bsSaveBtn" class="btn btn-outline-success" onclick="confirmEditPort()">OK</button>            
+                </div>        
+            </div>    
+        </div>
+    </div>
+
+    @* edit stack modal*@
+    <div class="modal fade" id="bsStackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+        <div class="modal-dialog modal-dialog-centered" role="document">        
+            <div class="modal-content">            
+                <div class="modal-header">                
+                    <h5 class="modal-title" id="myModalLabel">Please fill stack size</h5>                
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                        <span aria-hidden="true">×</span>                
+                        <span class="sr-only">Close</span>                
+                    </button>            
+                </div>            
+                <div class="modal-body">     
+                    <div class="ml-4 mb-0">
+                        <div class="row clearfix">
+                            <div class="col-md-5">
+                                <label for="txtStackSize" class = "normalweight">Stack Size: </label>
+                            </div>                                    
+                            <div class="col-md-7">
+                                <input id = "txtStackSize" class = "form-control" required = "required" type = "number" min = "1" max = "200" placeholder = "1 -> 200" autofocus = "" value = ""/>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                <div class="modal-footer">                
+                    <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                    <button type="button" class="btn btn-outline-success" onclick="selectStack()">OK</button>            
+                </div>                   
+            </div>    
+        </div>
+    </div>
+
+    @* confirm edit stack modal*@
+    <div class="modal fade" id="bsConfirmEditStackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+        <div class="modal-dialog modal-dialog-centered" role="document">        
+            <div class="modal-content">            
+                <div class="modal-header">                
+                    <h5 class="modal-title" id="confirmEditStackText"></h5>                
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                        <span aria-hidden="true">×</span>                
+                        <span class="sr-only">Close</span>                
+                    </button>            
+                </div>            
+                <div class="modal-body">                
+                    <table id="tableSelectedPump_editStack" class="table table-bordered table-sm text-nowrap" role="grid" style="width: 100%; margin:0 auto"></table>        
+                </div>            
+                <div class="modal-footer">                
+                    <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                    <button type="button" class="btn btn-outline-success" onclick="confirmEditStack()">OK</button>            
+                </div>        
+            </div>    
+        </div>
+    </div>
+
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    var tablePump, tablePort, tableSelectedPump, tableSelectedPump_editStack;
+    var selectedPump = [];
+
+    $(function () {
+        tablePump = $("#tablePump").DataTable(
+            {
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+                "drawCallback": function( settings ) {
+                    if(document.getElementById("btnediport").classList.contains("open-ediport")){
+                        document.getElementById("checkpumpHeader").classList.remove("d-none");
+
+                        for(var i = 0; i < document.getElementsByClassName("checkpump").length; i++){
+                            document.getElementsByClassName("checkpump")[i].classList.remove("d-none");
+                        }
+                    }
+                }
+            }
+        );
+
+        tablePort = $("#tablePort").DataTable(
+            {
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+            }
+        );
+
+        $('#bsConfirmEditPortModal').on('hidden.bs.modal', function (e) {
+            tableSelectedPump.clear();
+            tableSelectedPump.destroy();
+        })
+
+        $('#bsConfirmEditStackModal').on('hidden.bs.modal', function (e) {
+            tableSelectedPump_editStack.clear();
+            tableSelectedPump_editStack.destroy();
+        })
+    });
+
+    function editPort() {
+        if(document.getElementById("btnediport").classList.contains("open-ediport")){
+            window.location.href = '@Url.Action("Pump", "Pump")';
+        }else{
+            document.getElementById("btnediport").classList.add("text-danger");
+            document.getElementById("btnediport").title = "Cancel edit port";
+            document.getElementById("btnediport").classList.add("open-ediport");
+            document.getElementById("tablePump").classList.remove("table-striped");
+            document.getElementById("tablePumpBody").style.cursor = "pointer"; 
+            document.getElementById("saveEditPort").classList.remove("d-none");
+            document.getElementById("checkpumpHeader").classList.remove("d-none");
+            document.getElementById("checkpumpHeader").style.cursor = "pointer"; 
+            document.getElementById("btnedistack").classList.add("d-none");
+
+            for(var i = 0; i < document.getElementsByClassName("checkpump").length; i++){
+                document.getElementsByClassName("checkpump")[i].classList.remove("d-none");
+            }
+        }
+    }
+
+    function selectPump(row) {
+        if(document.getElementById("btnediport").classList.contains("open-ediport") || document.getElementById("btnedistack").classList.contains("open-edistack")){
+            $(row).toggleClass("selected");
+            $(row).children(".checkpump").children().toggleClass("far fas");
+            $(row).children(".checkpump").children().toggleClass("fa-circle fa-check-circle");
+            $(row).children(".checkpump").children().toggleClass("text-primary text-light");
+            $(row).children(".settings").children().toggleClass("changetextcolor text-light");
+            
+            var id = $(row).children(".settings").children().attr('id');
+            var index = $.inArray(id, selectedPump);
+
+            if(index === -1){
+                selectedPump.push(id);
+            }else{
+                selectedPump.splice(index, 1);
+            }
+        }
+    }
+
+    function selectPumpAll() {
+        $("#checkpumpHeader").children().toggleClass("far fas");
+        $("#checkpumpHeader").children().toggleClass("fa-circle fa-check-circle")
+        $("#checkpumpHeader").toggleClass("checkpump-all");
+
+        var rowpump = document.getElementsByClassName("row-pump");
+
+        if(document.getElementById("checkpumpHeader").classList.contains("checkpump-all")){ //if check all
+            for (let i = 0; i < rowpump.length; i++) {
+                if(!rowpump[i].classList.contains("selected")){
+                    $("#"+rowpump[i].id).toggleClass("selected");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("far fas");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("fa-circle fa-check-circle");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("text-primary text-light");
+                    $("#"+rowpump[i].id).children(".settings").children().toggleClass("changetextcolor text-light");
+
+                    var id = $("#"+rowpump[i].id).children(".settings").children().attr('id');
+                    var index = $.inArray(id, selectedPump);
+
+                    if(index === -1){
+                        selectedPump.push(id);
+                    }else{
+                        selectedPump.splice(index, 1);
+                    }
+                }
+            } 
+        }else{ //if uncheck all
+            for (let i = 0; i < rowpump.length; i++) {
+                if(rowpump[i].classList.contains("selected")){
+                    $("#"+rowpump[i].id).toggleClass("selected");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("far fas");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("fa-circle fa-check-circle");
+                    $("#"+rowpump[i].id).children(".checkpump").children().toggleClass("text-primary text-light");
+                    $("#"+rowpump[i].id).children(".settings").children().toggleClass("changetextcolor text-light");
+
+                    var id = $("#"+rowpump[i].id).children(".settings").children().attr('id');
+                    var index = $.inArray(id, selectedPump);
+
+                    if(index === -1){
+                        selectedPump.push(id);
+                    }else{
+                        selectedPump.splice(index, 1);
+                    }
+                }
+            } 
+        }
+    }
+
+    function selectPort(row) {
+        $("#tablePortBody tr").removeClass("selected");
+        $(row).toggleClass("selected");
+
+        var confirmEditPortText = "Change port of "+tablePump.rows('.selected').data().length+" pumps to <b>"+tablePort.rows('.selected').data()[0][1] + "</b> ?";
+        document.getElementById("confirmEditPortText").innerHTML = confirmEditPortText;
+        showSelectedPump();
+        $('#bsConfirmEditPortModal').modal("show");
+    }
+
+    function selectPortModal() {
+        if(tablePump.rows('.selected').data().length > 0){
+            @* selectedPumpName = [];
+            for(var i = 0; i < tablePump.rows('.selected').data().length; i++){
+                selectedPumpName.push(tablePump.rows('.selected').data()[i][1]);
+            } *@
+            $("#tablePortBody tr").removeClass("selected");
+            $("#bsPortModal").modal("show");
+        }else{
+            $.bsAlert.alert("Please select a pump for edit port.");
+        }
+    }
+
+    function confirmEditPort() {
+        var loop_id = tablePort.rows('.selected').data()[0][0];   
+
+        $.ajax({
+            type: "POST",
+            url: "../Pump/editPort",
+            data: { selectedPump : selectedPump, loop_id : loop_id }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("Pump", "Pump")';
+        })
+    }
+
+    function showSelectedPump(){
+        tableSelectedPump = $("#tableSelectedPump").DataTable({
+                "ajax": {
+                    "url": "../Pump/GetSelectedPump",
+                    "type": "POST",
+                    "dataSrc": '',
+                    "data" : { selectedPump: selectedPump},
+                },
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+                @* "order": [[ 0, "desc" ]], *@
+                "columns": [
+                    @*
+                    {
+                        data: "Created", title: "Create Date", render: function (data, type, row) {
+                            return data == null ? "" : data.replace("T"," ");
+                        }
+                    }, *@
+                    { data: "pump_name" , title: "Pump Name"},
+                    { data: "loop_name" , title: "Port"},
+                    { data: "protocol_name" , title: "Protocol"},
+                ] ,
+            });
+
+        tableSelectedPump.columns.adjust().draw();
+    }
+
+    //////////// Edit Stack ////////////
+
+    function editStack() {
+        if(document.getElementById("btnedistack").classList.contains("open-edistack")){
+            window.location.href = '@Url.Action("Pump", "Pump")';
+        }else{
+            document.getElementById("btnedistack").classList.add("text-danger");
+            document.getElementById("btnedistack").title = "Cancel edit stack";
+            document.getElementById("btnedistack").classList.add("open-edistack");
+            document.getElementById("tablePump").classList.remove("table-striped");
+            document.getElementById("tablePumpBody").style.cursor = "pointer"; 
+            document.getElementById("saveEditStack").classList.remove("d-none");
+            document.getElementById("checkpumpHeader").classList.remove("d-none");
+            document.getElementById("checkpumpHeader").style.cursor = "pointer"; 
+            document.getElementById("btnediport").classList.add("d-none");
+
+            for(var i = 0; i < document.getElementsByClassName("checkpump").length; i++){
+                document.getElementsByClassName("checkpump")[i].classList.remove("d-none");
+            }
+        }
+    }
+
+    function selectStack() {
+        var stackSize = $("#txtStackSize").val();  
+
+        if(!containsOnlyNumbers(stackSize) || (stackSize < 1 || stackSize > 200)){
+            $.bsAlert.alert("Please fill Stack Size with number and between 1 to 200 seconds.");
+            $("#bsStackModal").modal("hide");
+            return false;
+        }
+        else{
+            var confirmEditStackText = "Change stack size of "+tablePump.rows('.selected').data().length+" pumps to <b>"+$("#txtStackSize").val() + "</b> ?";
+            document.getElementById("confirmEditStackText").innerHTML = confirmEditStackText;
+            showSelectedPump_editStack();
+            $('#bsConfirmEditStackModal').modal("show");
+        }
+    }
+
+    function selectStackModal() {
+        if(tablePump.rows('.selected').data().length > 0){
+            $("#txtStackSize").val("");
+            $("#bsStackModal").modal("show");
+        }else{
+            $.bsAlert.alert("Please select a pump for edit stack.");
+        }
+    }
+
+    function confirmEditStack() {
+        $.ajax({
+            type: "POST",
+            url: "../Pump/editStack",
+            data: { selectedPump : selectedPump, stackSize : $("#txtStackSize").val() }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("Pump", "Pump")';
+        })
+    }
+
+    function showSelectedPump_editStack(){
+        tableSelectedPump_editStack = $("#tableSelectedPump_editStack").DataTable({
+                "ajax": {
+                    "url": "../Pump/GetSelectedPump_EditStack",
+                    "type": "POST",
+                    "dataSrc": '',
+                    "data" : { selectedPump: selectedPump},
+                },
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+                "columns": [
+                    { data: "pump_name" , title: "Pump Name"},
+                    { data: "stack_limit" , title: "Stack Size"},
+                ] ,
+            });
+
+        tableSelectedPump_editStack.columns.adjust().draw();
+    }
+
+    function containsOnlyNumbers(str) {
+        return /^[0-9]+$/.test(str);
+    }
+
+</script>
+
+@if (ViewBag.pumpmessage == null || ViewBag.pumpmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                //alert("@ViewBag.pumpmessage");
+                $.bsAlert.alert("@ViewBag.pumpmessage");
+            };
+        </script>
+    }
+}

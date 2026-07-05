@@ -1,0 +1,702 @@
+﻿@model LavenderConfig.Models.AddPumpModel;
+
+@{
+    ViewData["Title"] = "Pump";
+    ViewData["SubTitle"] = "Create Pump";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Create Pump
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("Pump", "Pump")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content container-fluid">
+        @using (Html.BeginForm("A_Pump", "Pump", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            @*<div class="card-header" style="background-color: #0f2b57;">*@
+                                <!--<h3 class="card-title">Form</h3>-->
+                            @*</div>*@
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.pump_name, "Pump Name: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.pump_name, new { id = "txtPumpName", required = "required", autofocus = "", placeholder = "Pump Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.loop_id, "Port: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlLoop", new SelectList(ViewBag.loopinpump, "loop_id", "loop_name")
+                                            , new { @class = "form-control", @onchange = "looptohidden()", required = "required" })
+                                            @Html.HiddenFor(x => x.loop_id, new { id = "txtLoop" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.protocol_name, "Protocol: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.protocol_name, new { id = "txtProtocol", required = "required", autofocus = "", placeholder = "Protocol", @class = "form-control", disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.physical_address, "Physical Address: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.physical_address, new { id = "txtPhyAdd", required = "required", placeholder = "Address of Pump", @type = "number", min = 1, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div id="area_pumptype">
+                                        <div class="row clearfix inarea_pumptype">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4">@Html.LabelFor(model => model.pump_type, "Pump Type: ", new { @class = "normalweight" })</div>
+                                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:0.5%">
+                                                @Html.RadioButtonFor(model => model.pump_type, "5", new { id = "rdbom1", name = "txtPumpType", @class = "custom-control-input" })
+                                                @Html.Label("rdbom1", "5 Digits", new { @class = "custom-control-label normalweight" })
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                @Html.RadioButtonFor(model => model.pump_type, "6", new { id = "rdbom2", name = "txtPumpType", @class = "custom-control-input" })
+                                                @Html.Label("rdbom2", "6 Digits", new { @class = "custom-control-label normalweight" })
+                                            </div>
+                                            @*<div class="col-md-3">
+                                                @Html.TextBoxFor(model => model.pump_type, new { id = "txtPumpType", required = "required", placeholder = "Number Only", @type = "number", min = 1, @class = "form-control" })
+                                            </div>*@
+                                        </div>
+                                        <br class="inarea_pumptype">
+                                    </div>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.value_decimal_digit, "Pump Value Format: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.value_decimal_digit, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="0", Value="0" },
+                                            new SelectListItem { Text="0.0", Value="1" },
+                                            new SelectListItem { Text="0.00", Value="2" },
+                                            new SelectListItem { Text="0.000", Value="3" }
+                                            //new SelectListItem { Text="0.0000", Value="5" }
+                                            }, new { @class = "form-control", id = "ddlPumpVal", @onchange = "defaultValTotal(this.value)"})
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.volume_decimal_digit, "Pump Volume Format: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.volume_decimal_digit, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="0", Value="0" },
+                                            new SelectListItem { Text="0.0", Value="1" },
+                                            new SelectListItem { Text="0.00", Value="2" },
+                                            new SelectListItem { Text="0.000", Value="3" }
+                                            //new SelectListItem { Text="0.0000", Value="5" }
+                                            }, new { @class = "form-control", id = "ddlPumpVol", @onchange = "defaultVolTotal(this.value)"})
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.price_decimal_digit, "Price Format: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.price_decimal_digit, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="0", Value="0" },
+                                            new SelectListItem { Text="0.0", Value="1" },
+                                            new SelectListItem { Text="0.00", Value="2" },
+                                            new SelectListItem { Text="0.000", Value="3" }
+                                            //new SelectListItem { Text="0.0000", Value="5" }
+                                            }, new { @class = "form-control", id = "ddlPumpPri" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.value_total_decimal_digit, "Total Value Format: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.value_total_decimal_digit, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="0", Value="0" },
+                                            new SelectListItem { Text="0.0", Value="1" },
+                                            new SelectListItem { Text="0.00", Value="2" },
+                                            new SelectListItem { Text="0.000", Value="3" }
+                                            }, new { @class = "form-control", id = "ddlPumpValTot" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.volume_total_decimal_digit, "Total Volume Format: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.volume_total_decimal_digit, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="0", Value="0" },
+                                            new SelectListItem { Text="0.0", Value="1" },
+                                            new SelectListItem { Text="0.00", Value="2" },
+                                            new SelectListItem { Text="0.000", Value="3" }
+                                            }, new { @class = "form-control", id = "ddlPumpVolTot" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.stack_limit, "Stack Size: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.stack_limit, new { id = "txtStackSize", required = "required", type = "number", min = 1, max = 200, placeholder = "1 -> 200", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.self_mode, "Enable Self Authorize Feature: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            <div class="custom-control custom-switch custom-switch-lg">
+                                                @Html.CheckBoxFor(model => model.self_mode, new { @id = "chkSelfAutho", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="chkSelfAutho"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-sm-2" id="openadset">
+                                            <button type="button" class="btn btn-block btn-outline-primary" onclick="hideAdSetting()"><i class="fas fa-angle-right"></i>&nbsp; Advance Setting</button>
+                                        </div>
+                                        <div class="col-sm-2" id="closeadset" style="display:none">
+                                            <button type="button" class="btn btn-block btn-outline-primary" onclick="hideAdSetting()"><i class="fas fa-angle-down"></i>&nbsp; Advance Setting</button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix" id="divadset">
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_preset_volume, "Multiplier preset volume: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_preset_volume, new { id = "txtMulPreVol" })*@
+                                                @Html.DropDownListFor(model => model.multipier_preset_volume, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulPreVol" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_preset_value, "Multiplier preset value: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_preset_value, new { id = "txtMulPreVal" })*@
+                                                @Html.DropDownListFor(model => model.multipier_preset_value, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulPreVal" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_transaction_volume, "Multiplier transaction volume: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_transaction_volume, new { id = "txtMulTraVol" })*@
+                                                @Html.DropDownListFor(model => model.multipier_transaction_volume, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulTraVol" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_transaction_value, "Multiplier transaction value: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_transaction_value, new { id = "txtMulTraVal" })*@
+                                                @Html.DropDownListFor(model => model.multipier_transaction_value, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulTraVal" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_total_volume, "Multiplier total volume: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_total_volume, new { id = "txtMulTotVol" })*@
+                                                @Html.DropDownListFor(model => model.multipier_total_volume, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulTotVol" })
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row clearfix">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-4" style="margin-left:0.5%">@Html.LabelFor(model => model.multipier_total_value, "Multiplier total value: ", new { @class = "normalweight" })</div>
+                                            <div class="col-md-3">
+                                                @*@Html.TextBoxFor(model => model.multipier_total_value, new { id = "txtMulTotVal" })*@
+                                                @Html.DropDownListFor(model => model.multipier_total_value, new List<SelectListItem>
+                                                {
+                                                new SelectListItem { Text="1000", Value="1000" },
+                                                new SelectListItem { Text="100", Value="100" },
+                                                new SelectListItem { Text="10", Value="10" },
+                                                new SelectListItem { Text="1", Value="1" },
+                                                new SelectListItem { Text="0.1", Value="0.1" },
+                                                new SelectListItem { Text="0.01", Value="0.01" },
+                                                new SelectListItem { Text="0.001", Value="0.001" }
+                                                }, new { @class = "form-control", id = "ddlMulTotVal" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2" align="center">
+                                            <button type="submit" class="btn btn-block btn-success btn-sm" value="A_Pump">Create</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.ActionLink("Cancel", "Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        }
+        @*<div class="col-sm-2">
+            @Html.ActionLink("Cancel", "Pump", "Pump", null, new { @class = "btn btn-block btn-outline-primary" })
+        </div>
+        <br>*@
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var click = 1;
+    function hideAdSetting() {
+        //var tanktypevalue = document.getElementById("dllTankType").value;
+        if (click == "1") {
+            document.getElementById('divadset').style.display = 'block';
+            document.getElementById('closeadset').style.display = 'block';
+            document.getElementById('openadset').style.display = 'none';
+            click = click + 1;
+        }
+        else {
+            document.getElementById('divadset').style.display = 'none';
+            document.getElementById('closeadset').style.display = 'none';
+            document.getElementById('openadset').style.display = 'block';
+            click = click - 1;
+        }
+    }
+
+    var checkadset = (function clickadset() {
+        if (click == "1") {
+            document.getElementById('divadset').style.display = 'none';
+        }
+        else {
+            document.getElementById('divadset').style.display = 'block';
+        }
+    }());
+
+    //var protocolList = @Html.Raw(ViewBag.getprotocol);
+
+    function looptohidden() {
+        var loopvalue = document.getElementById("ddlLoop").value;
+        document.getElementById('txtLoop').value = loopvalue;
+
+        var stringArray = new Array();
+        stringArray[0] = loopvalue;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                if (data.protocol_id == 1) { //Gilbarco
+                    $(".inarea_pumptype").remove();
+                    $("#area_pumptype").append(`
+                        <div class="row clearfix inarea_pumptype">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-4"><label class="normalweight" for="item_pump_type">Pump Type: </label></div>
+                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:0.5%">
+                                <input class="custom-control-input" data-val="true" data-val-required="The pump_type field is required." id="rdbom1" name="item.pump_type" type="radio" value="5">
+                                <label class="custom-control-label normalweight" for="rdbom1">5 Digits</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="custom-control-input" id="rdbom2" name="item.pump_type" type="radio" value="6">
+                                <label class="custom-control-label normalweight" for="rdbom2">6 Digits</label>
+                            </div>
+                        </div>
+                        <br class="inarea_pumptype">
+                    `)
+                }
+                else {
+                    $(".inarea_pumptype").remove();
+                }
+                document.getElementById("txtProtocol").value = data.protocol_name;
+                defaultFormat(data.protocol_id);
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    //var defaultloop = (function setdefaultloop() {
+    //    var loopvalue = document.getElementById("ddlLoop").value;
+    //    document.getElementById('txtLoop').value = loopvalue;
+    //}());
+
+    //var defaultadset = (function setdefaultadset() {
+    //    document.getElementById('ddlMulPreVol').value = 1;
+    //    document.getElementById('ddlMulPreVal').value = 1;
+    //    document.getElementById('ddlMulTraVol').value = 1;
+    //    document.getElementById('ddlMulTraVal').value = 1;
+    //    document.getElementById('ddlMulTotVol').value = 1;
+    //    document.getElementById('ddlMulTotVal').value = 1;
+    //}());
+
+    var defaultindb = (function setdefaultindb() {
+        var statesAvailable = @Html.Raw(ViewBag.indblist);
+
+        if (statesAvailable === null) {   
+            var new_num = 1;
+            var new_pumpname = "Pump " + new_num;
+            document.getElementById('txtPumpName').value = new_pumpname;
+            document.getElementById('ddlLoop').value = 1; //default loop id
+            document.getElementById('txtLoop').value = 1; 
+            document.getElementById('txtPhyAdd').value = new_num;
+
+            //default as Gilbarco protocal
+            document.getElementById("rdbom1").checked = true;
+            document.getElementById("rdbom2").checked = false;
+            document.getElementById("rdbom1").disabled = false;
+            document.getElementById("rdbom2").disabled = false;
+
+            document.getElementById('ddlPumpVal').value = 2;
+            document.getElementById('ddlPumpVol').value = 3;
+            document.getElementById('ddlPumpPri').value = 2;
+            document.getElementById('ddlPumpValTot').value = 2;
+            document.getElementById('ddlPumpVolTot').value = 2;
+            document.getElementById('txtStackSize').value = 100;
+            document.getElementById('ddlMulPreVol').value = 1;
+            document.getElementById('ddlMulPreVal').value = 1;
+            document.getElementById('ddlMulTraVol').value = 1;
+            document.getElementById('ddlMulTraVal').value = 1;
+            document.getElementById('ddlMulTotVol').value = 1;
+            document.getElementById('ddlMulTotVal').value = 1;
+
+            document.getElementById("chkSelfAutho").checked = false;
+        }
+        else {
+            var new_num = parseInt(statesAvailable.pump_id) + 1;
+            var new_pumpname = "Pump " + new_num;
+            var protocol_id = parseInt(statesAvailable.protocol_id);
+
+            document.getElementById('txtPumpName').value = new_pumpname;
+            document.getElementById('ddlLoop').value = statesAvailable.loop_id;
+            document.getElementById('txtLoop').value = statesAvailable.loop_id;
+            document.getElementById('txtPhyAdd').value = new_num;
+            document.getElementById("txtProtocol").value = statesAvailable.pump_description;
+
+            if (protocol_id == 1) { //Gilbarco
+                var checkpumptype = (statesAvailable.pump_type).toString();
+
+                if (checkpumptype == "5") {
+                    document.getElementById("rdbom1").checked = true;
+                    document.getElementById("rdbom2").checked = false;
+                    document.getElementById("rdbom1").disabled = false;
+                    document.getElementById("rdbom2").disabled = false;
+                }
+                else if (checkpumptype == "6") {
+                    document.getElementById("rdbom1").checked = false;
+                    document.getElementById("rdbom2").checked = true;
+                    document.getElementById("rdbom1").disabled = false;
+                    document.getElementById("rdbom2").disabled = false;
+                }
+                else {
+                    document.getElementById("rdbom1").checked = false;
+                    document.getElementById("rdbom2").checked = false;
+                    document.getElementById("rdbom1").disabled = false;
+                    document.getElementById("rdbom2").disabled = false;
+                }
+            }
+            else {
+                $(".inarea_pumptype").remove();
+            }
+
+            defaultFormat(protocol_id);
+
+            document.getElementById('txtStackSize').value = statesAvailable.stack_limit;
+            document.getElementById('ddlMulPreVol').value = statesAvailable.multipier_preset_volume;
+            document.getElementById('ddlMulPreVal').value = statesAvailable.multipier_preset_value;
+            document.getElementById('ddlMulTraVol').value = statesAvailable.multipier_transaction_volume;
+            document.getElementById('ddlMulTraVal').value = statesAvailable.multipier_transaction_value;
+            document.getElementById('ddlMulTotVol').value = statesAvailable.multipier_total_volume;
+            document.getElementById('ddlMulTotVal').value = statesAvailable.multipier_total_value;
+
+            var checkauthorize = (statesAvailable.self_mode).toString();
+
+            if (checkauthorize == "true") {
+                document.getElementById("chkSelfAutho").checked = true;
+            }
+            else if (checkauthorize == "false") {
+                document.getElementById("chkSelfAutho").checked = false;
+            }
+            else { }
+        }
+
+    }());
+
+    function addDropDown(id,value)
+    {
+        var opt = document.createElement("option");
+        document.getElementById(id).options.add(opt);
+        let i = 0;
+        var text = value == 0 ? "0.0" : "0." ;
+
+        while (i < value) {
+            text += "0";
+            i++;
+        }
+        opt.text = text;
+        opt.value = value;
+    }
+
+    function defaultFormat(protocal){
+        //set dropdown
+        if(protocal == 1){ //Gilbarco
+            //set pump price
+            document.getElementById("ddlPumpPri").options.length = 0;
+            addDropDown("ddlPumpPri",2);
+            document.getElementById('ddlPumpPri').value = 2;
+
+            //set pump value
+            document.getElementById("ddlPumpVal").options.length = 0;
+            addDropDown("ddlPumpVal",1);
+            addDropDown("ddlPumpVal",2);
+            document.getElementById('ddlPumpVal').value = 2;
+
+            //set pump volume
+            document.getElementById("ddlPumpVol").options.length = 0;
+            addDropDown("ddlPumpVol",1);
+            addDropDown("ddlPumpVol",2);
+            addDropDown("ddlPumpVol",3);
+            document.getElementById("ddlPumpVol").value = 3;
+
+            //set pump total value
+            document.getElementById("ddlPumpValTot").options.length = 0;
+            addDropDown("ddlPumpValTot",2);
+            document.getElementById('ddlPumpValTot').value = 2;
+
+            //set pump total volume
+            document.getElementById("ddlPumpVolTot").options.length = 0;
+            addDropDown("ddlPumpVolTot",2);
+            document.getElementById('ddlPumpVolTot').value = 2;
+        }
+        else if(protocal == 3 || protocal == 6){  //Tatsuno or Wayne
+             //set pump price
+            document.getElementById("ddlPumpPri").options.length = 0;
+            addDropDown("ddlPumpPri",2);
+            document.getElementById('ddlPumpPri').value = 2;
+            
+            //set pump value
+            document.getElementById("ddlPumpVal").options.length = 0;
+            addDropDown("ddlPumpVal",1);
+            addDropDown("ddlPumpVal",2);
+            document.getElementById('ddlPumpVal').value = 2;
+
+            //set pump volume
+            document.getElementById("ddlPumpVol").options.length = 0;
+            addDropDown("ddlPumpVol",1);
+            addDropDown("ddlPumpVol",2);
+            addDropDown("ddlPumpVol",3);
+            document.getElementById("ddlPumpVol").value = 3;
+
+            //set pump total value
+            document.getElementById("ddlPumpValTot").options.length = 0;
+            addDropDown("ddlPumpValTot",2);
+            document.getElementById('ddlPumpValTot').value = 2;
+
+            //set pump total volume
+            document.getElementById("ddlPumpVolTot").options.length = 0;
+            addDropDown("ddlPumpVolTot",3);
+            document.getElementById('ddlPumpVolTot').value = 3;
+        }
+        else{
+            setOriginFormat(protocal);
+        }
+        
+    }
+
+    function defaultValTotal(val) {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("ddlLoop").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                if (data.protocol_id == 1 || data.protocol_id == 3 || data.protocol_id == 6) { //Gilbarco or Tatsuno or Wayne
+                    document.getElementById("ddlPumpValTot").options.length = 0;
+                    addDropDown("ddlPumpValTot",val);
+                    document.getElementById("ddlPumpValTot").value = val;
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function defaultVolTotal(val) {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("ddlLoop").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../Pump/getprotocol",
+            data: postData,
+            success: function (data) {
+                if (data.protocol_id == 1) { //Gilbarco
+                    document.getElementById("ddlPumpVolTot").options.length = 0;
+                    if(val > 2){
+                        addDropDown("ddlPumpVolTot",2);
+                        document.getElementById("ddlPumpVolTot").value = 2;
+                    }
+                    else{
+                        addDropDown("ddlPumpVolTot",val);
+                        document.getElementById("ddlPumpVolTot").value = val;
+                    }
+                }
+                else if(data.protocol_id == 3 || data.protocol_id == 6){ //Tatsuno or Wayne
+                    document.getElementById("ddlPumpVolTot").options.length = 0;
+                    addDropDown("ddlPumpVolTot",val);
+                    document.getElementById("ddlPumpVolTot").value = val;
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function setOriginFormat(protocal)
+    {
+        document.getElementById("ddlPumpPri").options.length = 0;
+        addDropDown("ddlPumpPri",0);
+        addDropDown("ddlPumpPri",1);
+        addDropDown("ddlPumpPri",2);
+        addDropDown("ddlPumpPri",3);
+            
+        document.getElementById("ddlPumpVal").options.length = 0;
+        addDropDown("ddlPumpVal",0);
+        addDropDown("ddlPumpVal",1);
+        addDropDown("ddlPumpVal",2);
+        addDropDown("ddlPumpVal",3);
+
+        document.getElementById("ddlPumpVol").options.length = 0;
+        addDropDown("ddlPumpVol",0);
+        addDropDown("ddlPumpVol",1);
+        addDropDown("ddlPumpVol",2);
+        addDropDown("ddlPumpVol",3);
+
+        document.getElementById("ddlPumpValTot").options.length = 0;
+        addDropDown("ddlPumpValTot",0);
+        addDropDown("ddlPumpValTot",1);
+        addDropDown("ddlPumpValTot",2);
+        addDropDown("ddlPumpValTot",3);
+
+        document.getElementById("ddlPumpVolTot").options.length = 0;
+
+        if(protocal.includes("Mepsan") == true){
+            addDropDown("ddlPumpVolTot",1);
+            addDropDown("ddlPumpVolTot",2);
+            addDropDown("ddlPumpVolTot",3);
+        }else{
+            addDropDown("ddlPumpVolTot",0);
+            addDropDown("ddlPumpVolTot",1);
+            addDropDown("ddlPumpVolTot",2);
+            addDropDown("ddlPumpVolTot",3);
+        }
+        
+        var statesAvailable = @Html.Raw(ViewBag.indblist);
+            
+        if (statesAvailable === null) {   
+            document.getElementById('ddlPumpVal').value = 2;
+            document.getElementById('ddlPumpVol').value = 3;
+            document.getElementById('ddlPumpPri').value = 2;
+            document.getElementById('ddlPumpValTot').value = 2;
+            document.getElementById('ddlPumpVolTot').value = 2;
+        }else{
+            document.getElementById('ddlPumpVal').value = statesAvailable.value_decimal_digit;
+            document.getElementById('ddlPumpVol').value = statesAvailable.volume_decimal_digit;
+            document.getElementById('ddlPumpPri').value = statesAvailable.price_decimal_digit;
+            document.getElementById('ddlPumpValTot').value = statesAvailable.value_total_decimal_digit;
+            document.getElementById('ddlPumpVolTot').value = statesAvailable.volume_total_decimal_digit;
+        } 
+    }
+
+</script>

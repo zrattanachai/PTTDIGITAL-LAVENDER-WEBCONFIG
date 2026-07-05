@@ -1,0 +1,220 @@
+﻿@model LavenderConfig.Models.Login;
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <!-- End Google Tag Manager -->
+    <title>Lavender Config</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+
+    <!-- External CSS libraries (4) -->
+    <!-- Favicon icon -->
+    <!-- Google fonts (2) -->
+    <!-- Custom Stylesheet (2) -->
+    <!-- Bootstrap Alert -->
+
+    <link type="text/css" rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/fonts/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/bower_components/fontawesome-free/css/all.min.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/fonts/flaticon/font/flaticon.css">
+    <link rel="shortcut icon" href="~/assets/img/LavenderWebIcon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="~/css/opensans.css?family=Open+Sans:400,300,600,700,800%7CPoppins:400,500,700,800,900%7CRoboto:100,300,400,400i,500,700">
+    <link href="~/dist/css/bootstrap-alert.css" rel="stylesheet">
+    @*<link type="text/css" rel="stylesheet" href="~/assets/css/style.css">*@
+    <link rel="stylesheet" type="text/css" id="style_sheet" href="~/assets/css/skins/default.css">
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #535353;
+        }
+
+        .login-21 .login-inner-form {
+            color: #cccccc;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-21 .bg-color-10 {
+            background: #151922;
+            min-height: 100vh;
+            position: relative;
+            text-align: center;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 50px;
+        }
+
+        .login-21 .login-inner-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-21 .login-inner-form .form-box {
+            float: left;
+            width: 100%;
+            position: relative;
+        }
+
+        .login-21 .login-inner-form .input-text {
+            font-size: 14px;
+            outline: none;
+            color: #717171;
+            border-radius: 3px;
+            border: 1px solid #dbdbdb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .06);
+        }
+
+        .login-21 .login-inner-form .form-box input {
+            float: left;
+            width: 100%;
+            padding: 11px 40px 11px 15px;
+        }
+
+        .login-21 .login-inner-form .form-box i {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            font-size: 19px;
+            color: #717171;
+        }
+
+        .login-21 .login-inner-form .btn-md {
+            cursor: pointer;
+            padding: 10px 30px 9px 30px;
+            height: 45px;
+            letter-spacing: 1px;
+            font-size: 17px;
+            font-weight: 400;
+            font-family: 'Open Sans', sans-serif;
+            border-radius: 3px;
+            color: #d6d6d6;
+        }
+
+        .login-21 .login-inner-form .btn-theme {
+            background: #2a3148;
+            border: none;
+            color: #fff;
+        }
+
+            .login-21 .login-inner-form .btn-theme:hover {
+                background: #36405f;
+            }
+
+        .login-21 .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .login-21 .logo img {
+                height: 30px;
+            }
+
+        .changetextcolor {
+            color: #ffffff;
+        }
+    </style>
+
+</head>
+    <body id="top">
+
+        <div class="page_loader"></div>
+
+        <!-- Login 21 start -->
+        <div class="login-21">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-5 col-md-11 col-pad-0 bg-color-10">
+                        <div class="form-section">
+                            <div class="logo">
+                                <a>
+                                    <img src="~/dist/img/logo.png" style="height: auto; width: 200px;" alt="logo">
+                                </a>
+                            </div>
+                            <div class="login-inner-form">
+                                @using (Html.BeginForm("Validate", "Home", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "new-password" }))
+                                {
+                                    <form role="form">
+                                        <div class="form-group form-box">
+                                            @Html.TextBox("user_name", "", new { id = "user_name", required = "required", autofocus = "", placeholder = "Username", @class = "input-text", type = "text", autocomplete = "new-password" })
+                                            <i class="fas fa-user" style="margin-top:1%"></i>
+                                        </div>
+                                        <div class="form-group form-box">
+                                            @Html.TextBox("password", "", new { id = "password", required = "required", placeholder = "Password", @class = "input-text", type = "password", autocomplete = "new-password" })
+                                            <a onclick="showPassW();"><i id ="ipass" class="fas fa-eye" style="margin-top:1%"></i></a>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="btn-md btn-theme btn-block" @*onclick="Validate()"*@>Login</button>
+                                        </div>
+                                        <div class="footer" style="text-align:center; margin-top:30px">
+                                            @*<span style="font-size:12px"><strong>Copyright &copy; 2019-@DateTime.Now.Year <a class="changetextcolor" href="https://www.pttdigital.com">PTT Digital Solution Co.,Ltd.</a></strong> All rights reserved.</span>*@
+                                            <span style="font-size:12px">Copyright &copy; @DateTime.Now.Year <strong>PTT Digital Solution Co.,Ltd.</strong> All rights reserved.</span>
+                                        </div>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-7 col-md-12 col-pad-0 bg-img none-992" style="background: rgba(0, 0, 0, 0.04) url('../dist/img/login_bg_1_new.png');background-size: cover;background-repeat: no-repeat;"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Login 21 end -->
+
+        <!-- External JS libraries -->
+
+        <script src="~/assets/js/jquery-2.2.0.min.js"></script>
+        <script src="~/assets/js/popper.min.js"></script>
+        <script src="~/assets/js/bootstrap.min.js"></script>
+        <script src="~/bower_components/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+        <script src="~/dist/js/adminlte.min.js"></script>
+        <script src="~/dist/js/demo.js"></script>
+        <script src="~/dist/js/bootstrap-alert.js"></script>
+
+        <!-- Custom JS Script -->
+
+        <script>
+            var click = 1;
+
+            function showPassW() {
+                if (click == "1") {
+                    document.getElementById('password').type = 'text';
+                    document.getElementById("ipass").className = "fas fa-eye-slash";
+                    click = click + 1;
+                }
+                else {
+                    document.getElementById('password').type = 'password';
+                    document.getElementById("ipass").className = "fas fa-eye";
+                    click = click - 1;
+                }
+            }
+        </script>
+
+        @if (ViewBag.loginmessage == null || ViewBag.loginmessage == "")
+        {
+        }
+        else
+        {
+            if (ViewBag.perpage == "1")
+            {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        //alert("@ViewBag.loginmessage");
+                        $.bsAlert.alert("@ViewBag.loginmessage");
+                    };
+                </script>
+            }
+        }
+
+    </body>
+</html>

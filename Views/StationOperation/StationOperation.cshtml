@@ -1,0 +1,969 @@
+﻿@model List<LavenderConfig.Models.PumpCommands>
+
+@{
+    ViewData["Title"] = "StationOperation";
+    ViewData["subpage"] = ViewBag.subpage;
+}
+
+@section Styles{
+    <style>
+        .red-background {
+            background: linear-gradient(105deg ,#f8f9fa -15%,#f95353 6%,#f95353 40%,#dc3545 66.7%, #f8f9fa 67%, #214990 67.3%, #2a5fbb 90%, #2a5fbb 130%);
+        }
+
+        .green-background {
+            background: linear-gradient(105deg ,#f8f9fa -15%,#58b368 6%,#58b368 40%,#28a745 66.7%, #f8f9fa 67%, #214990 67.3%, #2a5fbb 90%, #2a5fbb 130%);
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Station Operation
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">Station Operation</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        @*<div class="card-header" style="background-color: #0f2b57;">
+                        </div>*@
+                        <div class="card-body">
+                            @*<ul class="nav nav-tabs">
+                                <li class="nav-item"><a class="" data-toggle="tab" href="#menu1" id="tab1">Services</a></li>
+                                <li class="nav-item"><a class="" data-toggle="tab" href="#menu2" id="tab2">Command</a></li>
+                            </ul>*@
+                            @*<div class="tab-content*@
+                                @if (ViewBag.subpage == "MS")
+                                {
+                                    @*<div id="menu1" class="">*@
+                                        @using (Html.BeginForm("S_StationOperation", "StationOperation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <br>
+                                            <form role="form">
+                                                <div class="row clearfix" style="margin-right: 0.5%">
+                                                    <div class="col-md-2"><h4>Manage Services</h4></div>
+                                                </div>
+                                                <br>
+                                                <div class="row clearfix" id="area_time">
+                                                    <div class="col-md-3 timelist"><h6>Last Update: @Convert.ToDateTime(DateTime.Now).ToString("dd/MM/yyyy HH:mm:ss")</h6></div>
+                                                </div>
+                                                <hr>
+                                                <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                                    @{
+                                                        var bgcolor_dis = ViewBag.Resultdis == "active" ? "green-background" : "red-background";
+                                                    }
+                                                    <div class="col-md-6 col-sm-6 col-4" id="area_dis">
+                                                        <div class="info-box dislist @bgcolor_dis">
+                                                            <span class="info-box-icon"><i class="fas fa-gas-pump text-light"></i></span>
+                                                            <div class="col-5">
+                                                                <span class="info-box-text text-light"><b>Dispenser</b></span>
+                                                                @if (ViewBag.Resultdis == "active")
+                                                                {
+                                                                    <span class="info-box-text text-light">Running</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info-box-text text-light">Stopped</span>
+                                                                }
+                                                            </div>
+                                                            @if (ViewBag.Resultdis == "active")
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="disStopArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Dis_Stop" title="Stop Dispenser service"><i class="fas fa-stop"></i></button> *@
+                                                                            <button id="disStop" type="button" class="btn btn-block btn-primary border border-light" name="disStop" value="Dis_Stop" title="Stop Dispenser service" onclick='actionMS("Dis_Stop", this.id)'>
+                                                                                <i id="disStopAction" class="fas fa-stop"></i>
+                                                                                <i id="disStopSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="disStartArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Dis_Start" title="Start Dispenser service"><i class="fas fa-play"></i></button> *@
+                                                                            <button id="disStart" type="button" class="btn btn-block btn-primary border border-light" name="disStart" value="Dis_Start" title="Start Dispenser service" onclick='actionMS("Dis_Start", this.id)'>
+                                                                                <i id="disStartAction" class="fas fa-play"></i>
+                                                                                <i id="disStartSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                    
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    @{
+                                                        var bgcolor_mon = ViewBag.Resultmon == "active" ? "green-background" : "red-background";
+                                                    }
+                                                    <div class="col-md-6 col-sm-6 col-4" id="area_mon">
+                                                        <div class="info-box monlist @bgcolor_mon">
+                                                            <span class="info-box-icon"><i class="fas fa-desktop text-light"></i></span>
+                                                            <div class="col-5">
+                                                                <span class="info-box-text text-light"><b>Monitor</b></span>
+                                                                @if (ViewBag.Resultmon == "active")
+                                                                {
+                                                                    <span class="info-box-text text-light">Running</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info-box-text text-light">Stopped</span>
+                                                                }
+                                                            </div>
+                                                            @if (ViewBag.Resultmon == "active")
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="monStopArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Mon_Stop" title="Stop Monitor service"><i class="fas fa-stop"></i></button> *@
+                                                                            <button id="monStop" type="button" class="btn btn-block btn-primary border border-light" name="monStop" value="Mon_Stop" title="Stop Monitor service" onclick='actionMS("Mon_Stop", this.id)'>
+                                                                                <i id="monStopAction" class="fas fa-stop"></i>
+                                                                                <i id="monStopSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="monStartArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Mon_Start" title="Start Monitor service"><i class="fas fa-play"></i></button> *@
+                                                                            <button id="monStart" type="button" class="btn btn-block btn-primary border border-light" name="monStart" value="Mon_Start" title="Start Monitor service" onclick='actionMS("Mon_Start", this.id)'>
+                                                                                <i id="monStartAction" class="fas fa-play"></i>
+                                                                                <i id="monStartSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                                    @{
+                                                        var bgcolor_tg = ViewBag.Resulttg == "active" ? "green-background" : "red-background";
+                                                    }
+                                                    <div class="col-md-6 col-sm-6 col-4" id="area_tg">
+                                                        <div class="info-box tglist @bgcolor_tg">
+                                                            <span class="info-box-icon"><i class="fas fa-tachometer-alt text-light"></i></span>
+                                                            <div class="col-5">
+                                                                <span class="info-box-text text-light"><b>Tank Gauge</b></span>
+                                                                @if (ViewBag.Resulttg == "active")
+                                                                {
+                                                                    <span class="info-box-text text-light">Running</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info-box-text text-light">Stopped</span>
+                                                                }
+                                                            </div>
+                                                            @if (ViewBag.Resulttg == "active")
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="tgStopArea" class="col-7" style="margin-top: 3%;  margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Tg_Stop" title="Stop Tank gauge service"><i class="fas fa-stop"></i></button> *@
+                                                                            <button id="tgStop" type="button" class="btn btn-block btn-primary border border-light" name="tgStop" value="Tg_Stop" title="Stop Tank gauge service" onclick='actionMS("Tg_Stop", this.id)'>
+                                                                                <i id="tgStopAction" class="fas fa-stop"></i>
+                                                                                <i id="tgStopSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="tgStartArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Tg_Start" title="Start Tank gauge service"><i class="fas fa-play"></i></button> *@
+                                                                            <button id="tgStart" type="button" class="btn btn-block btn-primary border border-light" name="tgStart" value="Tg_Start" title="Start Tank gauge service" onclick='actionMS("Tg_Start", this.id)'>
+                                                                                <i id="tgStartAction" class="fas fa-play"></i>
+                                                                                <i id="tgStartSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    @{
+                                                        var bgcolor_gaia = ViewBag.Resultgaia == "active" ? "green-background" : "red-background";
+                                                    }
+                                                    <div class="col-md-6 col-sm-6 col-4" id="area_gaia">
+                                                        <div class="info-box gaialist @bgcolor_gaia">
+                                                            <span class="info-box-icon"><img src="../../dist/img/logo-white.png" alt="GAIA Logo" width="70%"></span>
+                                                            <div class="col-5">
+                                                                <span class="info-box-text text-light"><b>GAIA</b></span>
+                                                                @if (ViewBag.Resultgaia == "active")
+                                                                {
+                                                                    <span class="info-box-text text-light">Running</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info-box-text text-light">Stopped</span>
+                                                                }
+                                                            </div>
+                                                            @if (ViewBag.Resultgaia == "active")
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="gaiaStopArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Gaia_Stop" title="Stop GAIA service"><i class="fas fa-stop"></i></button> *@
+                                                                            <button id="gaiaStop" type="button" class="btn btn-block btn-primary border border-light" name="gaiaStop" value="Gaia_Stop" title="Stop GAIA service" onclick='actionMS("Gaia_Stop", this.id)'>
+                                                                                <i id="gaiaStopAction" class="fas fa-stop"></i>
+                                                                                <i id="gaiaStopSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="gaiaStartArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Gaia_Start" title="Start GAIA service"><i class="fas fa-play"></i></button> *@
+                                                                            <button id="gaiaStart" type="button" class="btn btn-block btn-primary border border-light" name="gaiaStart" value="Gaia_Start" title="Start GAIA service" onclick='actionMS("Gaia_Start", this.id)'>
+                                                                                <i id="gaiaStartAction" class="fas fa-play"></i>
+                                                                                <i id="gaiaStartSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                                    @{
+                                                        var bgcolor_update = ViewBag.Resultupdate == "active" ? "green-background" : "red-background";
+                                                    }
+                                                    <div class="col-md-6 col-sm-6 col-4" id="area_update">
+                                                        <div class="info-box updatelist @bgcolor_update">
+                                                            <span class="info-box-icon text-light"><i class="fas fa-arrow-alt-circle-down"></i></span>
+                                                            <div class="col-5">
+                                                                <span class="info-box-text text-light"><b>Update</b></span>
+                                                                @if (ViewBag.Resultupdate == "active")
+                                                                {
+                                                                    <span class="info-box-text text-light">Running</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info-box-text text-light">Stopped</span>
+                                                                }
+                                                            </div>
+                                                            @if (ViewBag.Resultupdate == "active")
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="updateStopArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Update_Stop" title="Stop Update service"><i class="fas fa-stop"></i></button> *@
+                                                                            <button id="updateStop" type="button" class="btn btn-block btn-primary border border-light" name="updateStop" value="Update_Stop" title="Stop Update service" onclick='actionMS("Update_Stop", this.id)'>
+                                                                                <i id="updateStopAction" class="fas fa-stop"></i>
+                                                                                <i id="updateStopSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="info-box-content">
+                                                                    <div id="updateStartArea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                        <span class="info-box-more">
+                                                                            @* <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="Update_Start" title="Start Update service"><i class="fas fa-play"></i></button> *@
+                                                                            <button id="updateStart" type="button" class="btn btn-block btn-primary border border-light" name="updateStart" value="Update_Start" title="Start Update service" onclick='actionMS("Update_Start", this.id)'>
+                                                                                <i id="updateStartAction" class="fas fa-play"></i>
+                                                                                <i id="updateStartSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        }
+                                    @*</div>*@
+                                }
+
+                                <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+                                @if (ViewBag.subpage == "MSAPI")
+                                {
+                                        @using (Html.BeginForm("S_StationOperation", "StationOperation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            var countpm2 = ViewBag.getpm2.Count;
+                                            <br>
+                                            <form role="form">
+                                                <div class="row clearfix" style="margin-right: 0.5%">
+                                                    <div class="col-md-9"><h4>Manage Services API &nbsp;<span class="text-danger">@ViewBag.pm2error</span></h4></div>
+                                                </div>
+                                                <br>
+                                                <div class="row clearfix" id="area_time">
+                                                    <div class="col-md-3 timelist"><h6>Last Update: @Convert.ToDateTime(DateTime.Now).ToString("dd/MM/yyyy HH:mm:ss")</h6></div>
+                                                </div>
+                                                <hr>
+                                                <div class="row clearfix">
+                                                    <label style="margin-top:0.5%; margin-left:0.5%"><b>All API Commands: </b></label>
+                                                    <div class="col-md-1">
+                                                        <button type="button" class="btn btn-block btn-outline-primary" name="Page_Reload" value="Page_Reload" title="Reload page" onclick='ReloadPage("MSAPI")'><i class="fas fa-sync"></i></button>
+                                                    </div>
+                                                    @if (ViewBag.userrole == "admin")
+                                                    {
+                                                        <div class="col-md-1">
+                                                            <button id="RestartAllApi" type="button" class="btn btn-block btn-primary" name="RestartAllApi" value="RestartAllApi" title="Restart all API" onclick="RestartAllAPI(this.id)">
+                                                                <i id="RestartAllApiAction" class="fas fa-undo"></i> 
+                                                                <i id="RestartAllApiSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                            </button>            
+                                                        </div>
+                                                        @if(ViewBag.api_lost_status == "true")
+                                                        {
+                                                            <div class="col-md-1">
+                                                                <button id="RestoreApi" type="button" class="btn btn-block btn-primary" name="RestoreApi" value="RestoreApi" title="Restore lost API" onclick="RestoreAPI(this.id)">
+                                                                    <i id="RestoreApiAction" class="fas fa-history"></i> 
+                                                                    <i id="RestoreApiSpin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                </button>            
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-1">
+                                                                <button id="RestoreApi" type="button" class="btn btn-block btn-primary" name="RestoreApi" value="RestoreApi" title="Restore lost API" disabled>
+                                                                    <i id="RestoreApiAction" class="fas fa-history"></i> 
+                                                                </button>            
+                                                            </div>
+                                                        }
+                                                    }
+                                                    <div class="col-md-7">
+                                                        <span class="text-danger">@ViewBag.apiname_lost_msg</span>
+                                                        @* <br>
+                                                        <span class="text-danger">@ViewBag.apiname_db</span>
+                                                        <br>
+                                                        <span class="text-danger">@ViewBag.apiname_lost</span> *@
+                                                    </div>
+                                                </div>
+                                        
+                                                @if (countpm2 > 0)
+                                                {
+                                                    <hr>
+                                                    @for (int i = 0; i < countpm2; i = i + 2)
+                                                    {
+                                                    <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                                        <div class="col-md-6 col-sm-6 col-4">
+                                                            @if (ViewBag.getpm2[i].status == "online")
+                                                            {
+                                                                @* online *@
+                                                                var pm2stoparea = ViewBag.getpm2[i].api_name + "StopArea";
+                                                                var pm2stop = ViewBag.getpm2[i].api_name + "Stop";
+                                                                var pm2stopaction = ViewBag.getpm2[i].api_name + "StopAction";
+                                                                var pm2stopspin = ViewBag.getpm2[i].api_name + "StopSpin";
+
+                                                                <div class='info-box pm2list green-background'>
+                                                                    <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                    <div class="col-5">
+                                                                        <span class="info-box-text text-light"><b>@ViewBag.getpm2[i].api_name</b></span>
+                                                                        <span class="info-box-text text-light">Running</span>
+                                                                    </div>
+                                                                    <div class="info-box-content">
+                                                                        <div id="@pm2stoparea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                            <span class="info-box-more">
+                                                                                @if (ViewBag.userrole == "admin" && ViewBag.getpm2[i].api_name != "Login_Logout" && ViewBag.getpm2[i].api_name != "ManageAPI"){
+                                                                                    <button id="@pm2stop" type="button" class="btn btn-block btn-primary border border-light" name="pm2Stop" value="PM2_Stop" title="Stop @ViewBag.getpm2[i].api_name service" onclick='actionMSAPI("@ViewBag.getpm2[i].status","@ViewBag.getpm2[i].id", this.id)'>
+                                                                                        <i id="@pm2stopaction" class="fas fa-stop"></i>
+                                                                                        <i id="@pm2stopspin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                                    </button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <button type="button" class="btn btn-block btn-primary border border-light" disabled>
+                                                                                        <i class="fas fa-stop"></i>
+                                                                                    </button>
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else if(ViewBag.getpm2[i].status == "stopped")
+                                                            {
+                                                                @* stopped *@
+                                                                var pm2startarea = ViewBag.getpm2[i].api_name + "StartArea";
+                                                                var pm2start = ViewBag.getpm2[i].api_name + "Start";
+                                                                var pm2startaction = ViewBag.getpm2[i].api_name + "StartAction";
+                                                                var pm2startspin = ViewBag.getpm2[i].api_name + "StartSpin";
+
+                                                                <div class='info-box pm2list red-background'>
+                                                                    <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                    <div class="col-5">
+                                                                        <span class="info-box-text text-light"><b>@ViewBag.getpm2[i].api_name</b></span>
+                                                                        <span class="info-box-text text-light">Stopped</span>
+                                                                    </div>
+                                                                    <div class="info-box-content">
+                                                                        <div id="@pm2startarea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                            <span class="info-box-more">
+                                                                                @if (ViewBag.userrole == "admin" && ViewBag.getpm2[i].api_name != "Login_Logout" && ViewBag.getpm2[i].api_name != "ManageAPI"){
+                                                                                    <button id="@pm2start" type="button" class="btn btn-block btn-primary border border-light" name="pm2Start" value="PM2_Start" title="Start @ViewBag.getpm2[i].api_name service" onclick='actionMSAPI("@ViewBag.getpm2[i].status","@ViewBag.getpm2[i].id", this.id)'>
+                                                                                        <i id="@pm2startaction" class="fas fa-play"></i>
+                                                                                        <i id="@pm2startspin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                                    </button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <button type="button" class="btn btn-block btn-primary border border-light" disabled>
+                                                                                        <i class="fas fa-play"></i>
+                                                                                    </button>
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else 
+                                                            {
+                                                                @* error *@
+                                                                <div class='info-box pm2list red-background'>
+                                                                    <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                    <div class="col-5">
+                                                                        <span class="info-box-text text-light"><b>@ViewBag.getpm2[i].api_name</b></span>
+                                                                        <span class="info-box-text text-light">Error</span>
+                                                                    </div>
+                                                                    <div class="info-box-content">
+                                                                        <div class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                            <span class="info-box-more">
+                                                                                <button type="button" class="btn btn-block btn-primary border border-light" value="PM2_Error" title="@ViewBag.getpm2[i].api_name service error" disabled>
+                                                                                    <i class="fas fa-play"></i>
+                                                                                </button>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                        </div>
+                                                            @if ((i + 1) < countpm2)
+                                                            {
+                                                                <div class="col-md-6 col-sm-6 col-4">
+                                                                @if (ViewBag.getpm2[i + 1].status == "online")
+                                                                {
+                                                                    @* online *@
+                                                                    var pm2stoparea = ViewBag.getpm2[i + 1].api_name + "StopArea";
+                                                                    var pm2stop = ViewBag.getpm2[i + 1].api_name + "Stop";
+                                                                    var pm2stopaction = ViewBag.getpm2[i + 1].api_name + "StopAction";
+                                                                    var pm2stopspin = ViewBag.getpm2[i + 1].api_name + "StopSpin";
+
+                                                                    <div class='info-box pm2list green-background'>
+                                                                        <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                        <div class="col-5">
+                                                                            <span class="info-box-text text-light"><b>@ViewBag.getpm2[i + 1].api_name</b></span>
+                                                                            <span class="info-box-text text-light">Running</span>
+                                                                        </div>
+                                                                        <div class="info-box-content">
+                                                                            <div id="@pm2stoparea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                                <span class="info-box-more">
+                                                                                    @if (ViewBag.userrole == "admin" && ViewBag.getpm2[i + 1].api_name != "Login_Logout" && ViewBag.getpm2[i + 1].api_name != "ManageAPI"){
+                                                                                        <button id="@pm2stop" type="button" class="btn btn-block btn-primary border border-light" name="pm2Stop" value="PM2_Stop" title="Stop @ViewBag.getpm2[i + 1].api_name service" onclick='actionMSAPI("@ViewBag.getpm2[i + 1].status","@ViewBag.getpm2[i + 1].id", this.id)'>
+                                                                                            <i id="@pm2stopaction" class="fas fa-stop"></i>
+                                                                                            <i id="@pm2stopspin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                                        </button>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <button type="button" class="btn btn-block btn-primary border border-light" disabled>
+                                                                                            <i class="fas fa-stop"></i>
+                                                                                        </button>
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else if(ViewBag.getpm2[i + 1].status == "stopped")
+                                                                {
+                                                                    @* stopped *@
+                                                                    var pm2startarea = ViewBag.getpm2[i + 1].api_name + "StartArea";
+                                                                    var pm2start = ViewBag.getpm2[i + 1].api_name + "Start";
+                                                                    var pm2startaction = ViewBag.getpm2[i + 1].api_name + "StartAction";
+                                                                    var pm2startspin = ViewBag.getpm2[i + 1].api_name + "StartSpin";
+
+                                                                    <div class='info-box pm2list red-background'>
+                                                                        <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                        <div class="col-5">
+                                                                            <span class="info-box-text text-light"><b>@ViewBag.getpm2[i + 1].api_name</b></span>
+                                                                            <span class="info-box-text text-light">Stopped</span>
+                                                                        </div>
+                                                                        <div class="info-box-content">
+                                                                            <div id="@pm2startarea" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                                <span class="info-box-more">
+                                                                                    @if (ViewBag.userrole == "admin" && ViewBag.getpm2[i + 1].api_name != "Login_Logout" && ViewBag.getpm2[i + 1].api_name != "ManageAPI"){
+                                                                                        <button id="@pm2start" type="button" class="btn btn-block btn-primary border border-light" name="pm2Start" value="PM2_Start" title="Start @ViewBag.getpm2[i + 1].api_name service" onclick='actionMSAPI("@ViewBag.getpm2[i + 1].status","@ViewBag.getpm2[i + 1].id", this.id)'>
+                                                                                            <i id="@pm2startaction" class="fas fa-play"></i>
+                                                                                            <i id="@pm2startspin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                                                                                        </button>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <button type="button" class="btn btn-block btn-primary border border-light" disabled>
+                                                                                            <i class="fas fa-play"></i>
+                                                                                        </button>
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @* error *@
+                                                                    <div class='info-box pm2list red-background'>
+                                                                        <span class="info-box-icon"><i class="fas fa-wrench text-light"></i></span>
+                                                                        <div class="col-5">
+                                                                            <span class="info-box-text text-light"><b>@ViewBag.getpm2[i + 1].api_name</b></span>
+                                                                            <span class="info-box-text text-light">Error</span>
+                                                                        </div>
+                                                                        <div class="info-box-content">
+                                                                            <div class="col-7" style="margin-top: 3%; margin-left:40%;">
+                                                                                <span class="info-box-more">
+                                                                                    <button type="button" class="btn btn-block btn-primary border border-light" value="PM2_Error" title="@ViewBag.getpm2[i + 1].api_name service error" disabled>
+                                                                                        <i class="fas fa-play"></i>
+                                                                                    </button>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                </div>
+                                                            }
+                                                    </div>
+                                                    }
+                                                }
+                                                
+                                            </form>
+                                        }
+                                }
+
+                                <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+                                @if (ViewBag.subpage == "PO")
+                                {
+                                    @*<div id="menu2" class="">*@
+                                        @using (Html.BeginForm("O_StationOperation", "StationOperation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            var countmodel = ViewBag.command.Length;
+                                            countmodel = countmodel / 3;
+                                            <br>
+                                            <form role="form">
+                                                <div class="row clearfix" style="margin-right: 1.5%;">
+                                                    <div class="col-md-2"><h4>Pump Operation</h4></div>
+                                                </div>
+                                                <br>
+                                                <div class="row clearfix">
+                                                    <div class="col-md-3"><h6>Last Update: @Convert.ToDateTime(DateTime.Now).ToString("dd/MM/yyyy HH:mm:ss")</h6></div>
+                                                </div>
+                                                <hr>
+                                                <div class="row clearfix">
+                                                    <label style="margin-top:0.5%; margin-left:0.5%"><b>All Pump Commands: </b></label>
+                                                    <div class="col-md-1">
+                                                        <button type="submit" class="btn btn-block btn-outline-primary" name="submitButton" value="Page_Reload" title="Reload page"><i class="fas fa-sync"></i></button>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        @if (countmodel > 0)
+                                                        {
+                                                            <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="All_Clear" title="Clear all commands"><i class="fas fa-eraser"></i></button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if (countmodel > 0)
+                                                {
+                                                    <hr>
+                                                    @for (int i = 0; i < countmodel; i = i + 2)
+                                                    {
+                                                        <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                                                            <div class="col-md-6 col-sm-6 col-4">
+                                                                <div class="info-box" style="background: #f8f9fa linear-gradient(180deg,#f8f9fa,#f8f9fa) repeat-x">
+                                                                    <span class="info-box-icon"><i class="fas fa-gas-pump"></i></span>
+                                                                    <div class="col-8">
+                                                                        <span class="info-box-text"><b>Pump @ViewBag.command[i, 0]</b></span>
+                                                                        <span class="info-box-text">Next Command: @ViewBag.command[i, 1]</span>
+                                                                        <span class="info-box-text">Count in Queue: @ViewBag.command[i, 2]</span>
+                                                                    </div>
+                                                                    <div class="info-box-content">
+                                                                        <div class="col-12" style="margin-top: 11%;">
+                                                                            <span class="info-box-more">
+                                                                                <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="@ViewBag.command[i, 0]" title="Clear Pump @ViewBag.command[i, 0] command(s)"><i class="fas fa-eraser"></i></button>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @if ((i + 1) < countmodel)
+                                                            {
+                                                                <div class="col-md-6 col-sm-6 col-4">
+                                                                    <div class="info-box" style="background: #f8f9fa linear-gradient(180deg,#f8f9fa,#f8f9fa) repeat-x">
+                                                                        <span class="info-box-icon"><i class="fas fa-gas-pump"></i></span>
+                                                                        <div class="col-8">
+                                                                            <span class="info-box-text"><b>Pump @ViewBag.command[i + 1, 0]</b></span>
+                                                                            <span class="info-box-text">Next Command: @ViewBag.command[i + 1, 1]</span>
+                                                                            <span class="info-box-text">Count in Queue: @ViewBag.command[i + 1, 2]</span>
+                                                                        </div>
+                                                                        <div class="info-box-content">
+                                                                            <div class="col-12" style="margin-top: 11%;">
+                                                                                <span class="info-box-more">
+                                                                                    <button type="submit" class="btn btn-block btn-primary" name="submitButton" value="@ViewBag.command[i + 1, 0]" title="Clear Pump @ViewBag.command[i + 1, 0] command(s)"><i class="fas fa-eraser"></i></button>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                            </form>
+                                        }
+                                    @*</div>*@
+                                }
+                            @*</div>*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</section>
+
+@if (ViewBag.SOmessage == null || ViewBag.SOmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("@ViewBag.SOmessage");
+            };
+        </script>
+    }
+}
+
+@*@if (ViewBag.tabinpage == null || ViewBag.tabinpage == "")
+{
+    <script type="text/javascript">
+        document.getElementById("tab1").className = "nav-link active changetextcolor";
+        document.getElementById("tab2").className = "nav-link changetextcolor";
+        document.getElementById("menu1").className = "tab-pane fade show active";
+        document.getElementById("menu2").className = "tab-pane fade";
+    </script>
+}
+else if (ViewBag.tabinpage == "PumpOperation")
+{
+    <script type="text/javascript">
+        document.getElementById("tab1").className = "nav-link changetextcolor";
+        document.getElementById("tab2").className = "nav-link active changetextcolor";
+        document.getElementById("menu1").className = "tab-pane fade";
+        document.getElementById("menu2").className = "tab-pane fade show active";
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        document.getElementById("tab1").className = "nav-link active changetextcolor";
+        document.getElementById("tab2").className = "nav-link changetextcolor";
+        document.getElementById("menu1").className = "tab-pane fade show active";
+        document.getElementById("menu2").className = "tab-pane fade";
+    </script>
+}*@
+
+<script type="text/javascript">
+
+    const disDetail = (disres) => {
+        var status = (disres == 'active') ? 'Stop' : 'Start';
+        $(".dislist").remove();
+        $("#area_dis").append(`
+            <div class="info-box dislist ${(disres == 'active') ? 'green-background' : 'red-background'}">
+                <span class="info-box-icon text-light"><i class="fas fa-gas-pump"></i></span>
+                <div class="col-5">
+                    <span class="info-box-text text-light"><b>Dispenser</b></span>
+                    <span class="info-box-text text-light">${(disres == 'active') ? 'Running' : 'Stopped'}</span>
+                </div>
+                <div class="info-box-content">
+                    <div id="dis${status}Area" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                        <span class="info-box-more">
+                            <button id="dis${status}" type="button" class="btn btn-block btn-primary border border-light" name="dis${status}" value="Dis_${status}" title="${status} dispenser service" onclick='actionMS("Dis_${status}", "dis${status}")'>
+                                <i id="dis${status}Action" class="fas fa-${(disres == 'active') ? 'stop' : 'play'}"></i>
+                                <i id="dis${status}Spin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    const monDetail = (monres) => {
+        var status = (monres == 'active') ? 'Stop' : 'Start';
+        $(".monlist").remove();
+        $("#area_mon").append(`
+            <div class="info-box monlist ${(monres == 'active') ? 'green-background' : 'red-background'}">
+                <span class="info-box-icon text-light"><i class="fas fa-desktop"></i></span>
+                <div class="col-5">
+                    <span class="info-box-text text-light"><b>Monitor</b></span>
+                    <span class="info-box-text text-light">${(monres == 'active') ? 'Running' : 'Stopped'}</span>
+                </div>
+                <div class="info-box-content">
+                    <div id="mon${status}Area" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                        <span class="info-box-more">
+                            <button id="mon${status}" type="button" class="btn btn-block btn-primary border border-light" name="mon${status}" value="Mon_${status}" title="${status} monitor service" onclick='actionMS("Mon_${status}", "mon${status}")'>
+                                <i id="mon${status}Action" class="fas fa-${(monres == 'active') ? 'stop' : 'play'}"></i>
+                                <i id="mon${status}Spin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    const tgDetail = (tgres) => {
+        var status = (tgres == 'active') ? 'Stop' : 'Start';
+        $(".tglist").remove();
+        $("#area_tg").append(`
+            <div class="info-box tglist ${(tgres == 'active') ? 'green-background' : 'red-background'}">
+                <span class="info-box-icon text-light"><i class="fas fa-tachometer-alt"></i></span>
+                <div class="col-5">
+                    <span class="info-box-text text-light"><b>Tank Gauge</b></span>
+                    <span class="info-box-text text-light">${(tgres == 'active') ? 'Running' : 'Stopped'}</span>
+                </div>
+                <div class="info-box-content">
+                    <div id="tg${status}Area" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                        <span class="info-box-more">
+                            <button id="tg${status}" type="button" class="btn btn-block btn-primary border border-light" name="tg${status}" value="Tg_${status}" title="${status} tank gauge service" onclick='actionMS("Tg_${status}", "tg${status}")'>
+                                <i id="tg${status}Action" class="fas fa-${(tgres == 'active') ? 'stop' : 'play'}"></i>
+                                <i id="tg${status}Spin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    const gaiaDetail = (gaiares) => {
+        var status = (gaiares == 'active') ? 'Stop' : 'Start';
+        $(".gaialist").remove();
+        $("#area_gaia").append(`
+            <div class="info-box gaialist ${(gaiares == 'active') ? 'green-background' : 'red-background'}">
+                <span class="info-box-icon"><img src="../../dist/img/logo-white.png" alt="GAIA Logo" width="70%"></span>
+                <div class="col-5">
+                    <span class="info-box-text text-light"><b>GAIA</b></span>
+                    <span class="info-box-text text-light">${(gaiares == 'active') ? 'Running' : 'Stopped'}</span>
+                </div>
+                <div class="info-box-content">
+                    <div id="gaia${status}Area" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                        <span class="info-box-more">
+                            <button id="gaia${status}" type="button" class="btn btn-block btn-primary border border-light" name="gaia${status}" value="Gaia_${status}" title="${status} Gaia service" onclick='actionMS("Gaia_${status}", "gaia${status}")'>
+                                <i id="gaia${status}Action" class="fas fa-${(gaiares == 'active') ? 'stop' : 'play'}"></i>
+                                <i id="gaia${status}Spin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    const updateDetail = (updateres) => {
+        var status = (updateres == 'active') ? 'Stop' : 'Start';
+        $(".updatelist").remove();
+        $("#area_update").append(`
+            <div class="info-box updatelist ${(updateres == 'active') ? 'green-background' : 'red-background'}">
+                <span class="info-box-icon text-light"><i class="fas fa-arrow-alt-circle-down"></i></span>
+                <div class="col-5">
+                    <span class="info-box-text text-light"><b>Update</b></span>
+                    <span class="info-box-text text-light">${(updateres == 'active') ? 'Running' : 'Stopped'}</span>
+                </div>
+                <div class="info-box-content">
+                    <div id="update${status}Area" class="col-7" style="margin-top: 3%; margin-left:40%;">
+                        <span class="info-box-more">
+                            <button id="update${status}" type="button" class="btn btn-block btn-primary border border-light" name="update${status}" value="Update_${status}" title="${status} Update service" onclick='actionMS("Update_${status}", "update${status}")'>
+                                <i id="update${status}Action" class="fas fa-${(updateres == 'active') ? 'stop' : 'play'}"></i>
+                                <i id="update${status}Spin" class="spinner-border text-light d-none" style="width: 1.3rem; height: 1.3rem;" role="status"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    const timeDetail = (timeres) => {
+        $(".timelist").remove();
+        $("#area_time").append(`
+            <div class="col-md-3 timelist"><h6>Last Update: ${timeres}</h6></div>
+        `)
+    }
+
+    var myVarDis = setInterval(myFuncDis, 300000);
+
+    var myVarMon = setInterval(myFuncMon, 300000);
+
+    var myVarTg = setInterval(myFuncTg, 300000);
+
+    var myVarGaia = setInterval(myFuncGaia, 300000);
+
+    var myVarUpdate = setInterval(myFuncUpdate, 300000);
+
+    var myVarTime = setInterval(myFuncTime, 300000);
+
+    var myVarPM2 = setInterval(myFuncPM2, 300000);
+
+    function myFuncDis() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateDispenserStatus"
+        }).done(function (disres) {
+            disDetail(disres);
+        });
+    }
+
+    function myFuncMon() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateMonitorStatus"
+        }).done(function (monres) {
+            monDetail(monres);
+        });
+    }
+
+    function myFuncTg() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateTankgaugeStatus"
+        }).done(function (tgres) {
+            tgDetail(tgres);
+        });
+    }
+
+    function myFuncGaia() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateGaiaStatus"
+        }).done(function (gaiares) {
+            gaiaDetail(gaiares);
+        });
+    }
+
+    function myFuncUpdate() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateUpdateStatus"
+        }).done(function (updateres) {
+            updateDetail(updateres);
+        });
+    }
+
+    function myFuncTime() {
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/UpdateTime"
+        }).done(function (timeres) {
+            timeDetail(timeres);
+        });
+    }
+
+    function myFuncPM2() {
+        if("@ViewBag.subpage" == "MSAPI"){
+            window.location.href = '@Url.Action("StationOperation", "StationOperation",new { subpage = "MSAPI" })';
+        }
+    }
+
+    function actionMS(submitButton, buttonid) {
+        document.getElementById(buttonid).disabled = true; 
+        document.getElementById(buttonid + "Action").classList.add("d-none");
+        document.getElementById(buttonid + "Spin").classList.remove("d-none");
+        
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/S_StationOperation",
+            data: { submitButton : submitButton }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("StationOperation", "StationOperation",new { subpage = "MS" })';
+        })
+    }
+
+    function actionMSAPI(status, idapi, buttonid) {
+        document.getElementById(buttonid).disabled = true; 
+        document.getElementById(buttonid + "Action").classList.add("d-none");
+        document.getElementById(buttonid + "Spin").classList.remove("d-none");
+
+        var command = status == "stopped" ? "start": "stop";
+        
+        $.ajax({
+            type: "POST",
+            url: "../StationOperation/StartStopPM2",
+            data: { command: command, idapi: idapi }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("StationOperation", "StationOperation",new { subpage = "MSAPI" })';
+        })
+    }
+
+    function RestoreAPI(buttonid) {
+        $.bsAlert.confirm("Do you want to restore lost api ?", function () {
+            document.getElementById(buttonid).disabled = true; 
+            document.getElementById(buttonid + "Action").classList.add("d-none");
+            document.getElementById(buttonid + "Spin").classList.remove("d-none");
+
+            $.ajax({
+                type: "POST",
+                url: "../StationOperation/RestoreAPI",
+            }).done(function (res) {
+                window.location.href = '@Url.Action("StationOperation", "StationOperation",new { subpage = "MSAPI" })';
+            })
+        });
+    }
+
+    function RestartAllAPI(buttonid) {
+        $.bsAlert.confirm("Do you want to restart all api ?", function () {
+            document.getElementById(buttonid).disabled = true; 
+            document.getElementById(buttonid + "Action").classList.add("d-none");
+            document.getElementById(buttonid + "Spin").classList.remove("d-none");
+
+            $.ajax({
+                type: "POST",
+                url: "../StationOperation/RestartAllAPI",
+            }).done(function (res) {
+                window.location.href = '@Url.Action("StationOperation", "StationOperation",new { subpage = "MSAPI" })';
+            })
+        });
+    }
+
+    function ReloadPage(subpage) {
+        var action = '@Url.Action("StationOperation", "StationOperation",new { subpage = "_subpage_" })';
+        var action_page = action.replace("_subpage_", subpage);
+       
+        window.location.href = action_page;
+    }
+
+</script>

@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Lavender Config</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Theme style -->
+    <!-- Font Awesome -->
+    <!-- Ionicons (2) -->
+    <!-- DataTables -->
+    <!-- Theme style -->
+    <!-- Datetimepicker -->
+    <!-- Flaticon -->
+    <!-- Favicon icon -->
+    <!-- Bootstrap Alert -->
+
+    <link rel="stylesheet" href="~/dist/css/adminlte.css">
+    <link rel="stylesheet" href="~/bower_components/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/bower_components/bootstrap-icons/font/bootstrap-icons.css">
+    @*<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">*@
+    <link rel="stylesheet" href="~/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/bower_components/datatables-bs4/css/dataTables.bootstrap4.css">
+    @* <link rel="stylesheet" href="~/dist/css/adminlte.css"> *@
+    @* <link rel="stylesheet" href="~/css/picker/bootstrap-material-datetimepicker.css"> *@
+    @* <link rel="stylesheet" href="~/bower_components/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css"> *@
+    <link rel="stylesheet" href="~/bower_components/daterangepicker-master/daterangepicker.css">
+    <link rel="stylesheet" href="~/assets/fonts/flaticon/font/flaticon.css">
+    <link rel="shortcut icon" href="~/assets/img/LavenderWebIcon.ico" type="image/x-icon">
+    <link href="~/dist/css/bootstrap-alert.css" rel="stylesheet">
+
+    <style>
+
+        .brand-link-sm {
+            display: none;
+        }
+
+        .sidebar-collapse .brand-link-sm {
+            display: block;
+        }
+
+        .sidebar-collapse .brand-link {
+            display: none;
+        }
+
+        .login-21 .form-box {
+            width: 100%;
+        }
+
+        .login-21 .login-inner-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-21 .login-inner-form .form-box {
+            float: left;
+            width: 100%;
+            position: relative;
+        }
+
+        .login-21 .login-inner-form .form-box input {
+            float: left;
+            width: 100%;
+            padding: 11px 40px 11px 15px;
+        }
+
+        .login-21 .login-inner-form .form-box i {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            font-size: 19px;
+            color: #717171;
+        }
+
+        /* Link Font Color */
+
+        .changetextcolor {
+            color: #214990;
+        }
+
+        /* Link Font Color */
+
+        /* Normal Weight */
+
+        .normalweight {
+            font-weight: normal !important;
+        }
+
+        /* Normal Weight */
+
+        /* for -lg */
+
+        .custom-switch.custom-switch-lg .custom-control-label {
+            padding-left: 2rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .custom-switch.custom-switch-lg .custom-control-label::before {
+            height: 1.5rem;
+            width: calc(2rem + 0.75rem);
+            border-radius: 3rem;
+        }
+
+        .custom-switch.custom-switch-lg .custom-control-label::after {
+            width: calc(1.5rem - 4px);
+            height: calc(1.5rem - 4px);
+            border-radius: calc(2rem - (1.5rem / 2));
+        }
+
+        .custom-switch.custom-switch-lg .custom-control-input:checked ~ .custom-control-label::after {
+            transform: translateX(calc(1.5rem - 0.25rem));
+        }
+
+        /* for -lg */
+        
+    </style>
+    <!-- Google Font: Source Sans Pro -->
+    @*<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">*@
+    <link href="~/css/sourcesanspro.css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    @RenderSection("Styles", required: false)
+    @RenderSection("scripts", required: false)
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-dark navbar-primary" style="background: rgb(17, 49, 100)">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars" style="color:white"></i></a>
+                </li>
+            </ul>
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!--  Dropdown Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="fas fa-user" style="color:white"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right p-0">
+                        <a href="@Url.Action("Logout", "Home")" class="dropdown-item active">
+                            <i class="fas fa-running" style="color:white"></i> Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4 overflow-auto" style="background: rgb(17, 49, 100); position:fixed; max-height: 100%">
+            <!-- Brand Logo -->
+            <a href="@Url.Action("HomePage", "Home")" class="brand-link">
+                <img src="~/dist/img/logo.png"
+                     alt="Lavender Logo"
+                     style=" width: 120px;">
+            </a>
+            <a href="@Url.Action("HomePage", "Home")" class="brand-link-sm">
+                <img src="~/dist/img/logo-sm.png"
+                     alt="Lavender Logo-sm"
+                     style=" width: 120px; margin-top: 10px; margin-left:10px">
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/dist/img/user-logo.png" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        @*<a href="@Url.Action("HomePage", "Home")" class="d-block">@ViewBag.username</a>*@<span style="color: #C2C7D0">@ViewBag.username</span>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    @Html.Partial("_MainMenu")
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            @RenderBody()
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer" style="font-size: 13px">
+            @*<strong>Copyright &copy; 2019-@DateTime.Now.Year <a class="changetextcolor" href="https://www.pttdigital.com">PTT Digital Solution Co.,Ltd.</a></strong> All rights reserved.*@
+            Copyright &copy; @DateTime.Now.Year <strong>PTT Digital Solution Co.,Ltd.</strong> All rights reserved.
+        </footer>
+    </div>
+
+    <!-- jQuery -->
+    <!-- Popper -->
+    <!-- Bootstrap 4 -->
+    <!-- bs-custom-file-input -->
+    <!-- DataTables (2) -->
+    <!-- AdminLTE App -->
+    <!-- AdminLTE for demo purposes -->
+    <!-- MomentJS (2) -->
+    <!-- Datetimepicker -->
+    <!-- Bootstrap Alert -->
+
+    <script src="~/bower_components/jquery/jquery.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/bower_components/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/bower_components/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script src="~/bower_components/datatables/jquery.dataTables.js"></script>
+    <script src="~/bower_components/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/dist/js/demo.js"></script>
+    @*<script src="https://momentjs.com/downloads/moment.js"></script>*@
+    <script src="~/js/moment.js"></script>
+    @* <script src="~/js/picker/bootstrap-material-datetimepicker.js"></script>
+    <script src="~/bower_components/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script> *@
+    <script src="~/bower_components/daterangepicker-master/daterangepicker.js"></script>
+    <script src="~/dist/js/bootstrap-alert.js"></script>
+    <script src="~/js/jspdf.min.js"></script>
+    @*<script src="~/js/jspdf.customfonts.min.js"></script>
+    <script src="~/js/defaultVFS.js"></script>
+    <script src="~/js/jspdf/jspdf.es.min.js"></script>*@
+    <script src="~/js/jspdf/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Datatable Button -->
+    <script src="~/bower_components/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/bower_components/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/bower_components/jszip/jszip.min.js"></script>
+    @* <script src="~/bower_components/pdfmake/pdfmake.min.js"></script> *@
+    @* <script src="~/bower_components/pdfmake/vfs_fonts.js"></script> *@
+    <script src="~/bower_components/datatables-buttons/js/buttons.html5.min.js"></script>
+    @* <script src="~/bower_components/datatables-buttons/js/buttons.print.min.js"></script> *@
+
+    <script>
+        $(function () {
+            //1 page table
+            $("#example1").DataTable(
+                {
+                    "lengthChange": false,
+                    "searching": false,
+                    "info": false,
+                    "ordering": false,
+                    "paging": false,
+                }
+            );
+            //many page table
+            $("#example2").DataTable(
+                {
+                    "lengthChange": true,
+                    "searching": false,
+                    "info": true,
+                    "ordering": false
+                }
+            );
+        });
+
+        @* $(function () {
+            var previousDate = new Date();
+            previousDate.setMonth(previousDate.getMonth() - 6);
+            var now = new Date();
+            $('.datepicker').bootstrapMaterialDatePicker({
+                format: 'DD-MM-YYYY',
+                clearButton: false,
+                weekStart: 1,
+                minDate: previousDate,
+                maxDate: now,
+                time: true
+            });
+
+            $('.time-end').bootstrapMaterialDatePicker({
+                date: false,
+                format: 'HH:mm',
+                clearButton: false
+            });
+
+            $('.time-start').bootstrapMaterialDatePicker({
+                date: false,
+                format: 'HH:mm',
+                clearButton: false
+            })
+        });
+
+        $(".time-start").datetimepicker({
+            format: "HH:mm",
+            icons: {
+                up: "fa fa-chevron-up",
+                down: "fa fa-chevron-down"
+            },
+            toolbarPlacement: 'bottom',
+            showClose: true,
+            showClear: true
+        });
+
+        $(".time-end").datetimepicker({
+            format: "HH:mm",
+            icons: {
+                up: "fa fa-chevron-up",
+                down: "fa fa-chevron-down"
+            },
+            toolbarPlacement: 'bottom',
+            showClose: true,
+            showClear: true
+        }); *@
+
+        $(function() {
+            var previousDate = new Date();
+            previousDate.setMonth(previousDate.getMonth() - 6);
+            var now = new Date();
+
+            $('.datepicker').daterangepicker({
+                timePicker: true,
+                timePicker24Hour: true,
+                @* startDate: moment().startOf('hour'),
+                endDate: moment().startOf('hour').add(32, 'hour'), *@
+                minDate: previousDate,
+                maxDate: now,
+                locale: {
+                    format: 'DD-MM-YYYY HH:mm'
+                }
+            });
+        });
+    </script>
+
+</body>
+</html >

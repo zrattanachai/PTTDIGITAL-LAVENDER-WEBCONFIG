@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "LavenderConfig": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "LavenderConfig/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    },
+    "Asp_net_Core_Project_with_Admin_Template_Setup": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5003"
+    }
+  }
+}

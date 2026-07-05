@@ -1,0 +1,612 @@
+﻿@* @model LavenderConfig.Models.Tanks; *@
+@model LavenderConfig.Models.AddTankModel;
+
+@using LavenderConfig.Models;
+
+@{
+    ViewData["Title"] = "Tank";
+    ViewData["SubTitle"] = "Edit Tank";
+}
+
+@*@model LavenderConfig.Models.AddTankModel;*@
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit Tank
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("Tank", "Tank")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+
+        @using (Html.BeginForm("E_Tank", "Tank", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    @Html.HiddenFor(x => x.tank_id, new { id = "txtTankID" })
+                                    <div class="row clearfix">
+                                        <div class="col-md-1">
+                                            <h5>Tank</h5>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.tank_name, "Tank Name: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.tank_name, new { id = "txtTankName", required = "required", autofocus = "", placeholder = "Tank Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.tank_description, "Description: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.tank_description, new { id = "txtDesc", required = "required", placeholder = "Tank Description", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.loop_id, "Port: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlLoop", new SelectList(ViewBag.loopintank, "loop_id", "loop_name", Model.loop_id)
+                                            , new { @class = "form-control", @onchange = "looptohidden()", required = "required" })
+                                            @Html.HiddenFor(x => x.loop_id, new { id = "txtLoop" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.protocol_name, "Protocol: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.protocol_name, new { id = "txtProtocol", required = "required", autofocus = "", placeholder = "null", @class = "form-control", disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.physical_label, "Physical Label: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.physical_label, new { id = "txtPhy", placeholder = "Tank Physical Label", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.capacity, "Capacity: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.capacity, new { id = "txtCapa", required = "required", placeholder = "Tank Capacity", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.grade_id, "Grade: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlGrade", new SelectList(ViewBag.gradeintank, "grade_id", "grade_name")
+                                            , new { @class = "form-control", @onchange = "gradetohidden()", required = "required" })
+                                            @Html.HiddenFor(x => x.grade_id, new { id = "txtGrade" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.tank_type, "Tank Type: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.tank_type, new List<SelectListItem>
+                                            {
+                                            new SelectListItem { Text="Manual Dip", Value="1" },
+                                            new SelectListItem { Text="Automatic Tank Gauge", Value="2" }
+                                            }, new { @class = "form-control", id = "dllTankType", @onchange = "hideProbe()" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix" id="divProbe">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.tank_number, "Probe Number: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.tank_number, new { id = "txtProbe", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix" id="divDia">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.diameter, "Diameter: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.diameter, new { id = "txtDia", required = "required", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0, max = 20, step = 0.01 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.theoretical_volume, "Theoretical Volume: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.theoretical_volume, new { id = "txtTheorVol", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        @*<div class="col-md-1"></div>*@
+                                        <div class="col-md-1">
+                                            <h5>Alarm</h5>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.low_volume_warning, "Low Volume Warning: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.low_volume_warning, new { id = "txtLowVolWar", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.low_volume_alarm, "Low Volume Alarm: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.low_volume_alarm, new { id = "txtLowVolAla", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.high_volume_warning, "High Volume Warning: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.high_volume_warning, new { id = "txtHigVolWar", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.high_volume_alarm, "High Volume Alarm: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.high_volume_alarm, new { id = "txtHigVolAla", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.high_temp_alarm, "High Temperature Alarm: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.high_temp_alarm, new { id = "txtHigTemAla", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.low_temp_alarm, "Low Temperature Alarm: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.low_temp_alarm, new { id = "txtLowTemAla", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.high_water_warning, "Water Volume Warning: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.high_water_warning, new { id = "txtWatVolWar", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.high_water_alarm, "Water Volume Alarm: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.high_water_alarm, new { id = "txtWatVolAla", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.loss_tolerance_volume, "Loss Tolerance Volume: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.loss_tolerance_volume, new { id = "txtLosTolVol", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.gain_tolerance_volume, "Gain Tolerance Volume: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.gain_tolerance_volume, new { id = "txtGaiTolVol", placeholder = "Number Only", @class = "form-control", @type = "number", min = 0 })
+                                        </div>
+                                    </div>
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <br>
+                                        <div class="row clearfix" align="center">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-block btn-outline-info btn-sm" id="btndel" name="btndel" value="btndel" onclick="requiredfunc(this.id)" @*onclick="sentdelete()"*@>Delete</button>
+                                            </div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="requiredfunc(this.id)">Save</button>
+                                            </div>
+                                            <div class="col-md-2" align="center">
+                                                @Html.ActionLink("Cancel", "Tank", "Tank", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        }
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#txtCapa").bind('keyup mouseup', function () {
+            document.getElementById('txtLowVolWar').value = cutDecimal(0.15 * this.value);
+            document.getElementById('txtLowVolAla').value = cutDecimal(0.1 * this.value);
+            document.getElementById('txtHigVolWar').value = cutDecimal(0.9 * this.value);
+            document.getElementById('txtHigVolAla').value = cutDecimal(0.95 * this.value);      
+            document.getElementById('txtWatVolWar').value = cutDecimal(0.9 * this.value);
+            document.getElementById('txtWatVolAla').value = cutDecimal(0.95 * this.value);   
+        });
+    });
+    
+    function hideProbe() {
+        var tanktypevalue = document.getElementById("dllTankType").value;
+        if (tanktypevalue == "1") {
+            document.getElementById("txtProbe").disabled = true;
+            document.getElementById('txtProbe').value = "";
+            document.getElementById("txtDia").disabled = true;
+            document.getElementById('txtDia').value = "";
+        }
+        else {
+            document.getElementById("txtProbe").disabled = false;
+            document.getElementById("txtDia").disabled = false;
+        }
+    }
+
+    var tanktype = (function checktanktype() {
+        var tanktypevalue = document.getElementById("dllTankType").value;
+        if (tanktypevalue == "1") {
+            document.getElementById("txtProbe").disabled = true;
+            document.getElementById('txtProbe').value = "";
+            document.getElementById("txtDia").disabled = true;
+            document.getElementById('txtDia').value = "";
+        }
+        else {
+            document.getElementById("txtProbe").disabled = false;
+            document.getElementById("txtDia").disabled = false;
+        }
+    }());
+
+    function gradetohidden() {
+        var gradevalue = document.getElementById("ddlGrade").value;
+        document.getElementById('txtGrade').value = gradevalue;
+    }
+
+    var defaultgrade = (function setdefaultgrade() {
+        var gradevalue = document.getElementById("txtGrade").value;
+        document.getElementById("ddlGrade").value = gradevalue;
+    }());
+
+    function requiredfunc(getbtnid) {
+        var username = document.getElementById("txtTankName").value;
+
+        if (getbtnid == "btndel") {
+            $.bsAlert.confirm("Do you want to delete " + username + " ?", function () {
+                doRemove();
+            });
+        }
+        else if (getbtnid == "btnedi") {
+            $.bsAlert.confirm("Do you want to update " + username + " ?", function () {
+                sentupdate();
+            });
+        }
+        else {
+
+        }
+    }
+
+    function doRemove() {
+        var input = document.getElementsByTagName("input").length;
+        var select = document.getElementsByTagName("select").length;
+        if (input > 0) {
+            if (select > 0) {
+                for (c = 0; c <= select - 1; c++) {
+                    var checkatt = document.getElementsByTagName("select")[c].hasAttribute("required");
+                    if (checkatt == true) {
+                        document.getElementsByTagName("select")[c].removeAttribute("required");
+                    }
+                    else {
+                    }
+                }
+            }
+            else {
+            }
+
+            for (i = 0; i <= input - 1; i++) {
+                var checkatt = document.getElementsByTagName("input")[i].hasAttribute("required");
+                if (checkatt == true) {
+                    document.getElementsByTagName("input")[i].removeAttribute("required");
+                }
+                else {
+
+                }
+            }
+        }
+        else {
+
+        }
+        sentdelete();
+    }
+
+    function sentdelete() {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtTankID").value;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Tank/DeleteList",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = '@Url.Action("Tank", "Tank")';
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function sentupdate() {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtTankID").value;
+        stringArray[1] = document.getElementById("txtTankName").value;
+
+        if (stringArray[1] == null || stringArray[1] == "") {
+            $.bsAlert.alert("Please fill Tank Name.");
+            return false;
+        }
+        else {
+
+        }
+        stringArray[2] = document.getElementById("txtDesc").value;
+
+        if (stringArray[2] == null || stringArray[2] == "") {
+            $.bsAlert.alert("Please fill Tank Description.");
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[3] = document.getElementById("txtCapa").value;
+
+        if (stringArray[3] == null || stringArray[3] == "") {
+            $.bsAlert.alert("Please fill Capacity with number.");
+            document.getElementById("txtCapa").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[4] = document.getElementById("txtGrade").value;
+        stringArray[5] = document.getElementById("dllTankType").value;
+        stringArray[6] = document.getElementById("txtProbe").value;
+        stringArray[7] = document.getElementById("txtLowVolWar").value;
+
+        if (stringArray[7] == null || stringArray[7] == "") {
+            $.bsAlert.alert("Please fill Low Volume Warning with number.");
+            document.getElementById("txtLowVolWar").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[8] = document.getElementById("txtLowVolAla").value;
+
+        if (stringArray[8] == null || stringArray[8] == "") {
+            $.bsAlert.alert("Please fill Low Volume Alarm with number.");
+            document.getElementById("txtLowVolAla").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[9] = document.getElementById("txtHigVolWar").value;
+
+        if (stringArray[9] == null || stringArray[9] == "") {
+            $.bsAlert.alert("Please fill High Volume Warning with number.");
+            document.getElementById("txtHigVolWar").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[10] = document.getElementById("txtHigVolAla").value;
+
+        if (stringArray[10] == null || stringArray[10] == "") {
+            $.bsAlert.alert("Please fill High Volume Alarm with number.");
+            document.getElementById("txtHigVolAla").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[11] = document.getElementById("txtHigTemAla").value;
+
+        if (stringArray[11] == null || stringArray[11] == "") {
+            $.bsAlert.alert("Please fill High Temperature Alarm with number.");
+            document.getElementById("txtHigTemAla").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[12] = document.getElementById("txtWatVolWar").value;
+
+        if (stringArray[12] == null || stringArray[12] == "") {
+            $.bsAlert.alert("Please fill Water Volume Warning with number.");
+            document.getElementById("txtWatVolWar").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[13] = document.getElementById("txtWatVolAla").value;
+
+        if (stringArray[13] == null || stringArray[13] == "") {
+            $.bsAlert.alert("Please fill Water Volume Alarm with number.");
+            document.getElementById("txtWatVolAla").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[14] = document.getElementById("txtPhy").value;
+
+        stringArray[15] = document.getElementById("txtDia").value;
+
+        var boolDia = new Boolean(document.getElementById("txtDia").disabled);
+
+        if (boolDia == false)
+        {
+            if (stringArray[15] == null || stringArray[15] == "") {
+                $.bsAlert.alert("Please fill Diameter with number.");
+                document.getElementById("txtDia").value = null;
+                return false;
+            }
+            else {
+                if (Number(stringArray[15]) > 20) {
+                    $.bsAlert.alert("Maximun of Diameter is 20.");
+                    document.getElementById("txtDia").value = null;
+                    return false;
+                }
+                else {
+                }
+            }
+        }
+        else
+        {
+        }
+
+        stringArray[16] = document.getElementById("txtLowTemAla").value;
+
+        if (stringArray[16] == null || stringArray[16] == "") {
+            $.bsAlert.alert("Please fill Low Temperature Alarm with number.");
+            document.getElementById("txtLowTemAla").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[17] = document.getElementById("txtLosTolVol").value;
+
+        if (stringArray[17] == null || stringArray[17] == "") {
+            $.bsAlert.alert("Please fill Loss Tolerance Volume with number.");
+            document.getElementById("txtLosTolVol").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[18] = document.getElementById("txtGaiTolVol").value;
+
+        if (stringArray[18] == null || stringArray[18] == "") {
+            $.bsAlert.alert("Please fill Gain Tolerance Volume with number.");
+            document.getElementById("txtGaiTolVol").value = null;
+            return false;
+        }
+        else {
+
+        }
+
+        stringArray[19] = document.getElementById("ddlLoop").value;  
+        stringArray[20] = document.getElementById("txtTheorVol").value;              
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Tank/UpdateList",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = '@Url.Action("Tank", "Tank")';
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function cutDecimal(num) {
+        var split = String(num).split(".");
+        if(split.length == 2){
+            return split[0];
+        }else{
+            return num
+        }
+    }
+
+    function looptohidden() {
+        var loopvalue = document.getElementById("ddlLoop").value;
+        document.getElementById('txtLoop').value = loopvalue;
+
+        var stringArray = new Array();
+        stringArray[0] = loopvalue;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Tank/getprotocol",
+            data: postData,
+            success: function (data) {
+                document.getElementById("txtProtocol").value = data.message;
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+</script>

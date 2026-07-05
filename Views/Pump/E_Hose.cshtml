@@ -1,0 +1,265 @@
+﻿@model LavenderConfig.Models.Hoses;
+@using LavenderConfig.Models;
+
+@{
+    ViewData["Title"] = "Pump";
+    ViewData["SubTitle"] = "Edit Pump";
+    ViewData["SubTitle_1"] = "Edit Hose";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Edit Hose
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("Pump", "Pump")">@ViewData["Title"]</a></li>
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Html.Raw(@Url.Action("E_Pump", "Pump", new { @ID = ViewBag.id, @disID = ViewBag.disid, @loopID = ViewBag.loopid }))">@ViewData["SubTitle"]</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["SubTitle_1"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content container-fluid">
+        @using (Html.BeginForm("E_Hose", "Pump", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- general form elements disabled -->
+                        <div class="card card-primary">
+                            <div class="card-body">
+                                <form role="form">
+                                    <br>
+                                    @Html.HiddenFor(model => model.hose_id, new { id = "txtHoseID" })
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.pump_id, "Pump: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlPump", new SelectList(ViewBag.pumpinhose, "pump_id", "pump_name")
+                                            , new { @class = "form-control", @onchange = "pumptohidden()"/*, required = "required"*/, disabled = "disabled" })
+                                            @Html.HiddenFor(model => model.pump_id, new { id = "txtPump" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.hose_number, "Hose Number: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.hose_number, new { id = "txtHoseNumber", autofocus = "", placeholder = "Number Only", @type = "number", min = 1, @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.grade_id, "Grade: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlGrade", new SelectList(ViewBag.gradeinhose, "grade_id", "grade_name")
+                                            , new { @class = "form-control", @onchange = "gradetohidden()", required = "required" })
+                                            @Html.HiddenFor(model => model.grade_id, new { id = "txtGrade" })
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row clearfix">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-4">@Html.LabelFor(model => model.tank_id, "Tank: ", new { @class = "normalweight" })</div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("ddlTank", new SelectList(ViewBag.tankinhose, "tank_id", "tank_name")
+                                            , new { @class = "form-control", @onchange = "tanktohidden()", required = "required" })
+                                            @Html.HiddenFor(model => model.tank_id, new { id = "txtTank" })
+                                        </div>
+                                    </div>
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <br>
+                                        <div class="row clearfix" align="center">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-block btn-outline-info btn-sm" id="btndel" name="btndel" value="btndel" onclick="requiredfunc(this.id)" @*onclick="sentdelete()"*@>Delete</button>
+                                            </div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2" align="center">
+                                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnedi" name="btnedi" value="btnedi" onclick="requiredfunc(this.id)">Save</button>
+                                            </div>
+                                            <div class="col-md-2" align="center">
+                                                @Html.ActionLink("Cancel", "E_Pump", "Pump", new { ID = @ViewBag.id, disID = ViewBag.disid, loopID = ViewBag.loopid }, new { ID = @ViewBag.id, disID = ViewBag.disid, loopID = ViewBag.loopid, @class = "btn btn-block btn-outline-primary btn-sm" })
+                                            </div>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        }
+    </div>
+    <!-- /.divData -->
+</section>
+
+<script type="text/javascript">
+
+    function pumptohidden() {
+        var pumpvalue = document.getElementById("ddlPump").value;
+        document.getElementById('txtPump').value = pumpvalue;
+    }
+
+    var defaultpump = (function setdefaultpump() {
+        var pumpvalue = document.getElementById("txtPump").value;
+        document.getElementById("ddlPump").value = pumpvalue;
+    }());
+
+    function gradetohidden() {
+        var gradevalue = document.getElementById("ddlGrade").value;
+        document.getElementById('txtGrade').value = gradevalue;
+    }
+
+    var defaultgrade = (function setdefaultgrade() {
+        var gradevalue = document.getElementById("txtGrade").value;
+        document.getElementById("ddlGrade").value = gradevalue;
+    }());
+
+    function tanktohidden() {
+        var tankvalue = document.getElementById("ddlTank").value;
+        document.getElementById('txtTank').value = tankvalue;
+    }
+
+    var defaulttank = (function setdefaulttank() {
+        var tankvalue = document.getElementById("txtTank").value;
+        document.getElementById("ddlTank").value = tankvalue;
+    }());
+
+    function requiredfunc(getbtnid) {
+        var hosenumber = document.getElementById("txtHoseNumber").value;
+
+        if (getbtnid == "btndel") {
+            $.bsAlert.confirm("Do you want to delete Hose Number " + hosenumber + " ?", function () {
+                doRemove();
+            });
+        }
+        else if (getbtnid == "btnedi") {
+            $.bsAlert.confirm("Do you want to update Hose Number " + hosenumber + " ?", function () {
+                sentupdate();
+            });
+        }
+        else {
+
+        }
+    }
+
+    function doRemove() {
+        var input = document.getElementsByTagName("input").length;
+        var select = document.getElementsByTagName("select").length;
+        if (input > 0) {
+            if (select > 0) {
+                for (c = 0; c <= select - 1; c++) {
+                    var checkatt = document.getElementsByTagName("select")[c].hasAttribute("required");
+                    if (checkatt == true) {
+                        document.getElementsByTagName("select")[c].removeAttribute("required");
+                    }
+                    else {
+                    }
+                }
+            }
+            else {
+            }
+
+            for (i = 0; i <= input - 1; i++) {
+                var checkatt = document.getElementsByTagName("input")[i].hasAttribute("required");
+                if (checkatt == true) {
+                    document.getElementsByTagName("input")[i].removeAttribute("required");
+                }
+                else {
+                }
+            }
+        }
+        else {
+        }
+        sentdelete();
+    }
+
+     function sentdelete() {
+        var stringArray = new Array();
+        stringArray[0] = document.getElementById("txtHoseID").value;
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/DeleteListH",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = "@Html.Raw(@Url.Action("E_Pump", "Pump", new { @ID = ViewBag.id, @disID = ViewBag.disid, @loopID = ViewBag.loopid }))";
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+    function sentupdate() {
+
+        var numbers = /^[0-9]+$/;
+
+        var stringArray = new Array();
+
+        stringArray[0] = document.getElementById("txtHoseID").value;
+        stringArray[1] = document.getElementById("txtHoseNumber").value;
+
+        if (stringArray[1] == null || stringArray[1] == "")
+        {
+            $.bsAlert.alert("Hose Number is a number and no less than 1.");
+            document.getElementById("txtHoseNumber").value = null;
+            return false;
+        }
+        else
+        {
+            
+        }
+
+        if (stringArray[1] >= 1 && stringArray[1].match(numbers))
+        {
+            
+        }
+        else
+        {
+            $.bsAlert.alert("Hose Number is a number and no less than 1.");
+            document.getElementById("txtHoseNumber").value = null;
+            return false;
+        }
+
+        stringArray[2] = document.getElementById("txtGrade").value;
+        stringArray[3] = document.getElementById("txtTank").value;
+
+        var postData = { values: stringArray };
+
+        $.ajax({
+            type: "POST",
+            url: "../../Pump/UpdateListH",
+            data: postData,
+            success: function (data) {
+                if (data.status == true) {
+                    window.location.href = "@Html.Raw(@Url.Action("E_Pump", "Pump", new { @ID = ViewBag.id, @disID = ViewBag.disid, @loopID = ViewBag.loopid }))";
+                }
+                else {
+
+                }
+            },
+            dataType: "json",
+            traditional: true
+        });
+    }
+
+</script>

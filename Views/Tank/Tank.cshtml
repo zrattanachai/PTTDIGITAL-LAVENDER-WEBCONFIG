@@ -1,0 +1,454 @@
+﻿@*@model IEnumerable<LavenderConfig.Models.AddTankModel>*@
+
+@using LavenderConfig.Models
+@model Tuple<List<Tanks>, List<Grades>, List<Loops>, List<Protocols>>
+
+@{
+    ViewData["Title"] = "Tank";
+}
+
+@section Styles {
+    <style>
+        .selected {
+            background-color: #214990;
+            color: white;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Tank
+                    <!--<small>Optional description</small>-->
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (ViewBag.userrole != "guest")
+                    {
+                        <div class="card-header">
+                            @*<h3 class="card-title">Tank</h3>*@
+                            <div class="row clearfix">
+                                <div class="col-md-2">
+                                    @Html.ActionLink("Create Tank", "A_Tank", "Tank", null, new { @class = "btn btn-block btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="card-body" @*style="overflow-x: auto"*@>
+                        <table id="tableTank" class="table table-bordered table-striped dataTable text-nowrap" role="grid" style="width: 80%; margin:0 auto">
+                            <thead>
+                                <tr role="row" class="header bg-light-blue">
+                                    <th id="checktankHeader" rowspan="1" colspan="1" class="text-center d-none" style="width: 5%;" onclick="selectTankAll()"><i class="far fa-circle text-primary"></i></th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 13%;">Tank Name</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Description</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Capacity</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Grade</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 20%;">Tank Type</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Probe Number</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Port &nbsp;
+                                    @if (ViewBag.userrole != "guest")
+                                    {
+                                        <span class="fas fa-pen changetextcolor" id="btnediport" name="btnediport" value="btnediport" title = "Edit port" onclick="editPort()" style="cursor: pointer;"></span>
+                                    }
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 15%;">Protocol</th>
+                                    <th rowspan="1" colspan="1" class="text-center" style="width: 10%;">Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableTankBody">
+                                @{
+                                    var countmodel = @Model.Item1.Count();
+                                }
+                                @if (countmodel > 0)
+                                {
+                                    @foreach (var item in Model.Item1)
+                                    {
+                                        <tr role="row" id="row_@item.tank_id"  class="odd row-tank" align="center" onclick="selectTank(this)">
+                                            <td class="d-none checktank"><i class="far fa-circle text-primary"></i></td>
+                                            <td>@item.tank_name</td>
+                                            <td>@item.tank_description</td>
+                                            <td>@item.capacity</td>
+                                            <td>
+                                                @foreach (var itemj in Model.Item2)
+                                                {
+                                                    if (itemj.grade_id == item.grade_id)
+                                                    {
+                                                        @itemj.grade_name
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item.tank_type == 1)
+                                                {
+                                                    <span>Manual Dip</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Automatic Tank Gauge</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item.tank_type == 2)
+                                                {
+                                                    @item.tank_number
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @foreach (var itemk in Model.Item3.Where(i => i.loop_id == item.loop_id))
+                                                {
+                                                    <span>@itemk.loop_name</span>
+                                                    break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @foreach (var itemk in Model.Item3.Where(i => i.loop_id == item.loop_id))
+                                                {
+                                                    @if(@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().Count() > 0){
+                                                        <span>@Model.Item4.Where(i => i.protocol_id == itemk.protocol_id).ToList().FirstOrDefault().protocol_name</span>
+                                                        break;
+                                                    }else
+                                                    {
+                                                       
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="settings">
+                                            @if (ViewBag.userrole != "guest")
+                                            {
+                                                @Html.ActionLink("", "E_Tank", "Tank", new { ID = @item.tank_id }, new { ID = @item.tank_id, @class = "fas fa-cog changetextcolor", title = "Settings" })
+                                            }
+                                            else 
+                                            {
+                                                <span>-</span>
+                                            }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            </tbody>
+                        </table>
+                        <br>
+                        <div id="saveEditPort" class="row clearfix d-none">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-block btn-success btn-sm" id="btnselport" name="btnselport" value="btnselport" onclick="selectPortModal()">Edit port</button>
+                            </div>
+                            <div class="col-md-2">
+                                @Html.ActionLink("Cancel", "Tank", "Tank", null, new { @class = "btn btn-block btn-outline-primary btn-sm" })
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        @* choose port modal*@
+        <div class="modal fade" id="bsPortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+            <div class="modal-dialog modal-dialog-centered" role="document">        
+                <div class="modal-content">            
+                    <div class="modal-header">                
+                        <h5 class="modal-title" id="myModalLabel">Please choose port</h5>                
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                            <span aria-hidden="true">×</span>                
+                            <span class="sr-only">Close</span>                
+                        </button>            
+                    </div>            
+                    <div class="modal-body">     
+                        <table id="tablePort" class="table table-bordered table-hover table-sm dataTable text-nowrap" role="grid" style="width: 100%; margin:0 auto">
+                                <thead>
+                                    <tr role="row" class="header bg-light-blue">
+                                        <th rowspan="1" colspan="1" class="text-center">ID</th>
+                                        <th rowspan="1" colspan="1" class="text-center">Port</th>
+                                        <th rowspan="1" colspan="1" class="text-center">Protocol</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablePortBody" style="cursor: pointer;">
+                                    @{
+                                        var countloop = @Model.Item3.Count();
+                                    }
+                                    @if (countloop > 0)
+                                    {
+                                        <tr role="row" class="odd" align="center" onclick="selectPort(this)">
+                                            <td>0</td>
+                                            <td>null</td>
+                                            <td>null</td>
+                                        </tr>
+                                        @foreach (var itemk in Model.Item3)
+                                        {
+                                            @foreach (var iteml in Model.Item4.Where(i => i.protocol_id == itemk.protocol_id && i.protocol_type == 1))
+                                            {
+                                                <tr role="row" class="odd" align="center" onclick="selectPort(this)">
+                                                    <td>@itemk.loop_id</td>
+                                                    <td>@itemk.loop_name</td>
+                                                    <td>@iteml.protocol_name</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                        </table>
+                    </div>                  
+                </div>    
+            </div>
+        </div>
+
+        @* confirm choose port modal*@
+        <div class="modal fade" id="bsConfirmEditPortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+            <div class="modal-dialog modal-dialog-centered" role="document">        
+                <div class="modal-content">            
+                    <div class="modal-header">                
+                        <h5 class="modal-title" id="confirmEditPortText"></h5>                
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                            <span aria-hidden="true">×</span>                
+                            <span class="sr-only">Close</span>                
+                        </button>            
+                    </div>            
+                    <div class="modal-body">                
+                        <table id="tableSelectedTank" class="table table-bordered table-sm text-nowrap" role="grid" style="width: 100%; margin:0 auto"></table>        
+                    </div>            
+                    <div class="modal-footer">                
+                        <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="deleteModal">Cancel</button>                
+                        <button type="button" id="bsSaveBtn" class="btn btn-outline-success" onclick="confirmEditPort()">OK</button>            
+                    </div>        
+                </div>    
+            </div>
+        </div>
+</section>
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    var tableTank, tablePort, tableSelectedTank;
+    var selectedTank = [];
+
+    $(function () {
+        tableTank = $("#tableTank").DataTable(
+            {
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+                "drawCallback": function( settings ) {
+                    if(document.getElementById("btnediport").classList.contains("open-ediport")){
+                        document.getElementById("checktankHeader").classList.remove("d-none");
+
+                        for(var i = 0; i < document.getElementsByClassName("checktank").length; i++){
+                            document.getElementsByClassName("checktank")[i].classList.remove("d-none");
+                        }
+                    }
+                }
+            }
+        );
+
+        tablePort = $("#tablePort").DataTable(
+            {
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+            }
+        );
+
+        $('#bsConfirmEditPortModal').on('hidden.bs.modal', function (e) {
+            tableSelectedTank.clear();
+            tableSelectedTank.destroy();
+        })
+    });
+
+    function editPort() {
+        if(document.getElementById("btnediport").classList.contains("open-ediport")){
+            window.location.href = '@Url.Action("Tank", "Tank")';
+        }else{
+            document.getElementById("btnediport").classList.add("text-danger");
+            document.getElementById("btnediport").title = "Cancel edit port";
+            document.getElementById("btnediport").classList.add("open-ediport");
+            document.getElementById("tableTank").classList.remove("table-striped");
+            document.getElementById("tableTankBody").style.cursor = "pointer"; 
+            document.getElementById("saveEditPort").classList.remove("d-none");
+            document.getElementById("checktankHeader").classList.remove("d-none");
+            document.getElementById("checktankHeader").style.cursor = "pointer"; 
+
+            for(var i = 0; i < document.getElementsByClassName("checktank").length; i++){
+                document.getElementsByClassName("checktank")[i].classList.remove("d-none");
+            }
+        }
+    }
+
+    function selectTank(row) {
+        if(document.getElementById("btnediport").classList.contains("open-ediport")){
+            $(row).toggleClass("selected");
+            $(row).children(".checktank").children().toggleClass("far fas");
+            $(row).children(".checktank").children().toggleClass("fa-circle fa-check-circle");
+            $(row).children(".checktank").children().toggleClass("text-primary text-light");
+            $(row).children(".settings").children().toggleClass("changetextcolor text-light");
+            
+            var id = $(row).children(".settings").children().attr('id');
+            var index = $.inArray(id, selectedTank);
+
+            if(index === -1){
+                selectedTank.push(id);
+            }else{
+                selectedTank.splice(index, 1);
+            }
+        }
+    }
+
+    function selectTankAll() {
+        $("#checktankHeader").children().toggleClass("far fas");
+        $("#checktankHeader").children().toggleClass("fa-circle fa-check-circle")
+        $("#checktankHeader").toggleClass("checktank-all");
+
+        var rowtank = document.getElementsByClassName("row-tank");
+
+        if(document.getElementById("checktankHeader").classList.contains("checktank-all")){ //if check all
+            for (let i = 0; i < rowtank.length; i++) {
+                if(!rowtank[i].classList.contains("selected")){
+                    $("#"+rowtank[i].id).toggleClass("selected");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("far fas");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("fa-circle fa-check-circle");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("text-primary text-light");
+                    $("#"+rowtank[i].id).children(".settings").children().toggleClass("changetextcolor text-light");
+
+                    var id = $("#"+rowtank[i].id).children(".settings").children().attr('id');
+                    var index = $.inArray(id, selectedTank);
+
+                    if(index === -1){
+                        selectedTank.push(id);
+                    }else{
+                        selectedTank.splice(index, 1);
+                    }
+                }
+            } 
+        }else{ //if uncheck all
+            for (let i = 0; i < rowtank.length; i++) {
+                if(rowtank[i].classList.contains("selected")){
+                    $("#"+rowtank[i].id).toggleClass("selected");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("far fas");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("fa-circle fa-check-circle");
+                    $("#"+rowtank[i].id).children(".checktank").children().toggleClass("text-primary text-light");
+                    $("#"+rowtank[i].id).children(".settings").children().toggleClass("changetextcolor text-light");
+
+                    var id = $("#"+rowtank[i].id).children(".settings").children().attr('id');
+                    var index = $.inArray(id, selectedTank);
+
+                    if(index === -1){
+                        selectedTank.push(id);
+                    }else{
+                        selectedTank.splice(index, 1);
+                    }
+                }
+            } 
+        }
+    }
+
+    function selectPort(row) {
+        $("#tablePortBody tr").removeClass("selected");
+        $(row).toggleClass("selected");
+
+        var confirmEditPortText = "Change port of "+tableTank.rows('.selected').data().length+" tanks to <b>"+tablePort.rows('.selected').data()[0][1] + "</b> ?";
+        document.getElementById("confirmEditPortText").innerHTML = confirmEditPortText;
+        showSelectedTank();
+        $('#bsConfirmEditPortModal').modal("show");
+    }
+
+    function selectPortModal() {
+        if(tableTank.rows('.selected').data().length > 0){
+            $("#tablePortBody tr").removeClass("selected");
+            $("#bsPortModal").modal("show");
+        }else{
+            $.bsAlert.alert("Please select a tank for edit port.");
+        }
+    }
+
+    function confirmEditPort() {
+        var loop_id = tablePort.rows('.selected').data()[0][0];   
+
+        $.ajax({
+            type: "POST",
+            url: "../Tank/editPort",
+            data: { selectedTank : selectedTank, loop_id : loop_id }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("Tank", "Tank")';
+        })
+    }
+
+    function showSelectedTank(){
+        tableSelectedTank = $("#tableSelectedTank").DataTable({
+                "ajax": {
+                    "url": "../Tank/GetSelectedTank",
+                    "type": "POST",
+                    "dataSrc": '',
+                    "data" : { selectedTank: selectedTank},
+                },
+                "lengthChange": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "paging": false,
+                @* "order": [[ 0, "desc" ]], *@
+                "columns": [
+                    @*
+                    {
+                        data: "Created", title: "Create Date", render: function (data, type, row) {
+                            return data == null ? "" : data.replace("T"," ");
+                        }
+                    }, *@
+                    { data: "tank_name" , title: "Tank Name"},
+                    { data: "loop_name" , title: "Port"},
+                    { data: "protocol_name" , title: "Protocol"},
+                ] ,
+            });
+
+        tableSelectedTank.columns.adjust().draw();
+    }
+
+</script>
+
+@if (ViewBag.tankmessage == null || ViewBag.tankmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                //alert("@ViewBag.tankmessage");
+                $.bsAlert.alert("@ViewBag.tankmessage");
+            };
+        </script>
+    }
+}

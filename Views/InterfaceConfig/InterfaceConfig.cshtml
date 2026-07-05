@@ -1,0 +1,692 @@
+﻿@using LavenderConfig.Models
+@using System.Linq;
+
+@{
+    ViewData["Title"] = "InterfaceConfig";
+}
+
+@section Styles{
+    <style>
+        .action-button:hover {
+            cursor: pointer;
+            opacity: 90%;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>
+                    Interface Configuration
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="changetextcolor" href="@Url.Action("HomePage", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" style="text-decoration-line: underline; text-decoration-style: double;">Interface Configuration</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content container-fluid">
+        <div id="divSpin" style="display:none;">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+                <h5>Loading...</h5>
+            </div>
+        </div>
+
+        @if (ViewBag.userrole == "admin" && ViewBag.userdepartment == "ATA/A"){
+            <div id="divData">
+                <div class="card card-solid">
+                    <div class="card-body pb-0">
+                        <div class="row pb-1">
+                            <div class="col-7">
+                                <h4>All Interface &nbsp;<span class="fas fa-redo changetextcolor btn-refresh" id="btnRefresh" name="btnRefresh" value="btnRefresh" title = "Refresh" onclick="RefreshPage()" style="cursor: pointer;"></span></h4>
+                            </div>
+                            <div class="col-5 text-danger text-right">
+                                @* <h4><span class="fas fa-redo changetextcolor btn-refresh" id="btnRefresh" name="btnRefresh" value="btnRefresh" title = "Refresh" onclick="RefreshPage()" style="cursor: pointer;"></span></h4> *@
+                                @if(ViewBag.apiErrorText != "")
+                                {
+                                    <h5>@ViewBag.apiErrorText</h5>
+                                }
+                            </div>
+                        </div>
+                        @* Row 1 *@
+                        <div class="row d-flex align-items-stretch" style="flex-wrap: nowrap; overflow: auto">
+                            @* LAV-LOOP 4 *@
+                            <div class="col-12 col-sm-12 col-md-6 tanklist">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0"></div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-9 text-left">
+                                                <h2 class="lead">
+                                                    <b>LAV-LOOP 4</b>
+                                                </h2>
+                                            </div>
+                                            <div class="col-3 text-right">
+                                                @if(ViewBag.getserial.loop4_serial == null){
+                                                    <i class="btn btn-sm btn-default">
+                                                        Disconnect
+                                                    </i>
+                                                }
+                                                else{
+                                                    <i class="btn btn-sm btn-success">
+                                                        Connected
+                                                    </i>
+                                                }  
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-1"></div>
+                                            <div class="col-4 text-left">
+                                                @if(ViewBag.getserial.loop4_serial == null){
+                                                    <img src="../../dist/img/interface_disconnect.png" alt="" class=" img-fluid">
+                                                }
+                                                else
+                                                {
+                                                    @if(ViewBag.descDuplicate.Contains(ViewBag.getserial.loop4_desc))
+                                                    {
+                                                        <img src="../../dist/img/interface_duplicate.png" alt="" class=" img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="../../dist/img/interface_connected.png" alt="" class=" img-fluid">
+                                                    } 
+                                                }
+                                            </div>
+                                            <div class="col-7 text-left">
+                                                <div class="ml-4 mb-0 text-muted">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            Serial Number:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop4_serial
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pb-2">
+                                                        <div class="col-5">
+                                                            Description:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop4_desc
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        @if(ViewBag.getserial.loop4_serial == null)
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" disabled>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" onclick='ChangeDescPopup("@ViewBag.getserial.loop4_serial")'>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        <div class="col">
+                                                            @if(ViewBag.getPreviousSerial.loop4_serial == null)
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-secondary btn-sm" title="Previous Interface" disabled><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-warning btn-sm" title="Previous Interface" onclick='PreviousInfPopup("@ViewBag.getPreviousSerial.loop4_serial", "@ViewBag.getPreviousSerial.loop4_desc")'><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @* LAV-LOOP 3 *@
+                            <div class="col-12 col-sm-12 col-md-6 tanklist">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0"></div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-9 text-left">
+                                                <h2 class="lead">
+                                                    <b>LAV-LOOP 3</b>
+                                                </h2>
+                                            </div>
+                                            <div class="col-3 text-right">
+                                                @if(ViewBag.getserial.loop3_serial == null){
+                                                    <i class="btn btn-sm btn-default">
+                                                        Disconnect
+                                                    </i>
+                                                }
+                                                else{
+                                                    <i class="btn btn-sm btn-success">
+                                                        Connected
+                                                    </i>
+                                                }  
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-1"></div>
+                                            <div class="col-4 text-left">
+                                                @if(ViewBag.getserial.loop3_serial == null){
+                                                    <img src="../../dist/img/interface_disconnect.png" alt="" class=" img-fluid">
+                                                }
+                                                else
+                                                {
+                                                    @if(ViewBag.descDuplicate.Contains(ViewBag.getserial.loop3_desc))
+                                                    {
+                                                        <img src="../../dist/img/interface_duplicate.png" alt="" class=" img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="../../dist/img/interface_connected.png" alt="" class=" img-fluid">
+                                                    } 
+                                                }
+                                            </div>
+                                            <div class="col-7 text-left">
+                                                <div class="ml-4 mb-0 text-muted">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            Serial Number:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop3_serial
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pb-2">
+                                                        <div class="col-5">
+                                                            Description:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop3_desc
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        @if(ViewBag.getserial.loop3_serial == null)
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" disabled>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" onclick='ChangeDescPopup("@ViewBag.getserial.loop3_serial")'>Change Description</button>
+                                                            </div>  
+                                                        }
+                                                        <div class="col">
+                                                            @if(ViewBag.getPreviousSerial.loop3_serial == null)
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-secondary btn-sm" title="Previous Interface" disabled><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-warning btn-sm" title="Previous Interface" onclick='PreviousInfPopup("@ViewBag.getPreviousSerial.loop3_serial", "@ViewBag.getPreviousSerial.loop3_desc")'><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @* Row 2 *@
+                        <div class="row d-flex align-items-stretch" id="area_tank" style="flex-wrap: nowrap; overflow: auto">
+                            @* LAV-LOOP 2 *@
+                            <div class="col-12 col-sm-12 col-md-6 tanklist">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0"></div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-9 text-left">
+                                                <h2 class="lead">
+                                                    <b>LAV-LOOP 2</b>
+                                                </h2>
+                                            </div>
+                                            <div class="col-3 text-right">
+                                                @if(ViewBag.getserial.loop2_serial == null){
+                                                    <i class="btn btn-sm btn-default">
+                                                        Disconnect
+                                                    </i>
+                                                }
+                                                else{
+                                                    <i class="btn btn-sm btn-success">
+                                                        Connected
+                                                    </i>
+                                                }  
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-1"></div>
+                                            <div class="col-4 text-left">
+                                                @if(ViewBag.getserial.loop2_serial == null){
+                                                    <img src="../../dist/img/interface_disconnect.png" alt="" class=" img-fluid">
+                                                }
+                                                else
+                                                {
+                                                    @if(ViewBag.descDuplicate.Contains(ViewBag.getserial.loop2_desc))
+                                                    {
+                                                        <img src="../../dist/img/interface_duplicate.png" alt="" class=" img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="../../dist/img/interface_connected.png" alt="" class=" img-fluid">
+                                                    } 
+                                                }
+                                            </div>
+                                            <div class="col-7 text-left">
+                                                <div class="ml-4 mb-0 text-muted">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            Serial Number:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop2_serial
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pb-2">
+                                                        <div class="col-5">
+                                                            Description:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop2_desc
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        @if(ViewBag.getserial.loop2_serial == null)
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" disabled>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" onclick='ChangeDescPopup("@ViewBag.getserial.loop2_serial")'>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        <div class="col">
+                                                            @if(ViewBag.getPreviousSerial.loop2_serial == null)
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-secondary btn-sm" title="Previous Interface" disabled><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-warning btn-sm" title="Previous Interface" onclick='PreviousInfPopup("@ViewBag.getPreviousSerial.loop2_serial", "@ViewBag.getPreviousSerial.loop2_desc")'><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @* LAV-LOOP 1 *@
+                            <div class="col-12 col-sm-12 col-md-6 tanklist">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0"></div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-9 text-left">
+                                                <h2 class="lead">
+                                                    <b>LAV-LOOP 1</b>
+                                                </h2>
+                                            </div>
+                                            <div class="col-3 text-right">
+                                                @if(ViewBag.getserial.loop1_serial == null){
+                                                    <i class="btn btn-sm btn-default">
+                                                        Disconnect
+                                                    </i>
+                                                }
+                                                else{
+                                                    <i class="btn btn-sm btn-success">
+                                                        Connected
+                                                    </i>
+                                                }  
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-1"></div>
+                                            <div class="col-4 text-left">
+                                                @if(ViewBag.getserial.loop1_serial == null){
+                                                    <img src="../../dist/img/interface_disconnect.png" alt="" class=" img-fluid">
+                                                }
+                                                else
+                                                {
+                                                    @if(ViewBag.descDuplicate.Contains(ViewBag.getserial.loop1_desc))
+                                                    {
+                                                        <img src="../../dist/img/interface_duplicate.png" alt="" class=" img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="../../dist/img/interface_connected.png" alt="" class=" img-fluid">
+                                                    } 
+                                                }
+                                            </div>
+                                            <div class="col-7 text-left">
+                                                <div class="ml-4 mb-0 text-muted">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            Serial Number:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop1_serial
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pb-2">
+                                                        <div class="col-5">
+                                                            Description:
+                                                        </div>
+                                                        <div class="col-7">
+                                                            @ViewBag.getserial.loop1_desc
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        @if(ViewBag.getserial.loop1_serial == null)
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" disabled>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-9">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" onclick='ChangeDescPopup("@ViewBag.getserial.loop1_serial")'>Change Description</button>
+                                                            </div>
+                                                        }
+                                                        <div class="col">
+                                                            @if(ViewBag.getPreviousSerial.loop1_serial == null)
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-secondary btn-sm" title="Previous Interface" disabled><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class = "btn btn-block btn-outline-warning btn-sm" title="Previous Interface" onclick='PreviousInfPopup("@ViewBag.getPreviousSerial.loop1_serial", "@ViewBag.getPreviousSerial.loop1_desc")'><i class="fas fa-exclamation"></i></button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Interface Description Error *@
+                        @if (ViewBag.serialError.Count > 0)
+                        {
+                        <div class="row pb-1 pt-3">
+                            <div class="col-8 text-danger">
+                                <h5>Interface Description Error</h5>
+                            </div>
+                        </div>
+                        @* Row *@
+                        <div class="row d-flex align-items-stretch" id="area_error" style="flex-wrap: nowrap; overflow: auto">
+                            @* Error item *@
+
+                            @for (int i = 0; i < ViewBag.serialError.Count; i++)
+                            {
+                                <div class="col-12 col-sm-12 col-md-6 errorlist">
+                                    <div class="card bg-light">
+                                        <div class="card-header text-muted border-bottom-0"></div>
+                                        <div class="card-body pt-0">
+                                            <div class="row">
+                                                <div class="col-9 text-left">
+                                                    <h2 class="lead">
+                                                        <b>@ViewBag.serialError[i].description</b>
+                                                    </h2>
+                                                </div>
+                                                <div class="col-3 text-right">
+                                                    <i class="btn btn-sm btn-success">
+                                                        Connected
+                                                    </i>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-1"></div>
+                                                <div class="col-4 text-left">
+                                                    @if(ViewBag.descDuplicate.Contains(ViewBag.serialError[i].description))
+                                                    {
+                                                        <img src="../../dist/img/interface_duplicate.png" alt="" class=" img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="../../dist/img/interface_error.png" alt="" class=" img-fluid">
+                                                    }  
+                                                </div>
+                                                <div class="col-7 text-left">
+                                                    <div class="ml-4 mb-0 text-muted">
+                                                        <div class="row">
+                                                            <div class="col-5">
+                                                                Serial Number:
+                                                            </div>
+                                                            <div class="col-7">
+                                                                @ViewBag.serialError[i].serialnumber
+                                                            </div>
+                                                        </div>
+                                                        <div class="row pb-2">
+                                                            <div class="col-5">
+                                                                Description:
+                                                            </div>
+                                                            <div class="col-7">
+                                                                @ViewBag.serialError[i].description
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <button type="button" class = "btn btn-block btn-primary btn-sm" onclick='ChangeDescPopup("@ViewBag.serialError[i].serialnumber")'>Change Description</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* change description modal*@
+        <div class="modal fade" id="changeDescModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+            <div class="modal-dialog" role="document">        
+                <div class="modal-content">            
+                    <div class="modal-header">                
+                        <h5 class="modal-title" id="changeDescText">Change Description</h5>                
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                            <span aria-hidden="true">×</span>                
+                            <span class="sr-only">Close</span>                
+                        </button>            
+                    </div>            
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" id="loop4Btn" class="btn btn-primary btn-block" onclick='ChangeDesc("LAV-LOOP4")'>LAV-LOOP 4</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" id="loop3Btn" class="btn btn-primary btn-block" onclick='ChangeDesc("LAV-LOOP3")'>LAV-LOOP 3</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" id="loop2Btn" class="btn btn-primary btn-block" onclick='ChangeDesc("LAV-LOOP2")'>LAV-LOOP 2</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" id="loop1Btn" class="btn btn-primary btn-block" onclick='ChangeDesc("LAV-LOOP1")'>LAV-LOOP 1</button>
+                            </div>
+                        </div>
+                    </div>             
+                </div>    
+            </div>
+        </div>
+
+        @* previous interface modal*@
+        <div class="modal fade" id="previousInfModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 12px;" aria-modal="true">    
+            <div class="modal-dialog" role="document">        
+                <div class="modal-content">            
+                    <div class="modal-header">                
+                        <h5 class="modal-title" id="previousInfText">Previous Interface</h5>                
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">                
+                            <span aria-hidden="true">×</span>                
+                            <span class="sr-only">Close</span>                
+                        </button>            
+                    </div>            
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-4 text-left">
+                                <img src="../../dist/img/interface_previous.png" alt="" class=" img-fluid">
+                            </div>
+                            <div class="col-7 text-left">
+                                <div class="ml-4 mb-0 text-muted">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            Serial Number:
+                                        </div>
+                                        <div class="col-6">
+                                            <span id="previousInfSerial"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-2">
+                                        <div class="col-6">
+                                            Description:
+                                        </div>
+                                        <div class="col-6">
+                                            <span id="previousInfDesc"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>             
+                </div>    
+            </div>
+        </div>
+</section>
+
+@if (ViewBag.SOmessage == null || ViewBag.SOmessage == "")
+{
+}
+else
+{
+    if (ViewBag.perpage == "1")
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                $.bsAlert.alert("@ViewBag.SOmessage");
+            };
+        </script>
+    }
+}
+
+<script src="~/bower_components/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var editSerial = "";
+
+    $(function () {
+        $("#changeDescModal").on('hidden.bs.modal', function (e) {
+            editSerial = "";
+        })
+    });
+
+    function SetDescription(serialNumber, newDescription) {
+        $("#changeDescModal").modal("hide");
+        document.getElementById("divData").style.display = "none";
+        document.getElementById("divSpin").style.display = "block";
+        
+        $.ajax({
+            type: "POST",
+            url: "../InterfaceConfig/UpdateCard",
+            data: { serialnumber : serialNumber, description : newDescription }
+        }).done(function (res) {
+            window.location.href = '@Url.Action("InterfaceConfig", "InterfaceConfig")';
+        });      
+    }
+
+    function ChangeDescPopup(serial) {
+        editSerial = serial;
+        var loop1_serial = "@ViewBag.getserial.loop1_serial";
+        var loop2_serial = "@ViewBag.getserial.loop2_serial";
+        var loop3_serial = "@ViewBag.getserial.loop3_serial";
+        var loop4_serial = "@ViewBag.getserial.loop4_serial";
+
+        if(loop1_serial == "" || loop1_serial == null){
+            document.getElementById("loop1Btn").disabled = false;
+        }
+        else{
+            document.getElementById("loop1Btn").disabled = true;
+        }
+        if(loop2_serial == "" || loop2_serial == null){
+            document.getElementById("loop2Btn").disabled = false;
+        }
+        else{
+            document.getElementById("loop2Btn").disabled = true;
+        }
+        if(loop3_serial == "" || loop3_serial == null){
+            document.getElementById("loop3Btn").disabled = false;
+        }
+        else{
+            document.getElementById("loop3Btn").disabled = true;
+        }
+        if(loop4_serial == "" || loop4_serial == null){
+            document.getElementById("loop4Btn").disabled = false;
+        }
+        else{
+            document.getElementById("loop4Btn").disabled = true;
+        }
+
+        $("#changeDescModal").modal("show");
+    }
+
+    function ChangeDesc(description) {
+        $.bsAlert.confirm("Change \""+editSerial+"\" description to \""+description+"\" ?", function () {
+            SetDescription(editSerial, description);
+        }); 
+    }
+
+    function RefreshPage() {
+        document.getElementById("divData").style.display = "none";
+        document.getElementById("divSpin").style.display = "block";
+        window.location.href = '@Url.Action("InterfaceConfig", "InterfaceConfig")';
+    }
+
+    function PreviousInfPopup(serial, description) {
+        document.getElementById("previousInfSerial").innerHTML = serial;
+        document.getElementById("previousInfDesc").innerHTML = description;
+        $("#previousInfModal").modal("show");
+    }
+</script>
+
+    @if (ViewBag.interfaceconfigmessage == null || ViewBag.interfaceconfigmessage == "")
+    {
+    }
+    else
+    {
+        if (ViewBag.perpage == "1") {
+            <script type="text/javascript">
+                window.onload = function ()
+                {
+                    $.bsAlert.alert("@ViewBag.interfaceconfigmessage");
+                };
+            </script>
+        }
+    }
