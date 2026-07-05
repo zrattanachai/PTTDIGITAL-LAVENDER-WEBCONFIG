@@ -1,0 +1,19 @@
+version: '3.0'
+
+services:
+  netcore:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: netcore
+    restart: always
+    volumes:
+      - ./:/var/www
+    ports:
+      - 7000:80
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
